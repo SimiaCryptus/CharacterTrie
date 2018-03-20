@@ -1,0 +1,13 @@
+{
+  "embeddings": [
+    {
+      "tensorName": "cluster_Wikipedia_LZ",
+      "tensorShape": [
+        1000,
+        40
+      ],
+      "tensorPath": "https://simiacryptus.github.io/utilities/java-util/cluster_Wikipedia_LZ/tensors.tsv",
+      "metadataPath": "https://simiacryptus.github.io/utilities/java-util/cluster_Wikipedia_LZ/metadata.tsv"
+    }
+  ]
+}
