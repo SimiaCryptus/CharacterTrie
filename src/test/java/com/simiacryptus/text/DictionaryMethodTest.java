@@ -96,7 +96,7 @@ public class DictionaryMethodTest {
   private void test(NotebookOutput log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
+    Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
     addCompressors(log, compressors, baseTree, 4, 2, 3);
     addCompressors(log, compressors, baseTree, 5, 2, 3);
     addCompressors(log, compressors, baseTree, 6, 2, 3);
@@ -108,14 +108,14 @@ public class DictionaryMethodTest {
     log.p(output.calcNumberStats().toTextTable());
   }
   
-  private void addWordCountCompressor(NotebookOutput log, Map<String, Compressor> compressors, List<? extends TestDocument> content) {
-    Map<String, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
+  private void addWordCountCompressor(NotebookOutput log, Map<CharSequence, Compressor> compressors, List<? extends TestDocument> content) {
+    Map<CharSequence, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
       .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     String dictionary = wordCounts.entrySet().stream()
-      .sorted(Comparator.<Map.Entry<String, Long>>comparingLong(e -> -e.getValue())
+      .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
         .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
       .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
-    String key = "LZ8k_commonWords";
+    CharSequence key = "LZ8k_commonWords";
     int dictSampleSize = 512;
     log.p("Common Words Dictionary %s: %s...\n", key, dictionary.length() > dictSampleSize ? (dictionary.substring(0, dictSampleSize) + "...") : dictionary);
     compressors.put(key, new Compressor() {
@@ -125,16 +125,16 @@ public class DictionaryMethodTest {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, dictionary);
       }
     });
   }
   
-  private void addCompressors(NotebookOutput log, Map<String, Compressor> compressors, CharTrieIndex baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
+  private void addCompressors(NotebookOutput log, Map<CharSequence, Compressor> compressors, CharTrieIndex baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
-    String keyDictionary = String.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context, dictionary_lookahead, model_minPathWeight);
+    CharSequence keyDictionary = String.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context, dictionary_lookahead, model_minPathWeight);
     int dictSampleSize = 512;
     log.p("Adding Compressor %s: %s...\n", keyDictionary, genDictionary.length() > dictSampleSize ? (genDictionary.substring(0, dictSampleSize) + "...") : genDictionary);
     compressors.put(keyDictionary, new Compressor() {
@@ -145,12 +145,12 @@ public class DictionaryMethodTest {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, genDictionary);
       }
     });
     String genMarkov = dictionaryTree.copy().getGenerator().generateMarkov(8 * 1024, dictionary_context, "");
-    String keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead, model_minPathWeight);
+    CharSequence keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead, model_minPathWeight);
     log.p("Adding Compressor %s: %s...\n", keyMarkov, genMarkov.length() > dictSampleSize ? (genMarkov.substring(0, dictSampleSize) + "...") : genMarkov);
     compressors.put(keyMarkov, new Compressor() {
       
@@ -160,7 +160,7 @@ public class DictionaryMethodTest {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, genMarkov);
       }
     });

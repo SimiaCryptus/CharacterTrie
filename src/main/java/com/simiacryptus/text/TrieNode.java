@@ -157,7 +157,7 @@ public class TrieNode {
    */
   public String getString(TrieNode root) {
     if (this == root) return "";
-    String parentStr = null == getParent() ? "" : getParent().getString(root);
+    CharSequence parentStr = null == getParent() ? "" : getParent().getString(root);
     return parentStr + getToken();
   }
   
@@ -196,7 +196,7 @@ public class TrieNode {
    */
   public String getDebugString(TrieNode root) {
     if (this == root) return "";
-    String parentStr = null == getParent() ? "" : getParent().getDebugString(root);
+    CharSequence parentStr = null == getParent() ? "" : getParent().getDebugString(root);
     return parentStr + getDebugToken();
   }
   
@@ -205,7 +205,7 @@ public class TrieNode {
    *
    * @return the debug token
    */
-  public String getDebugToken() {
+  public CharSequence getDebugToken() {
     char asChar = getChar();
     if (asChar == NodewalkerCodec.FALLBACK) return "<STOP>";
     if (asChar == NodewalkerCodec.END_OF_STRING) return "<NULL>";
@@ -524,7 +524,7 @@ public class TrieNode {
    * @return the god children
    */
   public Map<Character, TrieNode> getGodChildren() {
-    String postContext = this.getString().substring(1);
+    CharSequence postContext = this.getString().substring(1);
     return trie.tokens().stream().collect(Collectors.toMap(x -> x, token -> {
       TrieNode traverse = trie.traverse(token + postContext);
       return traverse.getString().equals(token + postContext) ? traverse : null;

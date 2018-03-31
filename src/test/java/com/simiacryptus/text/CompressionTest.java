@@ -52,7 +52,7 @@ public class CompressionTest {
    * @param model_minPathWeight  the model min path weight
    */
   static void addSharedDictionaryCompressors(
-    Map<String, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
+    Map<CharSequence, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     compressors.put("LZ8k", new Compressor() {
       String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
@@ -63,7 +63,7 @@ public class CompressionTest {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, dictionary);
       }
     });
@@ -77,7 +77,7 @@ public class CompressionTest {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeBZ(data, dictionary);
       }
     });
@@ -98,7 +98,7 @@ public class CompressionTest {
     codec.setVerbose(System.out);
     String txt = "ab ba";
     Bits encoded = codec.encodePPM(txt, 1);
-    String decoded = codec.decodePPM(encoded.getBytes(), 1);
+    CharSequence decoded = codec.decodePPM(encoded.getBytes(), 1);
     org.junit.Assert.assertEquals(txt, decoded);
   }
   
@@ -123,7 +123,7 @@ public class CompressionTest {
     TweetSentiment.load().limit(articleCount).map(t -> t.getText()).forEach(txt -> {
       try {
         Bits encoded = codec.encodePPM(txt, encodingContext);
-        String decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
+        CharSequence decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
         org.junit.Assert.assertEquals(txt, decoded);
         System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
       } catch (Throwable e) {
@@ -132,7 +132,7 @@ public class CompressionTest {
           try {
             NodewalkerCodec codec2 = codec.setVerbose(System.out);
             Bits encoded = codec2.encodePPM(txt, encodingContext);
-            String decoded = codec2.decodePPM(encoded.getBytes(), encodingContext);
+            CharSequence decoded = codec2.decodePPM(encoded.getBytes(), encodingContext);
             org.junit.Assert.assertEquals(txt, decoded);
             System.out.println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
             throw e;
@@ -164,7 +164,7 @@ public class CompressionTest {
     Supplier<Stream<? extends TestDocument>> source = () -> TweetSentiment.load().limit(modelCount + testCount);
     
     try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
-      Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+      Map<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
       TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
       //log.p(output.toTextTable());
       log.p(output.calcNumberStats().toTextTable());
@@ -188,7 +188,7 @@ public class CompressionTest {
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> EnglishWords.load().limit(modelCount + testCount);
     NotebookOutput log = MarkdownNotebookOutput.get(this);
-    Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+    Map<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toTextTable());
@@ -213,7 +213,7 @@ public class CompressionTest {
     Supplier<Stream<? extends TestDocument>> source = () -> WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
     
     NotebookOutput log = MarkdownNotebookOutput.get(this);
-    Map<String, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+    Map<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toTextTable());
@@ -232,8 +232,8 @@ public class CompressionTest {
    * @param modelCount           the model count
    * @return the apply
    */
-  protected Map<String, Compressor> buildCompressors(Supplier<Stream<? extends TestDocument>> source, int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context, final int encodingContext, int modelCount) {
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
+  protected Map<CharSequence, Compressor> buildCompressors(Supplier<Stream<? extends TestDocument>> source, int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context, final int encodingContext, int modelCount) {
+    Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
     Compressor.addGenericCompressors(compressors);
     System.out.println(String.format("Preparing %s documents", modelCount));
     CharTrieIndex baseTree = new CharTrieIndex();

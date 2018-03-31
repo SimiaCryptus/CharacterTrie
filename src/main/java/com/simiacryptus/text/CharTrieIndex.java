@@ -40,10 +40,10 @@ public class CharTrieIndex extends CharTrie {
   /**
    * The Documents.
    */
-  protected final ArrayList<String> documents;
+  protected final ArrayList<CharSequence> documents;
   
   private CharTrieIndex(SerialArrayList<NodeData> nodes, SerialArrayList<CursorData> cursors,
-    ArrayList<String> documents) {
+    ArrayList<CharSequence> documents) {
     super(nodes);
     this.cursors = cursors;
     this.documents = documents;
@@ -74,7 +74,7 @@ public class CharTrieIndex extends CharTrie {
    * @param minWeight the min weight
    * @return the char trie
    */
-  public static CharTrie indexWords(Collection<String> documents, int maxLevels, int minWeight) {
+  public static CharTrie indexWords(Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, true);
   }
   
@@ -86,15 +86,15 @@ public class CharTrieIndex extends CharTrie {
    * @param minWeight the min weight
    * @return the char trie
    */
-  public static CharTrie indexFulltext(Collection<String> documents, int maxLevels, int minWeight) {
+  public static CharTrie indexFulltext(Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, false);
   }
   
-  private static CharTrie create(Collection<String> documents, int maxLevels, int minWeight, boolean words) {
-    List<List<String>> a = new ArrayList<>();
-    List<String> b = new ArrayList<>();
+  private static CharTrie create(Collection<CharSequence> documents, int maxLevels, int minWeight, boolean words) {
+    List<List<CharSequence>> a = new ArrayList<>();
+    List<CharSequence> b = new ArrayList<>();
     int blockSize = 1024 * 1024;
-    for (String s : documents) {
+    for (CharSequence s : documents) {
       b.add(s);
       if (b.stream().mapToInt(x -> x.length()).sum() > blockSize) {
         a.add(b);
@@ -196,7 +196,7 @@ public class CharTrieIndex extends CharTrie {
    * @param document the document
    * @return this int
    */
-  public int addDictionary(String document) {
+  public int addDictionary(CharSequence document) {
     if (root().getNumberOfChildren() >= 0) {
       throw new IllegalStateException("Tree sorting has begun");
     }
@@ -217,7 +217,7 @@ public class CharTrieIndex extends CharTrie {
    * @param document the document
    * @return this int
    */
-  public int addDocument(String document) {
+  public int addDocument(CharSequence document) {
     if (root().getNumberOfChildren() >= 0) {
       throw new IllegalStateException("Tree sorting has begun");
     }
@@ -238,7 +238,7 @@ public class CharTrieIndex extends CharTrie {
    * @param document the document
    * @return the char trie
    */
-  public CharTrie addAlphabet(String document) {
+  public CharTrie addAlphabet(CharSequence document) {
     document.chars().mapToObj(i -> new String(Character.toChars(i))).forEach(s -> addDocument(s));
     return this;
   }

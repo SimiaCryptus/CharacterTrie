@@ -73,7 +73,7 @@ public class NodewalkerCodec {
    * @param context the context
    * @return the string
    */
-  public String decodePPM(byte[] data, int context) {
+  public CharSequence decodePPM(byte[] data, int context) {
     return new Decoder(data, context).encodePPM();
   }
   
@@ -261,7 +261,7 @@ public class NodewalkerCodec {
      *
      * @return the string
      */
-    protected String encodePPM() {
+    protected CharSequence encodePPM() {
       try {
         while (true) {
           if (null == node) {

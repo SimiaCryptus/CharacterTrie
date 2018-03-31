@@ -46,20 +46,20 @@ public interface Compressor {
    * @param wide        the wide
    * @return the table output
    */
-  static <T> TableOutput evalCompressor(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
+  static <T> TableOutput evalCompressor(Stream<? extends TestDocument> data, Map<CharSequence, Compressor> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
     data.parallel().forEach(item -> {
-      HashMap<String, Object> rowWide = new LinkedHashMap<>();
+      HashMap<CharSequence, Object> rowWide = new LinkedHashMap<>();
       String title;
       title = item.getTitle().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach((e) -> {
         try {
-          String name = e.getKey();
+          CharSequence name = e.getKey();
           Compressor compressor = e.getValue();
-          HashMap<String, Object> rowTall = new LinkedHashMap<>();
+          HashMap<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
           
@@ -71,7 +71,7 @@ public interface Compressor {
           double ONE_MILLION = 1000000.0;
           rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
-          TimedResult<String> uncompress = TimedResult.time(() -> compressor.uncompress(compress.result));
+          TimedResult<CharSequence> uncompress = TimedResult.time(() -> compressor.uncompress(compress.result));
           rowWide.put(name + ".uncompressMs", uncompress.timeNanos / ONE_MILLION);
           rowTall.put("uncompressMs", uncompress.timeNanos / ONE_MILLION);
           rowWide.put(name + ".verified", uncompress.result.equals(item.getText()));
@@ -96,9 +96,9 @@ public interface Compressor {
    * @param wide        the wide
    * @return the table output
    */
-  static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<String, Compressor> compressors, boolean wide) {
-    Stream<Map.Entry<String, Compressor>> stream = compressors.entrySet().stream();
-    Collector<Map.Entry<String, Compressor>, ?, Map<String, Function<TestDocument, Double>>> collector =
+  static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<CharSequence, Compressor> compressors, boolean wide) {
+    Stream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet().stream();
+    Collector<Map.Entry<CharSequence, Compressor>, ?, Map<CharSequence, Function<TestDocument, Double>>> collector =
       Collectors.toMap(e -> e.getKey(), e -> {
         Compressor value = e.getValue();
         return x -> (value.compress(x.getText()).length * 1.0 / x.getText().length());
@@ -115,20 +115,20 @@ public interface Compressor {
    * @param wide        the wide
    * @return the table output
    */
-  static <T> TableOutput evalCluster(Stream<? extends TestDocument> data, Map<String, Function<TestDocument, Double>> compressors, boolean wide) {
+  static <T> TableOutput evalCluster(Stream<? extends TestDocument> data, Map<CharSequence, Function<TestDocument, Double>> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
     data.parallel().forEach(item -> {
-      HashMap<String, Object> rowWide = new LinkedHashMap<>();
+      HashMap<CharSequence, Object> rowWide = new LinkedHashMap<>();
       String title;
       title = item.getTitle().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach((e) -> {
         try {
-          String name = e.getKey();
+          CharSequence name = e.getKey();
           Function<TestDocument, Double> compressor = e.getValue();
-          HashMap<String, Object> rowTall = new LinkedHashMap<>();
+          HashMap<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
           
@@ -154,7 +154,7 @@ public interface Compressor {
    *
    * @param compressors the compressors
    */
-  static void addGenericCompressors(Map<String, Compressor> compressors) {
+  static void addGenericCompressors(Map<CharSequence, Compressor> compressors) {
     compressors.put("BZ0", new Compressor() {
       @Override
       public byte[] compress(String text) {
@@ -162,7 +162,7 @@ public interface Compressor {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeBZ(data);
       }
     });
@@ -173,7 +173,7 @@ public interface Compressor {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data);
       }
     });
@@ -196,7 +196,7 @@ public interface Compressor {
       }
       
       @Override
-      public String uncompress(byte[] data) {
+      public CharSequence uncompress(byte[] data) {
         return codec.decodePPM(data, encodingContext);
       }
     };
@@ -216,5 +216,5 @@ public interface Compressor {
    * @param compress the compress
    * @return the string
    */
-  String uncompress(byte[] compress);
+  CharSequence uncompress(byte[] compress);
 }

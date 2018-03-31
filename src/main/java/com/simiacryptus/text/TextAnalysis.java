@@ -63,7 +63,7 @@ public class TextAnalysis {
    * @param minOverlap the min overlap
    * @return the string
    */
-  public static String combine(String left, String right, int minOverlap) {
+  public static CharSequence combine(String left, String right, int minOverlap) {
     if (left.length() < minOverlap) return null;
     if (right.length() < minOverlap) return null;
     int bestOffset = Integer.MAX_VALUE;
@@ -104,8 +104,8 @@ public class TextAnalysis {
    * @param source the source
    * @return the list
    */
-  public List<String> keywords(final String source) {
-    Map<String, Long> wordCounts = splitChars(source, DEFAULT_THRESHOLD).stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+  public List<CharSequence> keywords(final String source) {
+    Map<CharSequence, Long> wordCounts = splitChars(source, DEFAULT_THRESHOLD).stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     wordCounts = aggregateKeywords(wordCounts);
     return wordCounts.entrySet().stream().filter(x -> x.getValue() > 1)
       .sorted(Comparator.comparing(x -> -entropy(x.getKey()) * Math.pow(x.getValue(), 0.3)))
@@ -117,12 +117,12 @@ public class TextAnalysis {
       }).collect(Collectors.toList());
   }
   
-  private Map<String, Long> aggregateKeywords(Map<String, Long> wordCounts) {
-    Map<String, Long> accumulator = new HashMap<>();
+  private Map<CharSequence, Long> aggregateKeywords(Map<CharSequence, Long> wordCounts) {
+    Map<CharSequence, Long> accumulator = new HashMap<>();
     wordCounts.forEach((key, count) -> {
       boolean added = false;
-      for (Map.Entry<String, Long> e : accumulator.entrySet()) {
-        String combine = combine(key, e.getKey(), 4);
+      for (Map.Entry<CharSequence, Long> e : accumulator.entrySet()) {
+        CharSequence combine = combine(key, e.getKey(), 4);
         if (null != combine) {
           accumulator.put(combine, e.getValue() + count);
           accumulator.remove(e.getKey());
@@ -192,9 +192,9 @@ public class TextAnalysis {
    * @param minSize the min size
    * @return the list
    */
-  public List<String> splitMatches(String text, int minSize) {
+  public List<CharSequence> splitMatches(String text, int minSize) {
     TrieNode node = inner.root();
-    List<String> matches = new ArrayList<>();
+    List<CharSequence> matches = new ArrayList<>();
     String accumulator = "";
     for (int i = 0; i < text.length(); i++) {
       short prevDepth = node.getDepth();
@@ -215,7 +215,7 @@ public class TextAnalysis {
         accumulator = node.getString();
       }
     }
-    List<String> tokenization = new ArrayList<>();
+    List<CharSequence> tokenization = new ArrayList<>();
     for (String match : matches) {
       int index = text.indexOf(match);
       assert (index >= 0);
@@ -234,8 +234,8 @@ public class TextAnalysis {
    * @param threshold the threshold
    * @return the list
    */
-  public List<String> splitChars(final String source, double threshold) {
-    List<String> output = new ArrayList<>();
+  public List<CharSequence> splitChars(final String source, double threshold) {
+    List<CharSequence> output = new ArrayList<>();
     int wordStart = 0;
     double aposterioriNatsPrev = 0;
     boolean isIncreasing = false;
@@ -259,7 +259,7 @@ public class TextAnalysis {
           Arrays.asList(aprioriNats, aposterioriNats, linkNats
           ).stream().map(x -> String.format("%.4f", x)).collect(Collectors.joining("\t"))));
       }
-      String word = i < 2 ? "" : source.substring(wordStart, i - 2);
+      CharSequence word = i < 2 ? "" : source.substring(wordStart, i - 2);
       if (isIncreasing && linkNats < prevLink && prevLink > threshold && word.length() > 2) {
         wordStart = i - 2;
         output.add(word);
@@ -328,7 +328,7 @@ public class TextAnalysis {
     TrieNode priorParent = priorNode.getParent();
     TreeMap<Character, ? extends TrieNode> childrenMap = null == priorParent ? inner.root().getChildrenMap() : priorParent.getChildrenMap();
     String followingString = followingNode.getString();
-    String postContext = followingString.isEmpty() ? "" : followingString.substring(1);
+    CharSequence postContext = followingString.isEmpty() ? "" : followingString.substring(1);
     return childrenMap.keySet().stream().collect(Collectors.toMap(x -> x, token -> {
       TrieNode altFollowing = inner.traverse(token + postContext);
       long a = altFollowing.getString().equals(token + postContext) ? altFollowing.getCursorCount() : 0;
@@ -385,7 +385,7 @@ public class TextAnalysis {
    * @param text the text
    * @return the list
    */
-  public List<String> splitChars(String text) {
+  public List<CharSequence> splitChars(String text) {
     return splitChars(text, DEFAULT_THRESHOLD);
   }
   

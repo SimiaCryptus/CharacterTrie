@@ -80,7 +80,7 @@ public class ConvolutionalTrieSerializer {
       });
     }
     else {
-      HashMap<String, Integer> godchildCounters = new HashMap<>();
+      HashMap<CharSequence, Integer> godchildCounters = new HashMap<>();
       root.streamDecendents(level).forEach(node -> {
         AtomicLong nodeCounter = new AtomicLong();
         TrieNode godparent = node.getDepth() == 0 ? root : node.godparent();
@@ -171,7 +171,7 @@ public class ConvolutionalTrieSerializer {
       }
     }
     else {
-      HashMap<String, Integer> godchildCounters = new HashMap<>();
+      HashMap<CharSequence, Integer> godchildCounters = new HashMap<>();
       root.streamDecendents(level).forEach(node -> {
         AtomicLong nodeCounter = new AtomicLong();
         TrieNode godparent = node.getDepth() == 0 ? root : node.godparent();
