@@ -50,11 +50,11 @@ public class ClassificationTree {
    * @param depth      the depth
    * @return the function
    */
-  public Function<String, Map<String, Double>> categorizationTree(Map<String, List<String>> categories, int depth) {
+  public Function<CharSequence, Map<CharSequence, Double>> categorizationTree(Map<CharSequence, List<CharSequence>> categories, int depth) {
     return categorizationTree(categories, depth, "");
   }
   
-  private Function<String, Map<String, Double>> categorizationTree(Map<String, List<String>> categories, int depth, String indent) {
+  private Function<CharSequence, Map<CharSequence, Double>> categorizationTree(Map<CharSequence, List<CharSequence>> categories, int depth, CharSequence indent) {
     if (0 == depth) {
       return str -> {
         int sum = categories.values().stream().mapToInt(x -> x.size()).sum();
@@ -67,11 +67,11 @@ public class ClassificationTree {
       }
       Optional<NodeInfo> info = categorizationSubstring(categories.values());
       if (!info.isPresent()) return categorizationTree(categories, 0, indent);
-      String split = info.get().node.getString();
-      Map<String, List<String>> lSet = categories.entrySet().stream().collect(
+      CharSequence split = info.get().node.getString();
+      Map<CharSequence, List<CharSequence>> lSet = categories.entrySet().stream().collect(
         Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> str.contains(split))
           .collect(Collectors.toList())));
-      Map<String, List<String>> rSet = categories.entrySet().stream().collect(
+      Map<CharSequence, List<CharSequence>> rSet = categories.entrySet().stream().collect(
         Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> !str.contains(split))
           .collect(Collectors.toList())));
       int lSum = lSet.values().stream().mapToInt(x -> x.size()).sum();
@@ -85,8 +85,8 @@ public class ClassificationTree {
           rSet.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
           info.get().entropy));
       }
-      Function<String, Map<String, Double>> l = categorizationTree(lSet, depth - 1, indent + "  ");
-      Function<String, Map<String, Double>> r = categorizationTree(rSet, depth - 1, indent + "  ");
+      Function<CharSequence, Map<CharSequence, Double>> l = categorizationTree(lSet, depth - 1, indent + "  ");
+      Function<CharSequence, Map<CharSequence, Double>> r = categorizationTree(rSet, depth - 1, indent + "  ");
       return str -> {
         if (str.contains(split)) {
           return l.apply(str);
@@ -115,14 +115,14 @@ public class ClassificationTree {
       }).sum()) / (sumSum * Math.log(2));
   }
   
-  private Optional<NodeInfo> categorizationSubstring(Collection<List<String>> categories) {
+  private Optional<NodeInfo> categorizationSubstring(Collection<List<CharSequence>> categories) {
     CharTrieIndex trie = new CharTrieIndex();
     Map<Integer, Integer> categoryMap = new TreeMap<>();
     int categoryNumber = 0;
     Map<Integer, Long> sum = new HashMap<>();
-    for (List<String> category : categories) {
+    for (List<CharSequence> category : categories) {
       categoryNumber += 1;
-      for (String text : category) {
+      for (CharSequence text : category) {
         sum.put(categoryNumber, sum.getOrDefault(categoryNumber, 0l) + text.length() + 1);
         categoryMap.put(trie.addDocument(text), categoryNumber);
       }

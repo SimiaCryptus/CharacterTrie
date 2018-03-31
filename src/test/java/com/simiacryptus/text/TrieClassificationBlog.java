@@ -138,7 +138,7 @@ public class TrieClassificationBlog {
         .map(x -> LanguageModel.match(x)).collect(Collectors.groupingBy(x -> x, Collectors.counting()))
         .forEach((language, count) ->
         {
-          HashMap<String, Object> row = new HashMap<>();
+          HashMap<CharSequence, Object> row = new HashMap<>();
           row.put("Source", sourceLanguage);
           row.put("Predicted", language.name());
           row.put("Count", count);
@@ -237,8 +237,8 @@ public class TrieClassificationBlog {
         Collections.shuffle(list);
         return list;
       });
-      Function<String, Map<String, Double>> rule = log.code(() -> {
-        HashMap<String, List<String>> map = new HashMap<>();
+      Function<CharSequence, Map<CharSequence, Double>> rule = log.code(() -> {
+        HashMap<CharSequence, List<CharSequence>> map = new HashMap<>();
         map.put("Positive", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
         map.put("Negative", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
         return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 32);
@@ -246,8 +246,8 @@ public class TrieClassificationBlog {
       TableOutput table = new TableOutput();
       log.code(() -> {
         return tweetsPositive.stream().skip(trainingSize).map(x -> x.getText()).mapToDouble(str -> {
-          Map<String, Double> prob = rule.apply(str);
-          HashMap<String, Object> row = new LinkedHashMap<>();
+          Map<CharSequence, Double> prob = rule.apply(str);
+          HashMap<CharSequence, Object> row = new LinkedHashMap<>();
           row.put("Category", "Positive");
           row.put("Prediction", prob.entrySet().stream().max(Comparator.comparing(x -> x.getValue())).get().getKey());
           prob.forEach((category, count) -> row.put(category + "%", count * 100));
@@ -258,8 +258,8 @@ public class TrieClassificationBlog {
       });
       log.code(() -> {
         return tweetsNegative.stream().skip(trainingSize).map(x -> x.getText()).mapToDouble(str -> {
-          Map<String, Double> prob = rule.apply(str);
-          HashMap<String, Object> row = new LinkedHashMap<>();
+          Map<CharSequence, Double> prob = rule.apply(str);
+          HashMap<CharSequence, Object> row = new LinkedHashMap<>();
           row.put("Category", "Negative");
           row.put("Prediction", prob.entrySet().stream().max(Comparator.comparing(x -> x.getValue())).get().getKey());
           prob.forEach((category, count) -> row.put(category + "%", count * 100));

@@ -97,7 +97,7 @@ public class TrieDemo {
       CharTrieIndex trie = log.code(() -> {
         return new CharTrieIndex();
       });
-      Map<Integer, String> documents = log.code(() -> {
+      Map<Integer, CharSequence> documents = log.code(() -> {
         return WikiArticle.ENGLISH.stream().limit(100).collect(Collectors.toMap(
           article -> trie.addDocument(article.getText()),
           article -> article.getTitle()
@@ -109,7 +109,7 @@ public class TrieDemo {
         print(trie);
       });
       log.p("Now we can search for a string:");
-      Map<String, Long> codec = log.code(() -> {
+      Map<CharSequence, Long> codec = log.code(() -> {
         IndexNode match = trie.traverse("Computer");
         System.out.println("Found string matches for " + match.getString());
         return match.getCursors().map(cursor -> {
@@ -160,7 +160,7 @@ public class TrieDemo {
         });
         
         log.p("\n\nAnd decompress to verify:");
-        String uncompressed = log.code(() -> {
+        CharSequence uncompressed = log.code(() -> {
           byte[] bytes = Base64.getDecoder().decode(compressed);
           return codec.decodePPM(bytes, 2);
         });
@@ -179,7 +179,7 @@ public class TrieDemo {
       });
       
       log.p("\n\nAnd decompress to verify:");
-      String uncompressed = log.code(() -> {
+      CharSequence uncompressed = log.code(() -> {
         byte[] bytes = Base64.getDecoder().decode(compressed);
         return CompressionUtil.decodeLZToString(bytes, dictionary);
       });
@@ -347,7 +347,7 @@ public class TrieDemo {
   @Category(TestCategories.ResearchCode.class)
   public void demoCommonWords() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
-      List<String> trainingData = WikiArticle.ENGLISH.stream().map(x -> x.getText()).limit(200).collect(Collectors.toList());
+      List<CharSequence> trainingData = WikiArticle.ENGLISH.stream().map(x -> x.getText()).limit(200).collect(Collectors.toList());
       int minWeight = 5;
       int maxLevels = 200;
       log.p("First, we cache text into a model");
@@ -360,10 +360,10 @@ public class TrieDemo {
         int _penalty = penalty;
         log.p("We can then search for high-entropy keywords apply encoding penalty %s:", penalty);
         log.code(() -> {
-          List<String> candidates = triePositive.max(node -> {
+          List<CharSequence> candidates = triePositive.max(node -> {
             return (node.getDepth() - _penalty) * (node.getCursorCount());
           }, 1000).map(x -> x.getString()).collect(Collectors.toList());
-          List<String> filteredKeywords = new ArrayList<>();
+          List<CharSequence> filteredKeywords = new ArrayList<>();
           for (String keyword : candidates) {
             if (!filteredKeywords.stream().anyMatch(x -> x.contains(keyword) || keyword.contains(x))) {
               filteredKeywords.add(keyword);
@@ -384,7 +384,7 @@ public class TrieDemo {
   @Category(TestCategories.ResearchCode.class)
   public void demoMarkovGraph() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
-      List<String> trainingData = Arrays.asList("a cat in the hat that can hat the cat");
+      List<CharSequence> trainingData = Arrays.asList("a cat in the hat that can hat the cat");
       int minWeight = 1;
       int maxLevels = Integer.MAX_VALUE;
       log.p("First, we cache text into a model");
@@ -394,7 +394,7 @@ public class TrieDemo {
         return charTrie;
       });
       log.p("The graph:");
-      HashMap<String, Node> nodes = new HashMap<>();
+      HashMap<CharSequence, Node> nodes = new HashMap<>();
       log.code(() -> {
         Node node = buildNode(trie.root(), maxLevels);
         Graph graph = graph().directed().generalAttr().with(RankDir.LEFT_TO_RIGHT).with(node);
@@ -544,22 +544,22 @@ public class TrieDemo {
         Collections.shuffle(list);
         return list;
       });
-      Function<String, Map<String, Double>> rule = log.code(() -> {
-        HashMap<String, List<String>> map = new HashMap<>();
+      Function<CharSequence, Map<CharSequence, Double>> rule = log.code(() -> {
+        HashMap<CharSequence, List<CharSequence>> map = new HashMap<>();
         map.put("pos", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
         map.put("neg", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
         return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 32);
       });
       log.code(() -> {
         return tweetsPositive.stream().skip(trainingSize).map(x -> x.getText()).mapToDouble(str -> {
-          Map<String, Double> prob = rule.apply(str);
+          Map<CharSequence, Double> prob = rule.apply(str);
           System.out.println(String.format("%s -> %s", str, prob));
           return prob.getOrDefault("pos", 0.0) < 0.5 ? 0.0 : 1.0;
         }).average().getAsDouble();
       });
       log.code(() -> {
         return tweetsNegative.stream().skip(trainingSize).map(x -> x.getText()).mapToDouble(str -> {
-          Map<String, Double> prob = rule.apply(str);
+          Map<CharSequence, Double> prob = rule.apply(str);
           System.out.println(String.format("%s -> %s", str, prob));
           return prob.getOrDefault("neg", 0.0) < 0.5 ? 0.0 : 1.0;
         }).average().getAsDouble();
@@ -669,7 +669,7 @@ public class TrieDemo {
   @Category(TestCategories.Report.class)
   public void demoCompression() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
-      HashSet<String> articles = new HashSet<String>(Arrays.asList("A"));
+      HashSet<CharSequence> articles = new HashSet<CharSequence>(Arrays.asList("A"));
       
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
       
@@ -702,9 +702,9 @@ public class TrieDemo {
         NodewalkerCodec codec = new NodewalkerCodec(trie);
         return articleList.stream().map(article -> {
           String text = article.getText();
-          String title = article.getTitle();
+          CharSequence title = article.getTitle();
           TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(text, Integer.MAX_VALUE));
-          TimedResult<String> decompressed = TimedResult.time(() -> codec.decodePPM(compressed.result.getBytes(), Integer.MAX_VALUE));
+          TimedResult<CharSequence> decompressed = TimedResult.time(() -> codec.decodePPM(compressed.result.getBytes(), Integer.MAX_VALUE));
           System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec; %s",
             title, article.getText().length(), compressed.result.bitLength / 8.0,
             compressed.result.bitLength * 100.0 / (8.0 * article.getText().length()),
@@ -721,7 +721,7 @@ public class TrieDemo {
       log.code(() -> {
         NodewalkerCodec codec = new NodewalkerCodec(trie);
         compressedArticles.forEach(article -> {
-          TimedResult<String> decompressed = TimedResult.time(() -> codec.decodePPM(article, Integer.MAX_VALUE));
+          TimedResult<CharSequence> decompressed = TimedResult.time(() -> codec.decodePPM(article, Integer.MAX_VALUE));
           System.out.println(String.format("Deserialized %s bytes -> %s chars in %s sec",
             article.length, decompressed.result.length(),
             decompressed.timeNanos / 1000000000.0));
@@ -769,7 +769,7 @@ public class TrieDemo {
   @Category(TestCategories.Report.class)
   public void demoWikiSummary() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
-      HashSet<String> articles = new HashSet<>();
+      HashSet<CharSequence> articles = new HashSet<>();
       Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
       log.h3("First, we cache training and testing data:");
@@ -820,7 +820,7 @@ public class TrieDemo {
   @Category(TestCategories.Report.class)
   public void demoWordlist() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
-      HashSet<String> articles = new HashSet<>();
+      HashSet<CharSequence> articles = new HashSet<>();
       Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
       log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
       log.h3("First, we cache training and testing data:");
@@ -848,7 +848,7 @@ public class TrieDemo {
       articleList.forEach(testArticle -> {
         log.h2(testArticle.getTitle());
         log.h3("Tokenization");
-        List<String> tokens = log.code(() -> {
+        List<CharSequence> tokens = log.code(() -> {
           return referenceTrie.getAnalyzer().setVerbose(System.out).splitMatches(testArticle.getText(), 2);
         });
         log.h3("Keywords");
@@ -878,7 +878,7 @@ public class TrieDemo {
       });
       log.h3("Then, we decompose the text into an n-gram node:");
       CharTrie referenceTrie = log.code(() -> {
-        List<String> list = trainingList.stream().map(x -> "|" + x.getTitle() + "|").collect(Collectors.toList());
+        List<CharSequence> list = trainingList.stream().map(x -> "|" + x.getTitle() + "|").collect(Collectors.toList());
         CharTrie trie = CharTrieIndex.indexFulltext(list, Integer.MAX_VALUE, 0);
         print(trie);
         return trie;

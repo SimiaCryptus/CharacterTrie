@@ -64,7 +64,7 @@ public class IndexNode extends TrieNode {
    *
    * @return the cursors by document
    */
-  public Map<String, List<Cursor>> getCursorsByDocument() {
+  public Map<CharSequence, List<Cursor>> getCursorsByDocument() {
     return this.getCursors().collect(Collectors.groupingBy((Cursor x) -> x.getDocument()));
   }
   

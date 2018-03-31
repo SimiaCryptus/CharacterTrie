@@ -81,7 +81,7 @@ public abstract class ModelMetaTest {
         baseTree.addDocument(txt.getText());
       });
       log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-      Map<String, Compressor> compressors = new LinkedHashMap<>();
+      Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
       
       for (int dictionary_context : Arrays.asList(4, 5, 6)) {
         int model_minPathWeight = 3;
@@ -98,7 +98,7 @@ public abstract class ModelMetaTest {
           }
           
           @Override
-          public String uncompress(byte[] data) {
+          public CharSequence uncompress(byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
           }
         });
@@ -126,7 +126,7 @@ public abstract class ModelMetaTest {
         baseTree.addDocument(txt.getText());
       });
       log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-      Map<String, Compressor> compressors = new LinkedHashMap<>();
+      Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
       
       for (int dictionary_context : Arrays.asList(4, 6, 8)) {
         int model_minPathWeight = 3;
@@ -143,7 +143,7 @@ public abstract class ModelMetaTest {
           }
           
           @Override
-          public String uncompress(byte[] data) {
+          public CharSequence uncompress(byte[] data) {
             return CompressionUtil.decodeBZ(data, dictionary);
           }
         });
@@ -170,14 +170,14 @@ public abstract class ModelMetaTest {
         baseTree.addDocument(txt.getText());
       });
       log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-      
-      Map<String, Compressor> compressors = new LinkedHashMap<>();
+  
+      Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
       
       int model_minPathWeight = 1;
       for (int ppmModelDepth : Arrays.asList(4, 6, 8)) {
         for (int encodingContext : Arrays.asList(1, 2, 3)) {
           CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
-          String name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
+          CharSequence name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
           compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
         }
       }

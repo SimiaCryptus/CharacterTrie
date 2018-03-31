@@ -68,7 +68,7 @@ public class LanguageModelBuilder {
     log.p("\n\n");
     log.h2(languageName);
     CharTrie trie = log.code(() -> {
-      List<String> data = load.map(x -> x.getText()).filter(x -> x.length() > minArticleSize)
+      List<CharSequence> data = load.map(x -> x.getText()).filter(x -> x.length() > minArticleSize)
         .skip(100)
         .map(str -> str.replaceAll("\\{\\{.*\\}\\}", ""))
         .map(str -> str.replaceAll("\\[\\[.*\\]\\]", ""))

@@ -78,7 +78,7 @@ public class PPMCodec {
    * @param context the context
    * @return the string
    */
-  public String decodePPM(byte[] data, int context) {
+  public CharSequence decodePPM(byte[] data, int context) {
     try {
       BitInputStream in = new BitInputStream(new ByteArrayInputStream(data));
       StringBuilder out = new StringBuilder();
@@ -153,7 +153,7 @@ public class PPMCodec {
    * @return the bits
    */
   public Bits encodePPM(String text, int context) {
-    final String original = text;
+    final CharSequence original = text;
     //if(verbose) System.p.println(String.format("Encoding %s apply %s chars of context", text, context));
     if (!text.endsWith("\u0000")) text += END_OF_STRING;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();

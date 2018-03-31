@@ -80,7 +80,7 @@ public abstract class ModelClusterTest {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
       AtomicInteger index = new AtomicInteger(0);
-      Map<String, Compressor> compressors = new LinkedHashMap<>();
+      Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex baseTree = new CharTrieIndex();
         baseTree.addDocument(text.getText());
@@ -95,7 +95,7 @@ public abstract class ModelClusterTest {
           }
           
           @Override
-          public String uncompress(byte[] data) {
+          public CharSequence uncompress(byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
           }
         });
@@ -109,7 +109,7 @@ public abstract class ModelClusterTest {
           }
           
           @Override
-          public String uncompress(byte[] data) {
+          public CharSequence uncompress(byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
           }
         });
@@ -140,12 +140,12 @@ public abstract class ModelClusterTest {
       int encodingContext = 2;
       
       log.p("Generating Compressor Models");
-      Map<String, Compressor> compressors = new LinkedHashMap<>();
+      Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
-        String name = String.format("PPM_%s", index.incrementAndGet());
+        CharSequence name = String.format("PPM_%s", index.incrementAndGet());
         Compressor ppmCompressor = Compressor.buildPPMCompressor(tree, encodingContext);
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
@@ -177,12 +177,12 @@ public abstract class ModelClusterTest {
       int encodingContext = 2;
       
       log.p("Generating Compressor Models");
-      Map<String, Function<TestDocument, Double>> compressors = new LinkedHashMap<>();
+      Map<CharSequence, Function<TestDocument, Double>> compressors = new LinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
-        String name = String.format("ENT_%s", index.incrementAndGet());
+        CharSequence name = String.format("ENT_%s", index.incrementAndGet());
         TextAnalysis analysis = tree.getAnalyzer();
         Function<TestDocument, Double> ppmCompressor = t -> analysis.entropy(t.getText());
         synchronized (compressors) {

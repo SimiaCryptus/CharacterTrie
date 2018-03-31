@@ -72,14 +72,14 @@ public class TermMetaTest {
       baseTree.addDocument(txt.getText());
     });
     log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-    
-    Map<String, Compressor> compressors = new LinkedHashMap<>();
+  
+    Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
     
     int model_minPathWeight = 1;
     for (int ppmModelDepth : Arrays.asList(8, 9, 10, 11, 12)) {
       for (int encodingContext : Arrays.asList(0, 1, 2, 3, 4, 5)) {
         CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
-        String name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
+        CharSequence name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
         compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
       }
     }

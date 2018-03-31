@@ -51,7 +51,7 @@ public class Cursor {
    *
    * @return the document
    */
-  public String getDocument() {
+  public CharSequence getDocument() {
     return this.charTrieIndex.documents.get(data.documentId);
   }
   
@@ -71,7 +71,7 @@ public class Cursor {
    */
   public char getToken() {
     int index = getPosition();
-    String document = getDocument();
+    CharSequence document = getDocument();
     return index >= document.length() ? NodewalkerCodec.END_OF_STRING : document.charAt(index);
   }
   

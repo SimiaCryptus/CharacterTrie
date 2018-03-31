@@ -124,9 +124,9 @@ public class BitsTest {
   }
   
   private void testConcatenate(final long a, final long b) {
-    final String asStringA = 0 == a ? "" : Long.toBinaryString(a);
-    final String asStringB = 0 == b ? "" : Long.toBinaryString(b);
-    final String asString = asStringA + asStringB;
+    final CharSequence asStringA = 0 == a ? "" : Long.toBinaryString(a);
+    final CharSequence asStringB = 0 == b ? "" : Long.toBinaryString(b);
+    final CharSequence asString = asStringA + asStringB;
     final Bits bitsA = new Bits(a);
     final Bits bitsB = new Bits(b);
     final Bits bits = bitsA.concatenate(bitsB);
@@ -240,7 +240,7 @@ public class BitsTest {
   
   private void testSubrange(final Bits bits, final String asString,
     final int from, final int to) {
-    final String subStr = asString.substring(from, to);
+    final CharSequence subStr = asString.substring(from, to);
     final Bits subBits = bits.range(from, to - from);
     Assert.assertEquals(
       String.format("Substring (%s,%s) of %s", from, to, bits), subStr,
@@ -262,7 +262,7 @@ public class BitsTest {
   }
   
   private void testToString(final long value) {
-    final String asString = 0 == value ? "" : Long.toBinaryString(value);
+    final CharSequence asString = 0 == value ? "" : Long.toBinaryString(value);
     final Bits bits = new Bits(value);
     Assert.assertEquals("toLong for " + value, value, bits.toLong());
     Assert.assertEquals("toString for " + value, asString, bits.toBitString());
