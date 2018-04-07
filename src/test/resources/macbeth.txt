@@ -2853,7 +2853,7 @@ Of your meere Owne. All these are portable,
 With other Graces weigh'd
 
    Mal. But I haue none. The King-becoming Graces,
-As Iustice, Verity, SimpleMavenProject'rance, Stablenesse,
+As Iustice, Verity, com.simiacryptus.devutil.SimpleMavenProject'rance, Stablenesse,
 Bounty, Perseuerance, Mercy, Lowlinesse,
 Deuotion, Patience, Courage, Fortitude,
 I haue no rellish of them, but abound

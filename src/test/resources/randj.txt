@@ -1222,7 +1222,7 @@ Enter Chorus.
     And she as much in love, her means much less
     To meet her new beloved anywhere;
     But passion lends them power, time means, to meet,
-    SimpleMavenProject'ring extremities with extreme sweet.
+    com.simiacryptus.devutil.SimpleMavenProject'ring extremities with extreme sweet.
 Exit.
 
 
