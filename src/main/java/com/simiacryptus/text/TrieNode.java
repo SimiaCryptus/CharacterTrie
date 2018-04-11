@@ -197,7 +197,7 @@ public class TrieNode {
   public String getDebugString(TrieNode root) {
     if (this == root) return "";
     CharSequence parentStr = null == getParent() ? "" : getParent().getDebugString(root);
-    return parentStr + getDebugToken();
+    return parentStr.toString() + getDebugToken();
   }
   
   /**
@@ -526,8 +526,8 @@ public class TrieNode {
   public Map<Character, TrieNode> getGodChildren() {
     CharSequence postContext = this.getString().substring(1);
     return trie.tokens().stream().collect(Collectors.toMap(x -> x, token -> {
-      TrieNode traverse = trie.traverse(token + postContext);
-      return traverse.getString().equals(token + postContext) ? traverse : null;
+      TrieNode traverse = trie.traverse(token.toString() + postContext);
+      return traverse.getString().equals(token.toString() + postContext) ? traverse : null;
     })).entrySet().stream().filter(e -> null != e.getValue()).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
   }
   

@@ -85,11 +85,11 @@ public class TrieTest {
         elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
   }
   
-  private static Map<CharSequence, Object> evaluateDictionary(List<CharSequence> sentances, String dictionary, Map<CharSequence, Object> map) {
+  private static Map<CharSequence, Object> evaluateDictionary(List<CharSequence> sentances, CharSequence dictionary, Map<CharSequence, Object> map) {
     Arrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
         int length0 = CompressionUtil.encodeLZ(line, "").length;
-        int lengthK = CompressionUtil.encodeLZ(line, dictionary.substring(0, Math.min(k * 1024, dictionary.length()))).length;
+        int lengthK = CompressionUtil.encodeLZ(line, dictionary.subSequence(0, Math.min(k * 1024, dictionary.length())).toString()).length;
         return (length0 - lengthK) * 1.0;
       }).collect(DoubleStatistics.COLLECTOR);
       map.put(String.format("%sk.sum", k), (int) statistics.getSum() / 1024);
@@ -186,14 +186,14 @@ public class TrieTest {
       .filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     
     {
-      String commonTerms = wordCounts.entrySet().stream()
+      CharSequence commonTerms = wordCounts.entrySet().stream()
         .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
           .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
+        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
       Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "CommonTerm");
       evaluateDictionary(sentances, commonTerms, map);
-      map.put("sampleTxt", commonTerms.substring(0, sampleLength));
+      map.put("sampleTxt", commonTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
     
@@ -202,16 +202,16 @@ public class TrieTest {
     
     for (int encodingPenalty = -4; encodingPenalty < 4; encodingPenalty++) {
       int _encodingPenalty = encodingPenalty;
-      String meritTerms = wordCounts.entrySet().stream()
+      CharSequence meritTerms = wordCounts.entrySet().stream()
         .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(
           e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
           .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
+        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
       Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "MeritTerm");
       map.put("encodingPenalty", encodingPenalty);
       evaluateDictionary(sentances, meritTerms, map);
-      map.put("sampleTxt", meritTerms.substring(0, sampleLength));
+      map.put("sampleTxt", meritTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
     
@@ -219,14 +219,14 @@ public class TrieTest {
     output = new TableOutput();
     
     {
-      String uncommonTerms = wordCounts.entrySet().stream()
+      CharSequence uncommonTerms = wordCounts.entrySet().stream()
         .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> e.getValue())
           .thenComparing(Comparator.comparingLong(e -> e.getKey().length())))
-        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, size);
+        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
       Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "UncommonTerm,");
       evaluateDictionary(sentances, uncommonTerms, map);
-      map.put("sampleTxt", uncommonTerms.substring(0, sampleLength));
+      map.put("sampleTxt", uncommonTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
     
@@ -410,13 +410,13 @@ public class TrieTest {
         map.put("dataTitle", dataTitle);
         dictionaries.forEach((modelTitle, dictionary) -> {
           int sumA = IntStream.range(0, article.length() / chunkSize)
-            .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+            .mapToObj(i -> article.subSequence(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
             .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
           int sumB = IntStream.range(0, article.length() / chunkSize)
-            .mapToObj(i -> article.substring(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
-            .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
+            .mapToObj(i -> article.subSequence(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
+            .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary.toString()).length).sum();
           double bytes = (sumA - sumB) * 1.0 / sumA;
-          map.put(modelTitle.replaceAll("[^01-9a-zA-Z]", "_"), bytes);
+          map.put(modelTitle.toString().replaceAll("[^01-9a-zA-Z]", "_"), bytes);
         });
         output.putRow(map);
       });
@@ -474,11 +474,11 @@ public class TrieTest {
       map.put("text", text);
       dictionaries.forEach((modelTitle, dictionary) -> {
         int sumA = IntStream.range(0, text.length() / chunkSize)
-          .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
+          .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
           .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
         int sumB = IntStream.range(0, text.length() / chunkSize)
-          .mapToObj(i -> text.substring(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-          .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary).length).sum();
+          .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
+          .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary.toString()).length).sum();
         double bytes = (sumA - sumB) * 1.0 / sumA;
         map.put(Integer.toHexString(modelTitle.hashCode()), bytes);
       });
@@ -586,18 +586,18 @@ public class TrieTest {
       // map2.put("decompressBits0", CharTreeUtil.compress("", s).length * 8);
       content.keySet().stream().forEach(key -> {
         CharTrie tree = trees.get(key);
-        String dictionary = dictionaries.get(key);
+        CharSequence dictionary = dictionaries.get(key);
         HashMap<CharSequence, Object> map1 = new LinkedHashMap<>();
         map1.put("key", key);
         map1.put("rawBits", s.length() * 8);
         map1.put("decompressBits0", CompressionUtil.encodeLZ(s, "").length * 8);
-        int decompressBits1 = CompressionUtil.encodeLZ(s, dictionary.substring(0, 1024)).length * 8;
+        int decompressBits1 = CompressionUtil.encodeLZ(s, dictionary.subSequence(0, 1024).toString()).length * 8;
         map1.put(".decompressBits1", decompressBits1);
         // map2.put(key+".decompressBits1", decompressBits1);
-        int decompressBits4 = CompressionUtil.encodeLZ(s, dictionary.substring(0, 4 * 1024)).length * 8;
+        int decompressBits4 = CompressionUtil.encodeLZ(s, dictionary.subSequence(0, 4 * 1024).toString()).length * 8;
         map1.put(".decompressBits4", decompressBits4);
         // map2.put(key+".decompressBits4", decompressBits4);
-        int decompressBits16 = CompressionUtil.encodeLZ(s, dictionary.substring(0, 16 * 1024)).length * 8;
+        int decompressBits16 = CompressionUtil.encodeLZ(s, dictionary.subSequence(0, 16 * 1024).toString()).length * 8;
         map1.put(".decompressBits16", decompressBits16);
         // map2.put(key+".decompressBits16", decompressBits16);
         double ppmBits = tree.getAnalyzer().entropy(s);
@@ -605,7 +605,7 @@ public class TrieTest {
         // map2.put(key+".ppmBits", ppmBits);
         map1.put(".bitsPerChar", ppmBits / s.length());
         map2.put(key + ".bitsPerChar", ppmBits / s.length());
-        map1.put("txt", s.substring(0, Math.min(s.length(), 120)));
+        map1.put("txt", s.subSequence(0, Math.min(s.length(), 120)));
         output1.putRow(map1);
       });
       map2.put("txt", s);

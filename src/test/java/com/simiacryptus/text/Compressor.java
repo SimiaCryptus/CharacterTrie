@@ -53,7 +53,7 @@ public interface Compressor {
     data.parallel().forEach(item -> {
       HashMap<CharSequence, Object> rowWide = new LinkedHashMap<>();
       String title;
-      title = item.getTitle().replaceAll("\0", "").replaceAll("\n", "\\n");
+      title = item.getTitle().toString().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach((e) -> {
         try {
@@ -122,7 +122,7 @@ public interface Compressor {
     data.parallel().forEach(item -> {
       HashMap<CharSequence, Object> rowWide = new LinkedHashMap<>();
       String title;
-      title = item.getTitle().replaceAll("\0", "").replaceAll("\n", "\\n");
+      title = item.getTitle().toString().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach((e) -> {
         try {

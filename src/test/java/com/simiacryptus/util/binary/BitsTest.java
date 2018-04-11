@@ -126,7 +126,7 @@ public class BitsTest {
   private void testConcatenate(final long a, final long b) {
     final CharSequence asStringA = 0 == a ? "" : Long.toBinaryString(a);
     final CharSequence asStringB = 0 == b ? "" : Long.toBinaryString(b);
-    final CharSequence asString = asStringA + asStringB;
+    final CharSequence asString = asStringA.toString() + asStringB;
     final Bits bitsA = new Bits(a);
     final Bits bitsB = new Bits(b);
     final Bits bits = bitsA.concatenate(bitsB);
