@@ -153,7 +153,7 @@ public class TrieDemo {
           .findFirst().get();
       });
       {
-        String compressed = log.code(() -> {
+        CharSequence compressed = log.code(() -> {
           Bits bits = codec.encodePPM(wikiArticle.getText(), 2);
           System.out.print("Bit Length: " + bits.bitLength);
           return bits.toBase64String();
@@ -161,7 +161,7 @@ public class TrieDemo {
         
         log.p("\n\nAnd decompress to verify:");
         CharSequence uncompressed = log.code(() -> {
-          byte[] bytes = Base64.getDecoder().decode(compressed);
+          byte[] bytes = Base64.getDecoder().decode(compressed.toString());
           return codec.decodePPM(bytes, 2);
         });
       }
@@ -364,12 +364,12 @@ public class TrieDemo {
             return (node.getDepth() - _penalty) * (node.getCursorCount());
           }, 1000).map(x -> x.getString()).collect(Collectors.toList());
           List<CharSequence> filteredKeywords = new ArrayList<>();
-          for (String keyword : candidates) {
-            if (!filteredKeywords.stream().anyMatch(x -> x.contains(keyword) || keyword.contains(x))) {
+          for (CharSequence keyword : candidates) {
+            if (!filteredKeywords.stream().anyMatch(x -> x.toString().contains(keyword) || keyword.toString().contains(x))) {
               filteredKeywords.add(keyword);
             }
           }
-          return filteredKeywords.stream().map(x -> '"' + x + '"').collect(Collectors.joining("\n"));
+          return filteredKeywords.stream().map(x -> '"' + x.toString() + '"').collect(Collectors.joining("\n"));
         });
       }
     }
@@ -800,12 +800,12 @@ public class TrieDemo {
         log.h3("Keywords");
         log.code(() -> {
           return articleTrie.getAnalyzer().setVerbose(System.out).keywords(testArticle.getText())
-            .stream().map(s -> '"' + s + '"').collect(Collectors.joining(", "));
+            .stream().map(s -> '"' + s.toString() + '"').collect(Collectors.joining(", "));
         });
         log.h3("Tokenization");
         log.code(() -> {
           return articleTrie.getAnalyzer().setVerbose(System.out).splitChars(testArticle.getText())
-            .stream().map(s -> '"' + s + '"').collect(Collectors.joining(", "));
+            .stream().map(s -> '"' + s.toString() + '"').collect(Collectors.joining(", "));
         });
       });
     }

@@ -63,7 +63,7 @@ public class TextAnalysis {
    * @param minOverlap the min overlap
    * @return the string
    */
-  public static CharSequence combine(String left, String right, int minOverlap) {
+  public static CharSequence combine(CharSequence left, CharSequence right, int minOverlap) {
     if (left.length() < minOverlap) return null;
     if (right.length() < minOverlap) return null;
     int bestOffset = Integer.MAX_VALUE;
@@ -80,12 +80,12 @@ public class TextAnalysis {
       }
     }
     if (bestOffset < Integer.MAX_VALUE) {
-      String combined = left;
+      CharSequence combined = left;
       if (bestOffset > 0) {
-        combined = right.substring(0, bestOffset) + combined;
+        combined = right.subSequence(0, bestOffset).toString() + combined;
       }
       if (left.length() + bestOffset < right.length()) {
-        combined = combined + right.substring(left.length() + bestOffset);
+        combined = combined.toString() + right.subSequence(0, left.length() + bestOffset);
       }
       return combined;
     }
@@ -216,8 +216,8 @@ public class TextAnalysis {
       }
     }
     List<CharSequence> tokenization = new ArrayList<>();
-    for (String match : matches) {
-      int index = text.indexOf(match);
+    for (CharSequence match : matches) {
+      int index = text.indexOf(match.toString());
       assert (index >= 0);
       if (index > 0) tokenization.add(text.substring(0, index));
       tokenization.add(text.substring(index, index + match.length()));
@@ -330,8 +330,8 @@ public class TextAnalysis {
     String followingString = followingNode.getString();
     CharSequence postContext = followingString.isEmpty() ? "" : followingString.substring(1);
     return childrenMap.keySet().stream().collect(Collectors.toMap(x -> x, token -> {
-      TrieNode altFollowing = inner.traverse(token + postContext);
-      long a = altFollowing.getString().equals(token + postContext) ? altFollowing.getCursorCount() : 0;
+      TrieNode altFollowing = inner.traverse(token.toString() + postContext);
+      long a = altFollowing.getString().equals(token.toString() + postContext) ? altFollowing.getCursorCount() : 0;
       TrieNode parent = priorParent;
       long b = childrenMap.get(token).getCursorCount();
       return a * b;
@@ -344,10 +344,10 @@ public class TextAnalysis {
    * @param source the source
    * @return the double
    */
-  public double entropy(final String source) {
+  public double entropy(final CharSequence source) {
     double output = 0;
     for (int i = 1; i < source.length(); i++) {
-      TrieNode node = this.inner.matchEnd(source.substring(0, i));
+      TrieNode node = this.inner.matchEnd(source.subSequence(0, i).toString());
       Optional<? extends TrieNode> child = node.getChild(source.charAt(i));
       while (!child.isPresent()) {
         output += Math.log(1.0 / node.getCursorCount());

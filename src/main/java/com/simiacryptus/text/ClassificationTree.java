@@ -69,10 +69,10 @@ public class ClassificationTree {
       if (!info.isPresent()) return categorizationTree(categories, 0, indent);
       CharSequence split = info.get().node.getString();
       Map<CharSequence, List<CharSequence>> lSet = categories.entrySet().stream().collect(
-        Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> str.contains(split))
+        Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> str.toString().contains(split))
           .collect(Collectors.toList())));
       Map<CharSequence, List<CharSequence>> rSet = categories.entrySet().stream().collect(
-        Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> !str.contains(split))
+        Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> !str.toString().contains(split))
           .collect(Collectors.toList())));
       int lSum = lSet.values().stream().mapToInt(x -> x.size()).sum();
       int rSum = rSet.values().stream().mapToInt(x -> x.size()).sum();
@@ -88,7 +88,7 @@ public class ClassificationTree {
       Function<CharSequence, Map<CharSequence, Double>> l = categorizationTree(lSet, depth - 1, indent + "  ");
       Function<CharSequence, Map<CharSequence, Double>> r = categorizationTree(rSet, depth - 1, indent + "  ");
       return str -> {
-        if (str.contains(split)) {
+        if (str.toString().contains(split)) {
           return l.apply(str);
         }
         else {

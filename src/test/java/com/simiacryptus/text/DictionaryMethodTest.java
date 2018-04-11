@@ -111,17 +111,17 @@ public class DictionaryMethodTest {
   private void addWordCountCompressor(NotebookOutput log, Map<CharSequence, Compressor> compressors, List<? extends TestDocument> content) {
     Map<CharSequence, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
       .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
-    String dictionary = wordCounts.entrySet().stream()
+    CharSequence dictionary = wordCounts.entrySet().stream()
       .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
         .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-      .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().substring(0, 8 * 1024);
+      .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, 8 * 1024);
     CharSequence key = "LZ8k_commonWords";
     int dictSampleSize = 512;
-    log.p("Common Words Dictionary %s: %s...\n", key, dictionary.length() > dictSampleSize ? (dictionary.substring(0, dictSampleSize) + "...") : dictionary);
+    log.p("Common Words Dictionary %s: %s...\n", key, dictionary.length() > dictSampleSize ? (dictionary.subSequence(0, dictSampleSize) + "...") : dictionary);
     compressors.put(key, new Compressor() {
       @Override
       public byte[] compress(String text) {
-        return CompressionUtil.encodeLZ(text, dictionary);
+        return CompressionUtil.encodeLZ(text, dictionary.toString());
       }
       
       @Override
