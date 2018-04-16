@@ -188,7 +188,7 @@ public class ClassificationTree {
      * The Entropy.
      */
     double entropy;
-    
+  
     /**
      * Instantiates a new Node info.
      *

@@ -244,7 +244,7 @@ public class NodewalkerCodec {
      * The Node.
      */
     protected TrieNode node = inner.root();
-    
+  
     /**
      * Instantiates a new Decoder.
      *
@@ -255,7 +255,7 @@ public class NodewalkerCodec {
       this.data = data;
       this.context = context;
     }
-    
+  
     /**
      * Encode ppm string.
      *
@@ -308,7 +308,7 @@ public class NodewalkerCodec {
      * The From node.
      */
     protected TrieNode fromNode = inner.root();
-    
+  
     /**
      * Instantiates a new Encoder.
      *
@@ -320,7 +320,7 @@ public class NodewalkerCodec {
       this.text = text;
       this.context = context;
     }
-    
+  
     /**
      * Encode ppm bits.
      *
