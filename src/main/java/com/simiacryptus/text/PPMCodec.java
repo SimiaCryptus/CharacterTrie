@@ -103,7 +103,7 @@ public class PPMCodec {
         }
         if (!newSegment.isEmpty()) {
           if (newSegment.endsWith("\u0000")) {
-            out.append(newSegment.substring(0, newSegment.length() - 1));
+            out.append(newSegment, 0, newSegment.length() - 1);
             if (verbose) System.out.println(String.format("Null char reached"));
             break;
           }

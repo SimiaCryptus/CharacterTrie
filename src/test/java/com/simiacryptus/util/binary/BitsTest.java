@@ -47,7 +47,6 @@ public class BitsTest {
    * Test concatenate.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -61,7 +60,6 @@ public class BitsTest {
    * Test divide.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -79,7 +77,6 @@ public class BitsTest {
    * Test bit stream.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -99,7 +96,6 @@ public class BitsTest {
    * Test interval.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -138,7 +134,6 @@ public class BitsTest {
    * Test fixed length.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -181,7 +176,6 @@ public class BitsTest {
    * Test hardcoded.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -217,7 +211,6 @@ public class BitsTest {
    * Test subrange.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -251,7 +244,6 @@ public class BitsTest {
    * Test to string.
    *
    * @throws JSONException the json exception
-   * @throws IOException   the io exception
    */
   @Test
   @Category(TestCategories.UnitTest.class)

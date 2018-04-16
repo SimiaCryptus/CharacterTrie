@@ -402,7 +402,7 @@ public class TextAnalysis {
      * The Sum.
      */
     double sum = 0;
-    
+  
     /**
      * Instantiates a new Word spelling.
      *
@@ -439,7 +439,7 @@ public class TextAnalysis {
       double sumLinkNats = Arrays.stream(linkNatsArray).sum();
       for (int i = 0; i < linkNatsArray.length; i++) linkNatsArray[i] /= sumLinkNats;
     }
-    
+  
     /**
      * Mutate stream.
      *
