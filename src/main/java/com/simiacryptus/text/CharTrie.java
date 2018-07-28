@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -94,17 +93,6 @@ public class CharTrie {
    */
   public static BiFunction<CharTrie, CharTrie, CharTrie> reducer(BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     return (left, right) -> left.reduce(right, fn);
-  }
-  
-  /**
-   * To stream stream.
-   *
-   * @param <T> the type parameter
-   * @param opt the opt
-   * @return the stream
-   */
-  public static <T> Stream<T> toStream(Optional<T> opt) {
-    return Arrays.asList(opt.orElse(null)).stream().filter(y -> null != y);
   }
   
   /**
