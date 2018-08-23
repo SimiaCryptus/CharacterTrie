@@ -21,7 +21,6 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.data.DoubleStatistics;
-import com.simiacryptus.util.io.CompressionUtil;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
@@ -196,8 +195,8 @@ public class TrieTest {
       map.put("sampleTxt", commonTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
-    
-    System.out.println(output.toTextTable());
+  
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
     
     for (int encodingPenalty = -4; encodingPenalty < 4; encodingPenalty++) {
@@ -214,8 +213,8 @@ public class TrieTest {
       map.put("sampleTxt", meritTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
-    
-    System.out.println(output.toTextTable());
+  
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
     
     {
@@ -229,8 +228,8 @@ public class TrieTest {
       map.put("sampleTxt", uncommonTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
-    
-    System.out.println(output.toTextTable());
+  
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
     
     CharTrieIndex tree = new CharTrieIndex();
@@ -244,8 +243,8 @@ public class TrieTest {
     System.out.println(String.format("Built index in time = %s sec", elapsed / 1000.));
     System.out.println(String.format("tree.getIndexedSize = %s KB", tree.getIndexedSize() / 1024));
     System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
-    
-    System.out.println(output.toTextTable());
+  
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
     
     for (int context = 0; context < maxLevels; context++) {
@@ -260,8 +259,8 @@ public class TrieTest {
         output.putRow(map);
       }
     }
-    
-    System.out.println(output.toTextTable());
+  
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
     
     for (int lookahead = 0; lookahead < 3; lookahead++) {
@@ -279,8 +278,8 @@ public class TrieTest {
         }
       }
     }
-    
-    System.out.println(output.toTextTable());
+  
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
     
     for (int lookahead = 0; lookahead < 3; lookahead++) {
@@ -295,8 +294,8 @@ public class TrieTest {
         output.putRow(map);
       }
     }
-    
-    System.out.println(output.toTextTable());
+  
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
   }
   
@@ -353,7 +352,7 @@ public class TrieTest {
         output1.putRow(map);
       }
     }
-    System.out.println(output1.toTextTable());
+    System.out.println(output1.toCSV(true));
     
   }
   
@@ -420,7 +419,7 @@ public class TrieTest {
         });
         output.putRow(map);
       });
-    System.out.println(output.toTextTable());
+    System.out.println(output.toCSV(true));
     String outputDirName = "wikiTopics/";
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
@@ -532,7 +531,7 @@ public class TrieTest {
       badRow.put("text", tree_bad.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(badRow);
     });
-    System.out.println(output.toTextTable());
+    System.out.println(output.toCSV(true));
   }
   
   /**

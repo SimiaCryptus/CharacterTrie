@@ -19,7 +19,6 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.util.io.CompressionUtil;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
