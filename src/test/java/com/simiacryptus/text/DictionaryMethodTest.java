@@ -20,7 +20,6 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.util.TableOutput;
-import com.simiacryptus.util.io.CompressionUtil;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.Shakespeare;
@@ -31,6 +30,7 @@ import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -53,7 +53,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesTweets() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(new File("dictionariesTweets"), true)) {
       int modelCount = 10000;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Tweets\n");
@@ -69,7 +69,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesShakespeare() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(new File("dictionariesShakespeare"), true)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Shakespeare text\n");
@@ -85,7 +85,7 @@ public class DictionaryMethodTest {
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesWiki() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(new File("dictionariesWiki"), true)) {
       int modelCount = 100;
       int testCount = 100;
       log.p("This notebook uses a variety of methods to generate compression dictionaries for a database of Wikipedia articles\n");
@@ -105,7 +105,7 @@ public class DictionaryMethodTest {
     Compressor.addGenericCompressors(compressors);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
-    log.p(output.calcNumberStats().toTextTable());
+    log.p(output.calcNumberStats().toCSV(true));
   }
   
   private void addWordCountCompressor(NotebookOutput log, Map<CharSequence, Compressor> compressors, List<? extends TestDocument> content) {

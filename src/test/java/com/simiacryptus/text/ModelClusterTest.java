@@ -20,7 +20,6 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.util.TableOutput;
-import com.simiacryptus.util.io.CompressionUtil;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.TestCategories;
@@ -74,7 +73,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(new File("clusterSharedDictionariesLZ"), true)) {
       
       int dictionary_context = 7;
       int model_minPathWeight = 3;
@@ -117,8 +116,8 @@ public abstract class ModelClusterTest {
       
       
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
-      log.p(output.toTextTable());
-      log.p(output.calcNumberStats().toTextTable());
+      log.p(output.toCSV(true));
+      log.p(output.calcNumberStats().toCSV(true));
       log.close();
       String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
@@ -133,7 +132,7 @@ public abstract class ModelClusterTest {
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(new File("calcCompressorPPM"), true)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
@@ -155,7 +154,7 @@ public abstract class ModelClusterTest {
       
       log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
-      log.p(output.calcNumberStats().toTextTable());
+      log.p(output.calcNumberStats().toCSV(true));
       String outputDirName = String.format("cluster_%s_PPM/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
@@ -170,7 +169,7 @@ public abstract class ModelClusterTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void calcEntropyPPM() throws Exception {
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+    try (NotebookOutput log = MarkdownNotebookOutput.get(new File("calcEntropyPPM"), true)) {
       int ppmModelDepth = 6;
       int model_minPathWeight = 3;
       AtomicInteger index = new AtomicInteger(0);
@@ -193,7 +192,7 @@ public abstract class ModelClusterTest {
       
       log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCluster(source().skip(getModelCount()), compressors, true);
-      log.p(output.calcNumberStats().toTextTable());
+      log.p(output.calcNumberStats().toCSV(true));
       String outputDirName = String.format("cluster_%s_Entropy/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }

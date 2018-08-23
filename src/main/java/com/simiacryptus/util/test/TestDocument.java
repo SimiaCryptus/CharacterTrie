@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.util.io.CompressionUtil;
+import com.simiacryptus.text.CompressionUtil;
 
 /**
  * The type Test document.

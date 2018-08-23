@@ -20,7 +20,6 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.util.TableOutput;
-import com.simiacryptus.util.io.CompressionUtil;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.test.TestDocument;
 

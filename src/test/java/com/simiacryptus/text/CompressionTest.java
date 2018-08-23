@@ -21,7 +21,6 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.io.CompressionUtil;
 import com.simiacryptus.util.io.MarkdownNotebookOutput;
 import com.simiacryptus.util.io.NotebookOutput;
 import com.simiacryptus.util.test.EnglishWords;
@@ -162,12 +161,12 @@ public class CompressionTest {
     int modelCount = 10000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> TweetSentiment.load().limit(modelCount + testCount);
-    
-    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
+  
+    try (NotebookOutput log = MarkdownNotebookOutput.get("calcTweetCompression")) {
       Map<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
       TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
       //log.p(output.toTextTable());
-      log.p(output.calcNumberStats().toTextTable());
+      log.p(output.calcNumberStats().toCSV(true));
     }
   }
   
@@ -187,11 +186,11 @@ public class CompressionTest {
     int modelCount = 15000;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> EnglishWords.load().limit(modelCount + testCount);
-    NotebookOutput log = MarkdownNotebookOutput.get(this);
+    NotebookOutput log = MarkdownNotebookOutput.get("calcTermCompression");
     Map<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
-    log.p(output.calcNumberStats().toTextTable());
+    log.p(output.calcNumberStats().toCSV(true));
     log.close();
   }
   
@@ -211,12 +210,12 @@ public class CompressionTest {
     int modelCount = 100;
     int testCount = 100;
     Supplier<Stream<? extends TestDocument>> source = () -> WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
-    
-    NotebookOutput log = MarkdownNotebookOutput.get(this);
+  
+    NotebookOutput log = MarkdownNotebookOutput.get("calcWikiCompression");
     Map<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
-    log.p(output.calcNumberStats().toTextTable());
+    log.p(output.calcNumberStats().toCSV(true));
     log.close();
   }
   

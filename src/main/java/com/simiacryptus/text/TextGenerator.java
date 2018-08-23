@@ -19,8 +19,6 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.util.io.CompressionUtil;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
