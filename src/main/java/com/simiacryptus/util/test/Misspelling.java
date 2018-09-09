@@ -25,6 +25,7 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -118,7 +119,7 @@ public class Misspelling extends TestDocument {
     
     private void read() {
       try {
-        try (final InputStream in = Util.cache(url, file)) {
+        try (final InputStream in = Util.cacheLocal(file, new URI(url))) {
           String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
           CharSequence[] list = txt.split("\n");
           String activeItem = "";

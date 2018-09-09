@@ -93,8 +93,8 @@ public class TextAnalysis {
       return null;
     }
   }
-  
-  private static double entropy(TrieNode tokenNode, TrieNode contextNode) {
+
+  public static double entropy(TrieNode tokenNode, TrieNode contextNode) {
     return -0.0 + (null == contextNode ? Double.POSITIVE_INFINITY : (-Math.log(tokenNode.getCursorCount() * 1.0 / contextNode.getCursorCount())));
   }
   

@@ -26,6 +26,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -104,7 +106,7 @@ public class TweetSentiment extends TestDocument {
   
   private static void read() {
     try {
-      InputStream load = Util.cache(url, file);
+      InputStream load = Util.cacheLocal(file, new URI(url));
       try (final ZipInputStream in = new ZipInputStream(load)) {
         ZipEntry entry = in.getNextEntry();
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
