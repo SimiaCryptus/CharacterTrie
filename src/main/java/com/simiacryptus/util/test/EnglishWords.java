@@ -25,6 +25,8 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -99,7 +101,7 @@ public class EnglishWords extends TestDocument {
   
   private static void read() {
     try {
-      InputStream in = Util.cache(url, file);
+      InputStream in = Util.cacheLocal(file, new URI(url));
       String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
       List<CharSequence> list = Arrays.stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", "")).collect(Collectors.toList());
       Collections.shuffle(list);

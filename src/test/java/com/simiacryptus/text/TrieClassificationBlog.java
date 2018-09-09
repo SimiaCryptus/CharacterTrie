@@ -66,7 +66,7 @@
 //      int minWeight = 1;
 //      int maxLevels = 5;
 //      int minArticleSize = 4 * 1024;
-//      log.p("First, we cache English and French wikipedia articles into two collections");
+//      log.p("First, we cacheLocal English and French wikipedia articles into two collections");
 //      List<WikiArticle> english = log.code(() -> {
 //        return new ArrayList<>(WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleSize)
 //          .limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -162,7 +162,7 @@
 //      int minWeight = 1;
 //      int maxLevels = 5;
 //      log.p("\n\n\n");
-//      log.p("First, we cache positive and negative sentiment tweets into two separate models");
+//      log.p("First, we cacheLocal positive and negative sentiment tweets into two separate models");
 //      List<TweetSentiment> tweetsPositive = log.code(() -> {
 //        ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
 //          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -224,7 +224,7 @@
 //      log.h1("Sentiment Analysis using a Decision Tree");
 //      int testingSize = 1000;
 //      int trainingSize = 50000;
-//      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
+//      log.p("First, we cacheLocal positive and negative sentiment tweets into two seperate models");
 //      List<TweetSentiment> tweetsPositive = log.code(() -> {
 //        ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
 //          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));

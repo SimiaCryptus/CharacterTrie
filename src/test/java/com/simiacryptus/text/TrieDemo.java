@@ -92,7 +92,7 @@
 //
 //      log.p("This will demonstrate how to use the CharTrieIndex class for searching indexed documents\n");
 //
-//      log.p("First, we cache some data into an index:");
+//      log.p("First, we cacheLocal some data into an index:");
 //      CharTrieIndex trie = log.code(() -> {
 //        return new CharTrieIndex();
 //      });
@@ -131,7 +131,7 @@
 //
 //      log.p("This will demonstrate how to use the CharTrieIndex class for PPM and shared dictionary compression\n");
 //
-//      log.p("First, we cache some data into an index:");
+//      log.p("First, we cacheLocal some data into an index:");
 //      CharTrie trie = log.code(() -> {
 //        CharTrieIndex charTrieIndex = new CharTrieIndex();
 //        WikiArticle.ENGLISH.stream().limit(100).forEach(article -> {
@@ -203,7 +203,7 @@
 //      int lookahead = 1;
 //      int dictionarySampleSize = 4 * 1024;
 //      int context = 5;
-//      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
+//      log.p("First, we cacheLocal positive and negative sentiment tweets into two seperate models");
 //      List<TweetSentiment> tweetsPositive = log.code(() -> {
 //        ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
 //          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -307,7 +307,7 @@
 //      int lookahead = 1;
 //      int dictionarySampleSize = 4 * 1024;
 //      int context = 5;
-//      log.p("First, we cache text into a model");
+//      log.p("First, we cacheLocal text into a model");
 //      List<TweetSentiment> tweetsPositive = log.code(() -> {
 //        ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
 //          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -349,7 +349,7 @@
 //      List<CharSequence> trainingData = WikiArticle.ENGLISH.stream().map(x -> x.getText()).limit(200).collect(Collectors.toList());
 //      int minWeight = 5;
 //      int maxLevels = 200;
-//      log.p("First, we cache text into a model");
+//      log.p("First, we cacheLocal text into a model");
 //      CharTrie triePositive = log.code(() -> {
 //        CharTrie charTrie = CharTrieIndex.indexFulltext(trainingData, maxLevels, minWeight).truncate();
 //        print(charTrie);
@@ -386,7 +386,7 @@
 //      List<CharSequence> trainingData = Arrays.asList("a cat in the hat that can hat the cat");
 //      int minWeight = 1;
 //      int maxLevels = Integer.MAX_VALUE;
-//      log.p("First, we cache text into a model");
+//      log.p("First, we cacheLocal text into a model");
 //      CharTrie trie = log.code(() -> {
 //        CharTrie charTrie = CharTrieIndex.indexFulltext(trainingData, maxLevels, minWeight).truncate();
 //        print(charTrie);
@@ -433,7 +433,7 @@
 //      int minWeight = 1;
 //      int groups = trainingSize / 50000;
 //      int maxLevels = 7;
-//      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
+//      log.p("First, we cacheLocal positive and negative sentiment tweets into two seperate models");
 //      List<TweetSentiment> tweetsPositive = log.code(() -> {
 //        ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
 //          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -530,7 +530,7 @@
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      int testingSize = 10000;
 //      int trainingSize = 5000;
-//      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
+//      log.p("First, we cacheLocal positive and negative sentiment tweets into two seperate models");
 //      List<TweetSentiment> tweetsPositive = log.code(() -> {
 //        ArrayList<TweetSentiment> list = new ArrayList<>(TweetSentiment.load()
 //          .filter(x -> x.category == 1).limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -580,7 +580,7 @@
 //      int minWeight = 1;
 //      int maxLevels = 5;
 //      int minArticleSize = 4 * 1024;
-//      log.p("First, we cache positive and negative sentiment tweets into two seperate models");
+//      log.p("First, we cacheLocal positive and negative sentiment tweets into two seperate models");
 //      List<WikiArticle> english = log.code(() -> {
 //        return new ArrayList<>(WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleSize)
 //          .limit(testingSize + trainingSize).collect(Collectors.toList()));
@@ -771,7 +771,7 @@
 //      HashSet<CharSequence> articles = new HashSet<>();
 //      Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
 //      log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-//      log.h3("First, we cache training and testing data:");
+//      log.h3("First, we cacheLocal training and testing data:");
 //      List<WikiArticle> articleList = log.code(() -> {
 //        return WikiArticle.ENGLISH.stream().limit(1000)
 //          .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
@@ -822,7 +822,7 @@
 //      HashSet<CharSequence> articles = new HashSet<>();
 //      Arrays.asList("Alabama", "Alchemy", "Algeria", "Altruism", "Abraham Lincoln", "ASCII", "Apollo", "Alaska").forEach(articles::add);
 //      log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-//      log.h3("First, we cache training and testing data:");
+//      log.h3("First, we cacheLocal training and testing data:");
 //      List<WikiArticle> articleList = log.code(() -> {
 //        return WikiArticle.ENGLISH.stream().limit(1000)
 //          .filter(x -> articles.contains(x.getTitle())).limit(articles.size())
@@ -832,7 +832,7 @@
 //        return EnglishWords.load().collect(Collectors.toList());
 //      });
 ////            List<WikiArticle> trainingList = log.code(() -> {
-////                return WikiArticle.ENGLISH.cache()
+////                return WikiArticle.ENGLISH.cacheLocal()
 ////                        .filter(x -> x.getText().length() > 4 * 1024).filter(x -> !articles.contains(x.getTitle()))
 ////                        .limit(1000).collect(Collectors.toList());
 ////            });
@@ -870,7 +870,7 @@
 //  public void demoWikiSpelling() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
-//      log.h3("First, we cache training and testing data:");
+//      log.h3("First, we cacheLocal training and testing data:");
 //
 //      List<Misspelling> trainingList = log.code(() -> {
 //        return Misspelling.BIRKBECK.load().collect(Collectors.toList());
@@ -904,7 +904,7 @@
 //
 //      log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
 //
-//      log.p("First, we cache some data into an index:");
+//      log.p("First, we cacheLocal some data into an index:");
 //      CharTrieIndex index = log.code(() -> {
 //        CharTrieIndex charTrieIndex = new CharTrieIndex();
 //        WikiArticle.ENGLISH.stream().limit(100).forEach(article -> {

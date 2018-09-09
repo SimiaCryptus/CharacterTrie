@@ -25,6 +25,8 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -40,7 +42,7 @@ public class Shakespeare extends TestDocument {
   /**
    * The constant url.
    */
-  public static String url = "http://www.gutenberg.org/cache/epub/100/pg100.txt";
+  public static String url = "http://www.gutenberg.org/cacheLocal/epub/100/pg100.txt";
   /**
    * The constant file.
    */
@@ -95,7 +97,7 @@ public class Shakespeare extends TestDocument {
   
   private static void read() {
     try {
-      InputStream in = Util.cache(url, file);
+      InputStream in = Util.cacheLocal(file, new URI(url));
       String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
       for (String paragraph : txt.split("\n\\s*\n")) {
         queue.add(new Shakespeare(paragraph));

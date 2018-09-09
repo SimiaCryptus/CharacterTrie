@@ -30,6 +30,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +103,7 @@ public class WikiArticle extends TestDocument {
     @Override
     protected void read(List<WikiArticle> queue) {
       try {
-        try (final InputStream in = new BZip2CompressorInputStream(Util.cache(url, file), true)) {
+        try (final InputStream in = new BZip2CompressorInputStream(Util.cacheLocal(file, new URI(url)), true)) {
           final SAXParserFactory spf = SAXParserFactory.newInstance();
           spf.setNamespaceAware(false);
           final SAXParser saxParser = spf.newSAXParser();
