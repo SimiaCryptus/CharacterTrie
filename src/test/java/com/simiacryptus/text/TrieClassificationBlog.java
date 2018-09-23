@@ -19,10 +19,10 @@
 //
 //package com.simiacryptus.text;
 //
-//import com.simiacryptus.util.TableOutput;
+//import com.simiacryptus.notebook.TableOutput;
 //import com.simiacryptus.util.binary.Bits;
-//import com.simiacryptus.util.io.MarkdownNotebookOutput;
-//import com.simiacryptus.util.io.NotebookOutput;
+//import com.simiacryptus.notebook.MarkdownNotebookOutput;
+//import com.simiacryptus.notebook.NotebookOutput;
 //import com.simiacryptus.util.test.TestCategories;
 //import com.simiacryptus.util.test.TweetSentiment;
 //import com.simiacryptus.util.test.WikiArticle;

@@ -36,7 +36,7 @@ public class TermMetaTest {
    * The Model count.
    */
   int modelCount = 15000;
-  
+
   /**
    * Source stream.
    *

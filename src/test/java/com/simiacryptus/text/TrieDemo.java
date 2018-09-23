@@ -20,9 +20,9 @@
 //package com.simiacryptus.text;
 //
 //import com.simiacryptus.util.binary.Bits;
-//import com.simiacryptus.util.io.MarkdownNotebookOutput;
-//import com.simiacryptus.util.io.NotebookOutput;
-//import com.simiacryptus.util.lang.TimedResult;
+//import com.simiacryptus.notebook.MarkdownNotebookOutput;
+//import com.simiacryptus.notebook.NotebookOutput;
+//import com.simiacryptus.lang.TimedResult;
 //import com.simiacryptus.util.test.EnglishWords;
 //import com.simiacryptus.util.test.Misspelling;
 //import com.simiacryptus.util.test.TestCategories;

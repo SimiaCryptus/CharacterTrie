@@ -26,7 +26,6 @@ import org.apache.commons.compress.utils.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -48,7 +47,7 @@ public class Shakespeare extends TestDocument {
    */
   public static String file = "Shakespeare.txt";
   private static volatile Thread thread;
-  
+
   /**
    * Instantiates a new Shakespeare.
    *
@@ -57,7 +56,7 @@ public class Shakespeare extends TestDocument {
   public Shakespeare(String text) {
     super(text, text);
   }
-  
+
   /**
    * Clear.
    *
@@ -75,7 +74,7 @@ public class Shakespeare extends TestDocument {
       }
     }
   }
-  
+
   /**
    * Load stream.
    *
@@ -94,7 +93,7 @@ public class Shakespeare extends TestDocument {
     Iterator<Shakespeare> iterator = new AsyncListIterator<>(queue, thread);
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
   }
-  
+
   private static void read() {
     try {
       InputStream in = Util.cacheLocal(file, new URI(url));

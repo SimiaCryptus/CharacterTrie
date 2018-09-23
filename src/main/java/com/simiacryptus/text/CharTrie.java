@@ -22,14 +22,7 @@ package com.simiacryptus.text;
 import com.google.common.collect.Iterators;
 import com.simiacryptus.util.data.SerialArrayList;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -56,7 +49,7 @@ public class CharTrie {
    * The Godparent index.
    */
   protected int[] godparentIndex = null;
-  
+
   /**
    * Instantiates a new Char trie.
    *
@@ -66,14 +59,14 @@ public class CharTrie {
     super();
     this.nodes = nodes;
   }
-  
+
   /**
    * Instantiates a new Char trie.
    */
   public CharTrie() {
     this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(END_OF_STRING, (short) -1, -1, -1, 0)));
   }
-  
+
   /**
    * Instantiates a new Char trie.
    *
@@ -84,7 +77,7 @@ public class CharTrie {
     this.parentIndex = null == charTrie.parentIndex ? null : Arrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
     this.godparentIndex = null == charTrie.godparentIndex ? null : Arrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
   }
-  
+
   /**
    * Reducer bi function.
    *
@@ -94,7 +87,7 @@ public class CharTrie {
   public static BiFunction<CharTrie, CharTrie, CharTrie> reducer(BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     return (left, right) -> left.reduce(right, fn);
   }
-  
+
   /**
    * Root trie node.
    *
@@ -103,7 +96,7 @@ public class CharTrie {
   public TrieNode root() {
     return new TrieNode(this, 0, null);
   }
-  
+
   /**
    * Ensure parent index capacity.
    *
@@ -116,8 +109,7 @@ public class CharTrie {
     if (null == parentIndex) {
       parentIndex = new int[end];
       Arrays.fill(parentIndex, parentId);
-    }
-    else {
+    } else {
       int newLength = parentIndex.length;
       while (newLength < end) newLength *= 2;
       if (newLength > parentIndex.length) {
@@ -129,8 +121,7 @@ public class CharTrie {
     if (null == godparentIndex) {
       godparentIndex = new int[end];
       Arrays.fill(godparentIndex, -1);
-    }
-    else {
+    } else {
       int newLength = godparentIndex.length;
       while (newLength < end) newLength *= 2;
       if (newLength > godparentIndex.length) {
@@ -140,7 +131,7 @@ public class CharTrie {
       }
     }
   }
-  
+
   /**
    * Reverse char trie.
    *
@@ -152,7 +143,7 @@ public class CharTrie {
     reverseSubtree(childrenMap, result.root());
     return result.recomputeCursorDetails();
   }
-  
+
   private void reverseSubtree(TreeMap<Character, ? extends TrieNode> childrenMap, TrieNode destination) {
     String suffix = new StringBuilder(destination.getRawString()).reverse().toString();
     TreeMap<Character, Long> children = new TreeMap<>();
@@ -166,7 +157,7 @@ public class CharTrie {
     destination.writeChildren(children);
     destination.getChildren().forEach(child -> reverseSubtree(childrenMap, child));
   }
-  
+
   /**
    * Rewrite char trie.
    *
@@ -178,7 +169,7 @@ public class CharTrie {
     rewriteSubtree(root(), result.root(), fn);
     return result.recomputeCursorDetails();
   }
-  
+
   private void rewriteSubtree(TrieNode sourceNode, TrieNode destNode, BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
     CharTrie result = destNode.getTrie();
     TreeMap<Character, ? extends TrieNode> sourceChildren = sourceNode.getChildrenMap();
@@ -191,7 +182,7 @@ public class CharTrie {
       }
     });
   }
-  
+
   /**
    * Add char trie.
    *
@@ -201,7 +192,7 @@ public class CharTrie {
   public CharTrie add(CharTrie z) {
     return reduceSimple(z, (left, right) -> (null == left ? 0 : left) + (null == right ? 0 : right));
   }
-  
+
   /**
    * Product char trie.
    *
@@ -211,7 +202,7 @@ public class CharTrie {
   public CharTrie product(CharTrie z) {
     return reduceSimple(z, (left, right) -> (null == left ? 0 : left) * (null == right ? 0 : right));
   }
-  
+
   /**
    * Divide char trie.
    *
@@ -222,7 +213,7 @@ public class CharTrie {
   public CharTrie divide(CharTrie z, int factor) {
     return reduceSimple(z, (left, right) -> (null == right ? 0 : ((null == left ? 0 : left) * factor / right)));
   }
-  
+
   /**
    * Reduce simple char trie.
    *
@@ -247,7 +238,7 @@ public class CharTrie {
       return new TreeMap<>(map);
     });
   }
-  
+
   /**
    * Reduce char trie.
    *
@@ -260,7 +251,7 @@ public class CharTrie {
     reduceSubtree(root(), right.root(), result.root(), fn);
     return result.recomputeCursorDetails();
   }
-  
+
   /**
    * Recompute cursor details char trie.
    *
@@ -278,7 +269,7 @@ public class CharTrie {
     System.gc();
     return this;
   }
-  
+
   private NodeData recomputeCursorTotals(TrieNode node) {
     parentIndex[node.index] = null == node.getParent() ? -1 : node.getParent().index;
     List<NodeData> newChildren = node.getChildren().map(child -> recomputeCursorTotals(child)).collect(Collectors.toList());
@@ -287,7 +278,7 @@ public class CharTrie {
     assert (0 < cursorCount);
     return node.update(d -> d.setCursorCount(cursorCount));
   }
-  
+
   private void recomputeCursorPositions(TrieNode node, final int position) {
     node.update(n -> n.setFirstCursorIndex(position));
     int childPosition = position;
@@ -297,7 +288,7 @@ public class CharTrie {
       childPosition += child.getCursorCount();
     }
   }
-  
+
   private void reduceSubtree(TrieNode sourceNodeA, TrieNode sourceNodeB, TrieNode destNode, BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     destNode.writeChildren(fn.apply(sourceNodeA, sourceNodeB));
     TreeMap<Character, ? extends TrieNode> sourceChildrenA = null == sourceNodeA ? null : sourceNodeA.getChildrenMap();
@@ -307,16 +298,14 @@ public class CharTrie {
       boolean containsB = null != sourceChildrenB && sourceChildrenB.containsKey(key);
       if (containsA && containsB) {
         reduceSubtree(sourceChildrenA.get(key), sourceChildrenB.get(key), newChild, fn);
-      }
-      else if (containsA) {
+      } else if (containsA) {
         reduceSubtree(sourceChildrenA.get(key), null, newChild, fn);
-      }
-      else if (containsB) {
+      } else if (containsB) {
         reduceSubtree(null, sourceChildrenB.get(key), newChild, fn);
       }
     });
   }
-  
+
   /**
    * Locate a node by finding the maximum prefix match apply the given string
    *
@@ -326,7 +315,7 @@ public class CharTrie {
   public TrieNode traverse(String search) {
     return root().traverse(search);
   }
-  
+
   /**
    * Gets node count.
    *
@@ -335,7 +324,7 @@ public class CharTrie {
   public int getNodeCount() {
     return nodes.length();
   }
-  
+
   /**
    * Match end trie node.
    *
@@ -354,8 +343,7 @@ public class CharTrie {
       if (cursor.getString().equals(attempt)) {
         min = Math.max(min, i + 1);
         winner = Math.max(winner, i);
-      }
-      else {
+      } else {
         max = Math.min(max, i - 1);
       }
       i = (3 * max + min) / 4;
@@ -364,7 +352,7 @@ public class CharTrie {
     String matched = search.substring(search.length() - winner);
     return traverse(matched);
   }
-  
+
   /**
    * Match predictor trie node.
    *
@@ -380,7 +368,7 @@ public class CharTrie {
     if (string.isEmpty()) return null;
     return matchPredictor(string.substring(1));
   }
-  
+
   /**
    * Copy char trie.
    *
@@ -389,7 +377,7 @@ public class CharTrie {
   public CharTrie copy() {
     return new CharTrie(this);
   }
-  
+
   /**
    * Gets memory size.
    *
@@ -398,7 +386,7 @@ public class CharTrie {
   public int getMemorySize() {
     return this.nodes.getMemorySize();
   }
-  
+
   /**
    * Gets indexed size.
    *
@@ -407,7 +395,7 @@ public class CharTrie {
   public long getIndexedSize() {
     return this.nodes.get(0).cursorCount;
   }
-  
+
   /**
    * Gets codec.
    *
@@ -416,7 +404,7 @@ public class CharTrie {
   public NodewalkerCodec getCodec() {
     return new NodewalkerCodec(this);
   }
-  
+
   /**
    * Gets generator.
    *
@@ -425,7 +413,7 @@ public class CharTrie {
   public TextGenerator getGenerator() {
     return new TextGenerator(this.truncate().copy());
   }
-  
+
   /**
    * Gets analyzer.
    *
@@ -434,7 +422,7 @@ public class CharTrie {
   public TextAnalysis getAnalyzer() {
     return new TextAnalysis(this.truncate().copy());
   }
-  
+
   /**
    * Truncate char trie.
    *
@@ -443,22 +431,22 @@ public class CharTrie {
   protected CharTrie truncate() {
     return this;
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    
+
     CharTrie charTrie = (CharTrie) o;
-    
+
     return nodes.equals(charTrie.nodes);
   }
-  
+
   @Override
   public int hashCode() {
     return nodes.hashCode();
   }
-  
+
   /**
    * Tokens set.
    *
@@ -466,10 +454,10 @@ public class CharTrie {
    */
   public Set<Character> tokens() {
     return root().getChildrenMap().keySet().stream()
-      .filter(c -> c != END_OF_STRING && c != FALLBACK && c != ESCAPE)
-      .collect(Collectors.toSet());
+        .filter(c -> c != END_OF_STRING && c != FALLBACK && c != ESCAPE)
+        .collect(Collectors.toSet());
   }
-  
+
   /**
    * Contains boolean.
    *
@@ -479,7 +467,7 @@ public class CharTrie {
   public boolean contains(String text) {
     return traverse(text).getString().endsWith(text);
   }
-  
+
   /**
    * Max stream.
    *
@@ -491,16 +479,16 @@ public class CharTrie {
   public <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn, int maxResults) {
     return max(fn, maxResults, root());
   }
-  
+
   private <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn, int maxResults, TrieNode node) {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-      Iterators.mergeSorted(
-        Stream.concat(
-          Stream.of(Stream.of(node)),
-          node.getChildren().map(x -> max(fn, maxResults, x))
-        ).map(x -> x.iterator()).collect(Collectors.toList()),
-        Comparator.comparing(fn).reversed()),
-      Spliterator.ORDERED),
-      false).limit(maxResults).collect(Collectors.toList()).stream();
+        Iterators.mergeSorted(
+            Stream.concat(
+                Stream.of(Stream.of(node)),
+                node.getChildren().map(x -> max(fn, maxResults, x))
+            ).map(x -> x.iterator()).collect(Collectors.toList()),
+            Comparator.comparing(fn).reversed()),
+        Spliterator.ORDERED),
+        false).limit(maxResults).collect(Collectors.toList()).stream();
   }
 }

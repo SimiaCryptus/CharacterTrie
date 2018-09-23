@@ -45,7 +45,7 @@ class NodeData {
    * The First cursor index.
    */
   long firstCursorIndex;
-  
+
   /**
    * Instantiates a new Node data.
    *
@@ -62,7 +62,7 @@ class NodeData {
     this.cursorCount = cursorCount;
     this.firstCursorIndex = firstCursorIndex;
   }
-  
+
   /**
    * Sets token.
    *
@@ -73,7 +73,7 @@ class NodeData {
     this.token = token;
     return this;
   }
-  
+
   /**
    * Sets number of children.
    *
@@ -84,7 +84,7 @@ class NodeData {
     this.numberOfChildren = numberOfChildren;
     return this;
   }
-  
+
   /**
    * Sets first child index.
    *
@@ -95,7 +95,7 @@ class NodeData {
     this.firstChildIndex = firstChildIndex;
     return this;
   }
-  
+
   /**
    * Sets cursor count.
    *
@@ -106,7 +106,7 @@ class NodeData {
     this.cursorCount = cursorCount;
     return this;
   }
-  
+
   /**
    * Sets first cursor index.
    *
@@ -117,7 +117,7 @@ class NodeData {
     this.firstCursorIndex = firstCursorIndex;
     return this;
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -126,9 +126,9 @@ class NodeData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    
+
     NodeData nodeData = (NodeData) o;
-    
+
     if (token != nodeData.token) {
       return false;
     }
@@ -143,7 +143,7 @@ class NodeData {
     }
     return firstCursorIndex == nodeData.firstCursorIndex;
   }
-  
+
   @Override
   public int hashCode() {
     int result = (int) token;
@@ -153,5 +153,5 @@ class NodeData {
     result = 31 * result + Long.hashCode(firstCursorIndex);
     return result;
   }
-  
+
 }

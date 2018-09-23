@@ -27,22 +27,22 @@ import java.nio.ByteBuffer;
  * The type Node type.
  */
 class NodeType implements SerialType<NodeData> {
-  
+
   /**
    * The Instance.
    */
   static NodeType INSTANCE = new NodeType();
-  
+
   @Override
   public int getSize() {
     return 24;
   }
-  
+
   @Override
   public NodeData read(ByteBuffer input) {
     return new NodeData(input.getChar(), input.getShort(), input.getInt(), input.getLong(), input.getLong());
   }
-  
+
   @Override
   public void write(ByteBuffer output, NodeData value) {
     output.putChar(value.token);

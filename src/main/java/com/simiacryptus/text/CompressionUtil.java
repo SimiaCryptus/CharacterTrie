@@ -26,11 +26,7 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.DataFormatException;
@@ -45,7 +41,7 @@ public class CompressionUtil {
    * The constant random.
    */
   public static final Random random = new Random();
-  
+
   /**
    * Encode lz byte [ ].
    *
@@ -62,7 +58,7 @@ public class CompressionUtil {
     }
     return encodeLZ(asBytes, dictionary);
   }
-  
+
   /**
    * Encode lz byte [ ].
    *
@@ -72,7 +68,7 @@ public class CompressionUtil {
   public static byte[] encodeLZ(byte[] bytes) {
     return encodeLZ(bytes, "");
   }
-  
+
   /**
    * Encode lz byte [ ].
    *
@@ -97,7 +93,7 @@ public class CompressionUtil {
     compresser.end();
     return Arrays.copyOf(output, compressedDataLength);
   }
-  
+
   /**
    * Decode lz byte [ ].
    *
@@ -126,7 +122,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Encode lz byte [ ].
    *
@@ -136,7 +132,7 @@ public class CompressionUtil {
   public static byte[] encodeLZ(CharSequence data) {
     return encodeLZ(data, "");
   }
-  
+
   /**
    * Decode lz to string string.
    *
@@ -151,7 +147,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Decode lz to string string.
    *
@@ -165,7 +161,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Decode lz byte [ ].
    *
@@ -175,7 +171,7 @@ public class CompressionUtil {
   public static byte[] decodeLZ(byte[] data) {
     return decodeLZ(data, "");
   }
-  
+
   /**
    * Decode bz string.
    *
@@ -189,7 +185,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Decode bz raw byte [ ].
    *
@@ -205,7 +201,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Encode bz byte [ ].
    *
@@ -221,7 +217,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Encode bz byte [ ].
    *
@@ -241,7 +237,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Decode bz string.
    *
@@ -259,7 +255,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Encode bz byte [ ].
    *
@@ -276,7 +272,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Encode bz byte [ ].
    *
@@ -288,8 +284,8 @@ public class CompressionUtil {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
       VCDiffEncoder<OutputStream> encoder = VCDiffEncoderBuilder.builder()
-        .withDictionary(dictBytes)
-        .buildSimple();
+          .withDictionary(dictBytes)
+          .buildSimple();
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
       encoder.encode(asBytes, buffer);
       return encodeBZ(buffer.toByteArray());
@@ -297,7 +293,7 @@ public class CompressionUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Display str string.
    *

@@ -25,13 +25,7 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -39,13 +33,13 @@ import java.util.stream.StreamSupport;
  * The type Misspelling.
  */
 public class Misspelling extends TestDocument {
-  
+
   /**
    * The constant BIRKBECK.
    */
   public static Loader BIRKBECK = new Loader(URI.create(
-    "http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
-  
+      "http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
+
   /**
    * Instantiates a new Misspelling.
    *
@@ -55,7 +49,7 @@ public class Misspelling extends TestDocument {
   public Misspelling(String correct, CharSequence misspelling) {
     super(correct, misspelling);
   }
-  
+
   /**
    * The type Loader.
    */
@@ -65,7 +59,7 @@ public class Misspelling extends TestDocument {
     private final int articleLimit;
     private final List<Misspelling> queue = Collections.synchronizedList(new ArrayList<>());
     private volatile Thread thread;
-  
+
     /**
      * Instantiates a new Loader.
      *
@@ -79,7 +73,7 @@ public class Misspelling extends TestDocument {
       String[] split = path.split("/");
       file = split[split.length - 1];
     }
-  
+
     /**
      * Clear.
      *
@@ -97,7 +91,7 @@ public class Misspelling extends TestDocument {
         }
       }
     }
-  
+
     /**
      * Load stream.
      *
@@ -116,7 +110,7 @@ public class Misspelling extends TestDocument {
       Iterator<Misspelling> iterator = new AsyncListIterator<>(queue, thread);
       return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
     }
-    
+
     private void read() {
       try {
         try (final InputStream in = Util.cacheLocal(file, new URI(url))) {
@@ -126,12 +120,11 @@ public class Misspelling extends TestDocument {
           for (CharSequence item : list) {
             if (item.toString().startsWith("$")) {
               activeItem = item.toString().substring(1);
-            }
-            else {
+            } else {
               queue.add(new Misspelling(activeItem, item));
             }
           }
-          
+
         }
       } catch (final RuntimeException e) {
         if (!(e.getCause() instanceof InterruptedException)) e.printStackTrace();
@@ -141,7 +134,7 @@ public class Misspelling extends TestDocument {
         System.err.println("Read thread exit");
       }
     }
-    
+
   }
-  
+
 }

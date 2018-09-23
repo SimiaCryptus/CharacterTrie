@@ -38,11 +38,11 @@ public class BitsTest {
    * The Random.
    */
   Random random = new Random();
-  
+
   private long randomLong() {
     return this.random.nextLong() >> this.random.nextInt(62);
   }
-  
+
   /**
    * Test concatenate.
    *
@@ -55,7 +55,7 @@ public class BitsTest {
       this.testConcatenate(this.randomLong(), this.randomLong());
     }
   }
-  
+
   /**
    * Test divide.
    *
@@ -72,7 +72,7 @@ public class BitsTest {
     Assert.assertEquals("0001", Bits.divide(171, 1368, 15).toBitString());
     Assert.assertEquals("000010001000001", Bits.divide(91, 1368, 15).toBitString());
   }
-  
+
   /**
    * Test bit stream.
    *
@@ -91,7 +91,7 @@ public class BitsTest {
     });
     Assert.assertEquals("0101", totalBits.toBitString());
   }
-  
+
   /**
    * Test interval.
    *
@@ -101,24 +101,24 @@ public class BitsTest {
   @Category(TestCategories.UnitTest.class)
   public void testInterval() throws JSONException {
     Assert.assertEquals("1", new Interval(1, 2, 3).toBits().toBitString());
-    
+
     Assert.assertEquals("01", new Interval(0, 1, 2).toBits().toBitString());
     Assert.assertEquals("11", new Interval(1, 1, 2).toBits().toBitString());
-    
+
     Assert.assertEquals("001", new Interval(0, 1, 3).toBits().toBitString());
     Assert.assertEquals("011", new Interval(1, 1, 3).toBits().toBitString());
     Assert.assertEquals("11", new Interval(2, 1, 3).toBits().toBitString());
-    
+
     Assert.assertEquals("0001", new Interval(0, 1, 5).toBits().toBitString());
     Assert.assertEquals("010", new Interval(1, 1, 5).toBits().toBitString());
     Assert.assertEquals("0111", new Interval(2, 1, 5).toBits().toBitString());
     Assert.assertEquals("101", new Interval(3, 1, 5).toBits().toBitString());
     Assert.assertEquals("111", new Interval(4, 1, 5).toBits().toBitString());
-    
+
     Assert.assertEquals("001", new Interval(0, 2, 5).toBits().toBitString());
     Assert.assertEquals("00011", new Interval(91, 80, 1368).toBits().toBitString());
   }
-  
+
   private void testConcatenate(final long a, final long b) {
     final CharSequence asStringA = 0 == a ? "" : Long.toBinaryString(a);
     final CharSequence asStringB = 0 == b ? "" : Long.toBinaryString(b);
@@ -127,9 +127,9 @@ public class BitsTest {
     final Bits bitsB = new Bits(b);
     final Bits bits = bitsA.concatenate(bitsB);
     Assert.assertEquals(String.format("Concatenate %s and %s", a, b), asString,
-      bits.toBitString());
+        bits.toBitString());
   }
-  
+
   /**
    * Test fixed length.
    *
@@ -142,7 +142,7 @@ public class BitsTest {
       this.testFixedLength(this.randomLong());
     }
   }
-  
+
   /**
    * Test var longs.
    *
@@ -161,7 +161,7 @@ public class BitsTest {
       Assert.assertEquals(i, in.readVarLong());
     }
   }
-  
+
   private void testFixedLength(final long value) {
     String asString = 0 == value ? "" : Long.toBinaryString(value);
     final Bits bits = new Bits(value, 64);
@@ -171,7 +171,7 @@ public class BitsTest {
     Assert.assertEquals("toLong for " + value, value, bits.toLong());
     Assert.assertEquals("toString for " + value, asString, bits.toBitString());
   }
-  
+
   /**
    * Test hardcoded.
    *
@@ -189,24 +189,24 @@ public class BitsTest {
     Assert.assertEquals("01", new Bits(17).range(3).toBitString());
     Assert.assertEquals("111", new Bits(7).toBitString());
     Assert.assertEquals("10111", new Bits(2).concatenate(new Bits(7))
-      .toBitString());
+        .toBitString());
     Assert.assertEquals("00110", new Bits(6l, 5).toBitString());
     Assert.assertEquals("111000000", new Bits(7l).leftShift(6).toBitString());
     Assert.assertEquals("1110", new Bits(7l).leftShift(6).range(0, 4)
-      .toBitString());
+        .toBitString());
     Assert.assertEquals("00000", new Bits(7l).leftShift(6).range(4)
-      .toBitString());
+        .toBitString());
     Assert.assertEquals("110", new Bits(6l).toBitString());
     Assert.assertEquals("11100", new Bits(7l).leftShift(2).toBitString());
     Assert.assertEquals("11000",
-      new Bits(7l).leftShift(2).bitwiseAnd(new Bits(6l)).toBitString());
+        new Bits(7l).leftShift(2).bitwiseAnd(new Bits(6l)).toBitString());
     Assert.assertEquals("11100",
-      new Bits(7l).leftShift(2).bitwiseOr(new Bits(6l)).toBitString());
+        new Bits(7l).leftShift(2).bitwiseOr(new Bits(6l)).toBitString());
     Assert.assertEquals("00100",
-      new Bits(7l).leftShift(2).bitwiseXor(new Bits(6l)).toBitString());
+        new Bits(7l).leftShift(2).bitwiseXor(new Bits(6l)).toBitString());
     Assert.assertEquals(2, new Bits(7l, 16).getBytes().length);
   }
-  
+
   /**
    * Test subrange.
    *
@@ -221,7 +221,7 @@ public class BitsTest {
       this.testSubrange(bits);
     }
   }
-  
+
   private void testSubrange(final Bits bits) {
     final String asString = bits.toBitString();
     for (int j = 0; j < 10; j++) {
@@ -230,16 +230,16 @@ public class BitsTest {
       this.testSubrange(bits, asString, from, to);
     }
   }
-  
+
   private void testSubrange(final Bits bits, final String asString,
-    final int from, final int to) {
+                            final int from, final int to) {
     final CharSequence subStr = asString.substring(from, to);
     final Bits subBits = bits.range(from, to - from);
     Assert.assertEquals(
-      String.format("Substring (%s,%s) of %s", from, to, bits), subStr,
-      subBits.toBitString());
+        String.format("Substring (%s,%s) of %s", from, to, bits), subStr,
+        subBits.toBitString());
   }
-  
+
   /**
    * Test to string.
    *
@@ -252,12 +252,12 @@ public class BitsTest {
       this.testToString(this.randomLong());
     }
   }
-  
+
   private void testToString(final long value) {
     final CharSequence asString = 0 == value ? "" : Long.toBinaryString(value);
     final Bits bits = new Bits(value);
     Assert.assertEquals("toLong for " + value, value, bits.toLong());
     Assert.assertEquals("toString for " + value, asString, bits.toBitString());
   }
-  
+
 }

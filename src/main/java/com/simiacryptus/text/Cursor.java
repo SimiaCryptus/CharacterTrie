@@ -32,7 +32,7 @@ public class Cursor {
    */
   private final CharTrieIndex charTrieIndex;
   private final short depth;
-  
+
   /**
    * Instantiates a new Cursor.
    *
@@ -45,7 +45,7 @@ public class Cursor {
     this.data = data;
     this.depth = depth;
   }
-  
+
   /**
    * Gets document.
    *
@@ -54,7 +54,7 @@ public class Cursor {
   public CharSequence getDocument() {
     return this.charTrieIndex.documents.get(data.documentId);
   }
-  
+
   /**
    * Has next boolean.
    *
@@ -63,7 +63,7 @@ public class Cursor {
   public boolean hasNext() {
     return (getPosition() + 1) < getDocument().length();
   }
-  
+
   /**
    * Gets token.
    *
@@ -74,7 +74,7 @@ public class Cursor {
     CharSequence document = getDocument();
     return index >= document.length() ? NodewalkerCodec.END_OF_STRING : document.charAt(index);
   }
-  
+
   /**
    * Next cursor.
    *
@@ -83,7 +83,7 @@ public class Cursor {
   public Cursor next() {
     return new Cursor(this.charTrieIndex, data, (short) (depth + 1));
   }
-  
+
   /**
    * Gets position.
    *
@@ -92,7 +92,7 @@ public class Cursor {
   public int getPosition() {
     return data.position + depth - 1;
   }
-  
+
   /**
    * Gets document id.
    *

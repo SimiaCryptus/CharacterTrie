@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -55,7 +54,7 @@ public class TweetSentiment extends TestDocument {
    * The Category.
    */
   public final int category;
-  
+
   /**
    * Instantiates a new Tweet sentiment.
    *
@@ -66,7 +65,7 @@ public class TweetSentiment extends TestDocument {
     super(text, text);
     this.category = category;
   }
-  
+
   /**
    * Clear.
    *
@@ -84,7 +83,7 @@ public class TweetSentiment extends TestDocument {
       }
     }
   }
-  
+
   /**
    * Load stream.
    *
@@ -103,7 +102,7 @@ public class TweetSentiment extends TestDocument {
     Iterator<TweetSentiment> iterator = new AsyncListIterator<>(queue, thread);
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
   }
-  
+
   private static void read() {
     try {
       InputStream load = Util.cacheLocal(file, new URI(url));

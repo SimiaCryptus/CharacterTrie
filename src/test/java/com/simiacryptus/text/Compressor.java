@@ -19,8 +19,8 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.util.TableOutput;
-import com.simiacryptus.util.lang.TimedResult;
+import com.simiacryptus.lang.TimedResult;
+import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.util.test.TestDocument;
 
 import java.util.HashMap;
@@ -61,7 +61,7 @@ public interface Compressor {
           HashMap<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
-          
+
           rowWide.put(name + ".uncompressed", item.getText().length());
           rowTall.put("uncompressed", item.getText().length());
           TimedResult<byte[]> compress = TimedResult.time(() -> compressor.compress(item.getText()));
@@ -85,7 +85,7 @@ public interface Compressor {
     });
     return wide ? wideTable : tallTable;
   }
-  
+
   /**
    * Eval compressor cluster table output.
    *
@@ -98,13 +98,13 @@ public interface Compressor {
   static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<CharSequence, Compressor> compressors, boolean wide) {
     Stream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet().stream();
     Collector<Map.Entry<CharSequence, Compressor>, ?, Map<CharSequence, Function<TestDocument, Double>>> collector =
-      Collectors.toMap(e -> e.getKey(), e -> {
-        Compressor value = e.getValue();
-        return x -> (value.compress(x.getText()).length * 1.0 / x.getText().length());
-      });
+        Collectors.toMap(e -> e.getKey(), e -> {
+          Compressor value = e.getValue();
+          return x -> (value.compress(x.getText()).length * 1.0 / x.getText().length());
+        });
     return evalCluster(data, stream.collect(collector), wide);
   }
-  
+
   /**
    * Eval cluster table output.
    *
@@ -130,7 +130,7 @@ public interface Compressor {
           HashMap<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
-          
+
           TimedResult<Double> compress = TimedResult.time(() -> compressor.apply(item));
           rowWide.put(name + ".value", compress.result);
           rowTall.put("value", compress.result);
@@ -147,7 +147,7 @@ public interface Compressor {
     });
     return wide ? wideTable : tallTable;
   }
-  
+
   /**
    * Add generic compressors.
    *
@@ -159,7 +159,7 @@ public interface Compressor {
       public byte[] compress(String text) {
         return CompressionUtil.encodeBZ(text);
       }
-      
+
       @Override
       public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeBZ(data);
@@ -170,14 +170,14 @@ public interface Compressor {
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text);
       }
-      
+
       @Override
       public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data);
       }
     });
   }
-  
+
   /**
    * Build ppm compressor compressor.
    *
@@ -193,14 +193,14 @@ public interface Compressor {
       public byte[] compress(String text) {
         return codec.encodePPM(text, encodingContext).getBytes();
       }
-      
+
       @Override
       public CharSequence uncompress(byte[] data) {
         return codec.decodePPM(data, encodingContext);
       }
     };
   }
-  
+
   /**
    * Compress byte [ ].
    *
@@ -208,7 +208,7 @@ public interface Compressor {
    * @return the byte [ ]
    */
   byte[] compress(String text);
-  
+
   /**
    * Uncompress string.
    *
