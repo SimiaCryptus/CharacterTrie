@@ -41,14 +41,14 @@ public enum LanguageModel {
    * German language model.
    */
   German("German.trie");
-  
+
   private final String resource;
   private volatile CharTrie trie;
-  
+
   LanguageModel(String resource) {
     this.resource = resource;
   }
-  
+
   /**
    * Match language model.
    *
@@ -57,10 +57,10 @@ public enum LanguageModel {
    */
   public static LanguageModel match(String text) {
     return Arrays.stream(LanguageModel.values()).min(Comparator.comparing(
-      model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength
+        model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength
     )).get();
   }
-  
+
   /**
    * Gets trie.
    *
@@ -82,5 +82,5 @@ public enum LanguageModel {
     }
     return trie;
   }
-  
+
 }

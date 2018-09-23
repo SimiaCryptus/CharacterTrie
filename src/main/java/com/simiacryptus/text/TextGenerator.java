@@ -30,9 +30,9 @@ import java.util.stream.Stream;
  * The type Text generator.
  */
 public class TextGenerator {
-  
+
   private final CharTrie inner;
-  
+
   /**
    * Instantiates a new Text generator.
    *
@@ -41,7 +41,7 @@ public class TextGenerator {
   TextGenerator(CharTrie inner) {
     this.inner = inner;
   }
-  
+
   /**
    * Generate markov string.
    *
@@ -71,14 +71,13 @@ public class TextGenerator {
       }
       if (null != next) {
         str += next;
-      }
-      else {
+      } else {
         break;
       }
     }
     return str;
   }
-  
+
   /**
    * Generate dictionary string.
    *
@@ -92,7 +91,7 @@ public class TextGenerator {
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive) {
     return generateDictionary(length, context, seed, lookahead, destructive, false);
   }
-  
+
   /**
    * Generate dictionary string.
    *
@@ -121,29 +120,27 @@ public class TextGenerator {
       if (next.isEmpty()) {
         if (prefix.isEmpty()) {
           break;
-        }
-        else {
+        } else {
           prefix = prefix.substring(1);
         }
       }
       if (nextNode.getChar() == NodewalkerCodec.END_OF_STRING) {
         if (terminateAtNull) {
           break;
-        }
-        else {
+        } else {
           prefix = "";
         }
       }
     }
     return str.substring(0, Math.min(length, str.length()));
   }
-  
+
   private Map<Character, Double> lookahead(TrieNode node, double smoothness) {
     HashMap<Character, Double> map = new HashMap<>();
     lookahead(node, map, 1.0, smoothness);
     return map;
   }
-  
+
   private void lookahead(TrieNode node, HashMap<Character, Double> map, double factor, double smoothness) {
     if (0 < factor) {
       node.getChildren().forEach(child -> {
@@ -151,11 +148,11 @@ public class TextGenerator {
       });
       if (null != node.getParent()) {
         lookahead(inner.matchPredictor(node.getString().substring(1)), map,
-          factor * (smoothness / (smoothness + node.getCursorCount())), smoothness);
+            factor * (smoothness / (smoothness + node.getCursorCount())), smoothness);
       }
     }
   }
-  
+
   private TrieNode maxNextNode(TrieNode node, int lookahead) {
     Stream<TrieNode> childStream = node.getChildren().map(x -> x);
     for (int level = 0; level < lookahead; level++) {
@@ -173,5 +170,5 @@ public class TextGenerator {
     }
     return result;
   }
-  
+
 }

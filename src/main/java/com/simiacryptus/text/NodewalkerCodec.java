@@ -46,7 +46,7 @@ public class NodewalkerCodec {
    * The constant END_OF_STRING.
    */
   public static final char END_OF_STRING = Character.MIN_VALUE;
-  
+
   /**
    * The Inner.
    */
@@ -55,7 +55,7 @@ public class NodewalkerCodec {
    * The Verbose.
    */
   protected PrintStream verbose = null;
-  
+
   /**
    * Instantiates a new Nodewalker codec.
    *
@@ -65,7 +65,7 @@ public class NodewalkerCodec {
     super();
     this.inner = inner;
   }
-  
+
   /**
    * Decode ppm string.
    *
@@ -76,7 +76,7 @@ public class NodewalkerCodec {
   public CharSequence decodePPM(byte[] data, int context) {
     return new Decoder(data, context).encodePPM();
   }
-  
+
   /**
    * Encode ppm bits.
    *
@@ -87,7 +87,7 @@ public class NodewalkerCodec {
   public Bits encodePPM(String text, int context) {
     return new Encoder(text, context).encodePPM();
   }
-  
+
   /**
    * Sets verbose.
    *
@@ -98,7 +98,7 @@ public class NodewalkerCodec {
     this.verbose = verbose;
     return this;
   }
-  
+
   /**
    * Write forward.
    *
@@ -114,13 +114,12 @@ public class NodewalkerCodec {
       }
       encoder.out.writeVarShort(count, 3);
       encoder.out.write(bits);
-    }
-    else {
+    } else {
       assert (0 == encoder.node.index);
       encoder.out.writeVarShort((short) 0, 3);
     }
   }
-  
+
   /**
    * Read forward.
    *
@@ -142,12 +141,11 @@ public class NodewalkerCodec {
       decoder.in.expect(bits);
       decoder.out.append(str);
       decoder.node = toNode;
-    }
-    else {
+    } else {
       assert (0 == decoder.node.index);
     }
   }
-  
+
   /**
    * Write backup optional.
    *
@@ -184,7 +182,7 @@ public class NodewalkerCodec {
     encoder.out.writeVarShort(backupSteps, 3);
     return child;
   }
-  
+
   /**
    * Read backup boolean.
    *
@@ -204,7 +202,7 @@ public class NodewalkerCodec {
     }
     return false;
   }
-  
+
   /**
    * Write terminal.
    *
@@ -219,7 +217,7 @@ public class NodewalkerCodec {
     encoder.out.write(encoder.fromNode.bitsTo(encoder.node));
     encoder.out.writeVarShort((short) 0, 3);
   }
-  
+
   /**
    * The type Decoder.
    */
@@ -244,7 +242,7 @@ public class NodewalkerCodec {
      * The Node.
      */
     protected TrieNode node = inner.root();
-  
+
     /**
      * Instantiates a new Decoder.
      *
@@ -255,7 +253,7 @@ public class NodewalkerCodec {
       this.data = data;
       this.context = context;
     }
-  
+
     /**
      * Encode ppm string.
      *
@@ -279,7 +277,7 @@ public class NodewalkerCodec {
       }
     }
   }
-  
+
   /**
    * The type Encoder.
    */
@@ -308,7 +306,7 @@ public class NodewalkerCodec {
      * The From node.
      */
     protected TrieNode fromNode = inner.root();
-  
+
     /**
      * Instantiates a new Encoder.
      *
@@ -320,7 +318,7 @@ public class NodewalkerCodec {
       this.text = text;
       this.context = context;
     }
-  
+
     /**
      * Encode ppm bits.
      *
@@ -339,13 +337,11 @@ public class NodewalkerCodec {
               out.write(token);
               fromNode = inner.root();
               node = fromNode;
-            }
-            else {
+            } else {
               fromNode = node;
               node = child.get();
             }
-          }
-          else {
+          } else {
             node = child.get();
           }
         }
@@ -357,7 +353,7 @@ public class NodewalkerCodec {
         throw new RuntimeException(e);
       }
     }
-    
+
   }
-  
+
 }

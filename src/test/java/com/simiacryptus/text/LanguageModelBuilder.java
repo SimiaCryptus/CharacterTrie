@@ -19,8 +19,8 @@
 //
 //package com.simiacryptus.text;
 //
-//import com.simiacryptus.util.io.MarkdownNotebookOutput;
-//import com.simiacryptus.util.io.NotebookOutput;
+//import com.simiacryptus.notebook.MarkdownNotebookOutput;
+//import com.simiacryptus.notebook.NotebookOutput;
 //import com.simiacryptus.util.test.TestCategories;
 //import com.simiacryptus.util.test.WikiArticle;
 //import org.junit.Test;

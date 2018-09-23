@@ -31,7 +31,7 @@ class CursorData {
    * The Position.
    */
   int position;
-  
+
   /**
    * Instantiates a new Cursor data.
    *
@@ -42,7 +42,7 @@ class CursorData {
     this.documentId = documentId;
     this.position = position;
   }
-  
+
   /**
    * Sets document id.
    *
@@ -53,7 +53,7 @@ class CursorData {
     this.documentId = documentId;
     return this;
   }
-  
+
   /**
    * Sets position.
    *
@@ -64,7 +64,7 @@ class CursorData {
     this.position = position;
     return this;
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -73,20 +73,20 @@ class CursorData {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    
+
     CursorData that = (CursorData) o;
-    
+
     if (documentId != that.documentId) {
       return false;
     }
     return position == that.position;
   }
-  
+
   @Override
   public int hashCode() {
     int result = documentId;
     result = 31 * result + position;
     return result;
   }
-  
+
 }

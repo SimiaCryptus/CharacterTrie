@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * The type Char trie serializer.
  */
 public class CharTrieSerializer {
-  
+
   /**
    * Serialize byte [ ].
    *
@@ -55,7 +55,7 @@ public class CharTrieSerializer {
     }
     return buffer.toByteArray();
   }
-  
+
   private int serialize(TrieNode root, BitOutputStream out, int level) {
     AtomicInteger nodesWritten = new AtomicInteger(0);
     if (0 == level) {
@@ -75,8 +75,7 @@ public class CharTrieSerializer {
           throw new RuntimeException(e);
         }
       });
-    }
-    else {
+    } else {
       root.streamDecendents(level).forEach(node -> {
         TrieNode godparent = node.godparent();
         Stream<TrieNode> stream = godparent.getChildren().map(x -> x);
@@ -88,8 +87,7 @@ public class CharTrieSerializer {
           try {
             if (null == child) {
               out.writeVarLong(0);
-            }
-            else {
+            } else {
               out.writeVarLong(child.getCursorCount());
             }
             nodesWritten.incrementAndGet();
@@ -100,9 +98,9 @@ public class CharTrieSerializer {
       });
     }
     return nodesWritten.get();
-    
+
   }
-  
+
   /**
    * Deserialize char trie.
    *
@@ -118,7 +116,7 @@ public class CharTrieSerializer {
     trie.recomputeCursorDetails();
     return trie;
   }
-  
+
   private int deserialize(TrieNode root, BitInputStream in, int level) {
     AtomicInteger nodesRead = new AtomicInteger(0);
     if (0 == level) {
@@ -135,8 +133,7 @@ public class CharTrieSerializer {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-    }
-    else {
+    } else {
       root.streamDecendents(level).forEach(node -> {
         TrieNode godparent = node.godparent();
         List<NodeData> list = godparent.getChildren().map(x -> x.getData()).collect(Collectors.toList());
@@ -156,7 +153,7 @@ public class CharTrieSerializer {
         node.writeChildren(children);
       });
     }
-    
+
     return nodesRead.get();
   }
 }

@@ -47,7 +47,7 @@ public class TrieNode {
   private transient short depth = -1;
   private transient TrieNode parent = null;
   private transient NodeData data;
-  
+
   /**
    * Instantiates a new Trie node.
    *
@@ -60,7 +60,7 @@ public class TrieNode {
     this.trie = trie;
     this.index = index;
   }
-  
+
   /**
    * Instantiates a new Trie node.
    *
@@ -75,7 +75,7 @@ public class TrieNode {
     this.parent = parent;
     //assert(null == trie.parentIndex || 0 == index || trie.parentIndex[index]>=0);
   }
-  
+
   /**
    * Gets data.
    *
@@ -91,7 +91,7 @@ public class TrieNode {
     }
     return data;
   }
-  
+
   /**
    * Godparent trie node.
    *
@@ -111,15 +111,13 @@ public class TrieNode {
     TrieNode godparent;
     if (null == parent) {
       godparent = root;
-    }
-    else {
+    } else {
       TrieNode greatgodparent = parent.godparent();
       if (null == greatgodparent) {
         godparent = root;
-      }
-      else {
+      } else {
         godparent = greatgodparent.getChild(getChar())
-          .map(x -> (TrieNode) x).orElseGet(() -> root);
+            .map(x -> (TrieNode) x).orElseGet(() -> root);
       }
       //assert(getString().isEmpty() || getString().substring(1).equals(godparent.getString()));
     }
@@ -128,7 +126,7 @@ public class TrieNode {
     }
     return godparent;
   }
-  
+
   /**
    * New node trie node.
    *
@@ -138,7 +136,7 @@ public class TrieNode {
   protected TrieNode newNode(int index) {
     return new TrieNode(trie, index);
   }
-  
+
   /**
    * Refresh trie node.
    *
@@ -148,7 +146,7 @@ public class TrieNode {
     this.data = null;
     return this;
   }
-  
+
   /**
    * Gets string.
    *
@@ -160,7 +158,7 @@ public class TrieNode {
     CharSequence parentStr = null == getParent() ? "" : getParent().getString(root);
     return parentStr + getToken();
   }
-  
+
   /**
    * Gets raw string.
    *
@@ -169,7 +167,7 @@ public class TrieNode {
   public String getRawString() {
     return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
   }
-  
+
   /**
    * Gets string.
    *
@@ -178,7 +176,7 @@ public class TrieNode {
   public String getString() {
     return (null == getParent() ? "" : getParent().getString()) + (0 == getDepth() ? "" : getToken());
   }
-  
+
   /**
    * Gets debug string.
    *
@@ -187,7 +185,7 @@ public class TrieNode {
   public String getDebugString() {
     return getDebugString(getTrie().root());
   }
-  
+
   /**
    * Gets debug string.
    *
@@ -199,7 +197,7 @@ public class TrieNode {
     CharSequence parentStr = null == getParent() ? "" : getParent().getDebugString(root);
     return parentStr.toString() + getDebugToken();
   }
-  
+
   /**
    * Gets debug token.
    *
@@ -214,7 +212,7 @@ public class TrieNode {
     if (asChar == '\n') return "\\n";
     return new String(new char[]{asChar});
   }
-  
+
   /**
    * Gets token.
    *
@@ -227,7 +225,7 @@ public class TrieNode {
     if (asChar == NodewalkerCodec.ESCAPE) return "";
     return new String(new char[]{asChar});
   }
-  
+
   /**
    * Gets char.
    *
@@ -236,7 +234,7 @@ public class TrieNode {
   public char getChar() {
     return getData().token;
   }
-  
+
   /**
    * Gets number of children.
    *
@@ -245,7 +243,7 @@ public class TrieNode {
   public short getNumberOfChildren() {
     return getData().numberOfChildren;
   }
-  
+
   /**
    * Gets depth.
    *
@@ -264,7 +262,7 @@ public class TrieNode {
     }
     return depth;
   }
-  
+
   /**
    * Gets cursor index.
    *
@@ -273,7 +271,7 @@ public class TrieNode {
   public long getCursorIndex() {
     return getData().firstCursorIndex;
   }
-  
+
   /**
    * Gets cursor count.
    *
@@ -282,7 +280,7 @@ public class TrieNode {
   public long getCursorCount() {
     return getData().cursorCount;
   }
-  
+
   /**
    * Visit first trie node.
    *
@@ -295,7 +293,7 @@ public class TrieNode {
     refresh.getChildren().forEach(n -> n.visitFirst(visitor));
     return refresh;
   }
-  
+
   /**
    * Visit last trie node.
    *
@@ -307,7 +305,7 @@ public class TrieNode {
     visitor.accept(this);
     return refresh();
   }
-  
+
   /**
    * Gets children.
    *
@@ -316,13 +314,12 @@ public class TrieNode {
   public Stream<? extends TrieNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
       return IntStream.range(0, getData().numberOfChildren)
-        .mapToObj(i -> new TrieNode(this.trie, getData().firstChildIndex + i, TrieNode.this));
-    }
-    else {
+          .mapToObj(i -> new TrieNode(this.trie, getData().firstChildIndex + i, TrieNode.this));
+    } else {
       return Stream.empty();
     }
   }
-  
+
   /**
    * Gets child.
    *
@@ -341,19 +338,17 @@ public class TrieNode {
       if (c < token) {
         // node.getChar() < token
         min = i + 1;
-      }
-      else if (c > token) {
+      } else if (c > token) {
         // node.getChar() > token
         max = i - 1;
-      }
-      else {
+      } else {
         return Optional.of(node);
       }
     }
     //assert !getChildren().keywords(x -> x.getChar() == token).findFirst().isPresent();
     return Optional.empty();
   }
-  
+
   /**
    * Decrement cursor count.
    *
@@ -365,7 +360,7 @@ public class TrieNode {
       getParent().decrementCursorCount(count);
     }
   }
-  
+
   /**
    * Traverse trie node.
    *
@@ -378,7 +373,7 @@ public class TrieNode {
     }
     return getChild(str.charAt(0)).map(n -> n.traverse(str.substring(1))).orElse(this);
   }
-  
+
   /**
    * Contains cursor boolean.
    *
@@ -391,7 +386,7 @@ public class TrieNode {
     }
     return cursorId < (getData().firstCursorIndex + getData().cursorCount);
   }
-  
+
   /**
    * Traverse trie node.
    *
@@ -403,16 +398,16 @@ public class TrieNode {
       throw new IllegalArgumentException();
     }
     return getChildren().filter(n -> n.containsCursor(cursorId)).findFirst().map(n -> n.traverse(cursorId))
-      .orElse(this);
+        .orElse(this);
   }
-  
+
   /**
    * Remove cursor count.
    */
   public void removeCursorCount() {
     decrementCursorCount(getCursorCount());
   }
-  
+
   /**
    * Bits to bits.
    *
@@ -423,7 +418,7 @@ public class TrieNode {
     if (index == toNode.index) return Bits.NULL;
     return intervalTo(toNode).toBits();
   }
-  
+
   /**
    * Interval to interval.
    *
@@ -432,9 +427,9 @@ public class TrieNode {
    */
   public Interval intervalTo(TrieNode toNode) {
     return new Interval(toNode.getCursorIndex() - this.getCursorIndex(),
-      toNode.getCursorCount(), this.getCursorCount());
+        toNode.getCursorCount(), this.getCursorCount());
   }
-  
+
   /**
    * Has children boolean.
    *
@@ -443,7 +438,7 @@ public class TrieNode {
   public boolean hasChildren() {
     return 0 < getNumberOfChildren();
   }
-  
+
   /**
    * Update node data.
    *
@@ -454,7 +449,7 @@ public class TrieNode {
     data = trie.nodes.update(index, update);
     return data;
   }
-  
+
   /**
    * Gets trie.
    *
@@ -463,7 +458,7 @@ public class TrieNode {
   public CharTrie getTrie() {
     return trie;
   }
-  
+
   /**
    * Is string terminal boolean.
    *
@@ -474,7 +469,7 @@ public class TrieNode {
     if (getChar() == NodewalkerCodec.FALLBACK && null != getParent()) return getParent().isStringTerminal();
     return false;
   }
-  
+
   /**
    * Stream decendents stream.
    *
@@ -485,12 +480,11 @@ public class TrieNode {
     assert (level > 0);
     if (level == 1) {
       return getChildren();
-    }
-    else {
+    } else {
       return getChildren().flatMap(child -> child.streamDecendents(level - 1));
     }
   }
-  
+
   /**
    * Write children.
    *
@@ -506,7 +500,7 @@ public class TrieNode {
     update(n -> n.setFirstChildIndex(firstIndex).setNumberOfChildren(length));
     data = null;
   }
-  
+
   /**
    * Gets children map.
    *
@@ -517,7 +511,7 @@ public class TrieNode {
     getChildren().forEach(x -> map.put(x.getChar(), x));
     return map;
   }
-  
+
   /**
    * Gets god children.
    *
@@ -530,22 +524,22 @@ public class TrieNode {
       return traverse.getString().equals(token.toString() + postContext) ? traverse : null;
     })).entrySet().stream().filter(e -> null != e.getValue()).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    
+
     TrieNode trieNode = (TrieNode) o;
     if (getCursorCount() != ((TrieNode) o).getCursorCount()) return false;
     return getChildrenMap().equals(trieNode.getChildrenMap());
   }
-  
+
   @Override
   public int hashCode() {
     return getChildrenMap().hashCode() ^ Long.hashCode(getCursorCount());
   }
-  
+
   /**
    * Gets parent.
    *
@@ -563,7 +557,7 @@ public class TrieNode {
     }
     return parent;
   }
-  
+
   /**
    * Gets continuation.
    *

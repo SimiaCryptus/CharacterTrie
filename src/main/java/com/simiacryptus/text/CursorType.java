@@ -27,22 +27,22 @@ import java.nio.ByteBuffer;
  * The type Cursor type.
  */
 class CursorType implements SerialType<CursorData> {
-  
+
   /**
    * The Instance.
    */
   static CursorType INSTANCE = new CursorType();
-  
+
   @Override
   public int getSize() {
     return 8;
   }
-  
+
   @Override
   public CursorData read(ByteBuffer input) {
     return new CursorData(input.getInt(), input.getInt());
   }
-  
+
   @Override
   public void write(ByteBuffer output, CursorData value) {
     output.putInt(value.documentId);

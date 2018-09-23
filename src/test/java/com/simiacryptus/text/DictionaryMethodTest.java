@@ -19,23 +19,15 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.util.TableOutput;
-import com.simiacryptus.util.io.MarkdownNotebookOutput;
-import com.simiacryptus.util.io.NotebookOutput;
-import com.simiacryptus.util.test.Shakespeare;
-import com.simiacryptus.util.test.TestCategories;
-import com.simiacryptus.util.test.TestDocument;
-import com.simiacryptus.util.test.TweetSentiment;
-import com.simiacryptus.util.test.WikiArticle;
+import com.simiacryptus.notebook.MarkdownNotebookOutput;
+import com.simiacryptus.notebook.NotebookOutput;
+import com.simiacryptus.notebook.TableOutput;
+import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +36,7 @@ import java.util.stream.Stream;
  * The type Dictionary method test.
  */
 public class DictionaryMethodTest {
-  
+
   /**
    * Dictionaries tweets.
    *
@@ -60,7 +52,7 @@ public class DictionaryMethodTest {
       test(log, () -> TweetSentiment.load().limit(modelCount + testCount), modelCount);
     }
   }
-  
+
   /**
    * Dictionaries shakespeare.
    *
@@ -76,7 +68,7 @@ public class DictionaryMethodTest {
       test(log, () -> Shakespeare.load().limit(modelCount + testCount), modelCount);
     }
   }
-  
+
   /**
    * Dictionaries wiki.
    *
@@ -92,7 +84,7 @@ public class DictionaryMethodTest {
       test(log, () -> WikiArticle.ENGLISH.stream().limit(modelCount + testCount), modelCount);
     }
   }
-  
+
   private void test(NotebookOutput log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
@@ -107,14 +99,14 @@ public class DictionaryMethodTest {
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toCSV(true));
   }
-  
+
   private void addWordCountCompressor(NotebookOutput log, Map<CharSequence, Compressor> compressors, List<? extends TestDocument> content) {
     Map<CharSequence, Long> wordCounts = content.stream().flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
-      .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+        .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     CharSequence dictionary = wordCounts.entrySet().stream()
-      .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
-        .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-      .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, 8 * 1024);
+        .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
+            .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
+        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, 8 * 1024);
     CharSequence key = "LZ8k_commonWords";
     int dictSampleSize = 512;
     log.p("Common Words Dictionary %s: %s...\n", key, dictionary.length() > dictSampleSize ? (dictionary.subSequence(0, dictSampleSize) + "...") : dictionary);
@@ -123,14 +115,14 @@ public class DictionaryMethodTest {
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text, dictionary.toString());
       }
-      
+
       @Override
       public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, dictionary);
       }
     });
   }
-  
+
   private void addCompressors(NotebookOutput log, Map<CharSequence, Compressor> compressors, CharTrieIndex baseTree, final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
@@ -138,12 +130,12 @@ public class DictionaryMethodTest {
     int dictSampleSize = 512;
     log.p("Adding Compressor %s: %s...\n", keyDictionary, genDictionary.length() > dictSampleSize ? (genDictionary.substring(0, dictSampleSize) + "...") : genDictionary);
     compressors.put(keyDictionary, new Compressor() {
-      
+
       @Override
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text, genDictionary);
       }
-      
+
       @Override
       public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, genDictionary);
@@ -153,18 +145,18 @@ public class DictionaryMethodTest {
     CharSequence keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead, model_minPathWeight);
     log.p("Adding Compressor %s: %s...\n", keyMarkov, genMarkov.length() > dictSampleSize ? (genMarkov.substring(0, dictSampleSize) + "...") : genMarkov);
     compressors.put(keyMarkov, new Compressor() {
-      
+
       @Override
       public byte[] compress(String text) {
         return CompressionUtil.encodeLZ(text, genMarkov);
       }
-      
+
       @Override
       public CharSequence uncompress(byte[] data) {
         return CompressionUtil.decodeLZToString(data, genMarkov);
       }
     });
   }
-  
-  
+
+
 }

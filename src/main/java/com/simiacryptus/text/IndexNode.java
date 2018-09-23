@@ -21,11 +21,7 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.util.data.SerialArrayList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,7 +32,7 @@ import java.util.stream.Stream;
  * The type Index node.
  */
 public class IndexNode extends TrieNode {
-  
+
   /**
    * Instantiates a new Index node.
    *
@@ -48,7 +44,7 @@ public class IndexNode extends TrieNode {
   public IndexNode(CharTrie trie, short depth, int index, TrieNode parent) {
     super(trie, index, parent);
   }
-  
+
   /**
    * Instantiates a new Index node.
    *
@@ -58,7 +54,7 @@ public class IndexNode extends TrieNode {
   public IndexNode(CharTrie trie, int index) {
     super(trie, index);
   }
-  
+
   /**
    * Gets cursors by document.
    *
@@ -67,7 +63,7 @@ public class IndexNode extends TrieNode {
   public Map<CharSequence, List<Cursor>> getCursorsByDocument() {
     return this.getCursors().collect(Collectors.groupingBy((Cursor x) -> x.getDocument()));
   }
-  
+
   /**
    * Gets cursors.
    *
@@ -78,7 +74,7 @@ public class IndexNode extends TrieNode {
       return new Cursor((CharTrieIndex) this.trie, ((CharTrieIndex) this.trie).cursors.get((int) (i + getData().firstCursorIndex)), getDepth());
     });
   }
-  
+
   /**
    * Split trie node.
    *
@@ -87,10 +83,10 @@ public class IndexNode extends TrieNode {
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
       TreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new TreeMap<>(getCursors().parallel()
-        .collect(Collectors.groupingBy(y -> y.next().getToken(),
-          Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
-            cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
-            (left, right) -> left.add(right)))));
+          .collect(Collectors.groupingBy(y -> y.next().getToken(),
+              Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
+                  cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
+                  (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
       //System.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
       ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
@@ -105,31 +101,30 @@ public class IndexNode extends TrieNode {
       trie.ensureParentIndexCapacity(firstChildIndex, size, index);
       this.trie.nodes.update(index, data -> {
         return data
-          .setFirstChildIndex(firstChildIndex)
-          .setNumberOfChildren(size);
+            .setFirstChildIndex(firstChildIndex)
+            .setNumberOfChildren(size);
       });
       return new IndexNode(this.trie, getDepth(), index, getParent());
-    }
-    else {
+    } else {
       return this;
     }
   }
-  
+
   @Override
   protected TrieNode newNode(int index) {
     return new IndexNode(trie, index);
   }
-  
+
   @Override
   public IndexNode godparent() {
     return (IndexNode) super.godparent();
   }
-  
+
   @Override
   public IndexNode refresh() {
     return (IndexNode) super.refresh();
   }
-  
+
   /**
    * Visit first index index node.
    *
@@ -142,7 +137,7 @@ public class IndexNode extends TrieNode {
     refresh.getChildren().forEach(n -> n.visitFirstIndex(visitor));
     return refresh;
   }
-  
+
   /**
    * Visit last index index node.
    *
@@ -154,18 +149,17 @@ public class IndexNode extends TrieNode {
     visitor.accept(this);
     return refresh();
   }
-  
+
   @Override
   public Stream<? extends IndexNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
       return IntStream.range(0, getData().numberOfChildren)
-        .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
-    }
-    else {
+          .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
+    } else {
       return Stream.empty();
     }
   }
-  
+
   @Override
   public Optional<? extends IndexNode> getChild(char token) {
     NodeData data = getData();
@@ -179,24 +173,22 @@ public class IndexNode extends TrieNode {
       if (c < token) {
         // node.getChar() < token
         min = i + 1;
-      }
-      else if (c > token) {
+      } else if (c > token) {
         // node.getChar() > token
         max = i - 1;
-      }
-      else {
+      } else {
         return Optional.of(node);
       }
     }
     //assert !getChildren().keywords(x -> x.getChar() == token).findFirst().isPresent();
     return Optional.empty();
   }
-  
+
   @Override
   public IndexNode traverse(String str) {
     return (IndexNode) super.traverse(str);
   }
-  
+
   @Override
   public IndexNode traverse(long cursorId) {
     return (IndexNode) super.traverse(cursorId);

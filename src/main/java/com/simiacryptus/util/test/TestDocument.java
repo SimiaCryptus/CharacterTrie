@@ -25,10 +25,10 @@ import com.simiacryptus.text.CompressionUtil;
  * The type Test document.
  */
 public class TestDocument {
-  
+
   private final CharSequence title;
   private final byte[] text;
-  
+
   /**
    * Instantiates a new Test document.
    *
@@ -39,7 +39,7 @@ public class TestDocument {
     this.title = title;
     this.text = CompressionUtil.encodeLZ(text);
   }
-  
+
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer(getClass().getSimpleName() + "{");
@@ -47,7 +47,7 @@ public class TestDocument {
     sb.append('}');
     return sb.toString();
   }
-  
+
   /**
    * Gets text.
    *
@@ -56,7 +56,7 @@ public class TestDocument {
   public String getText() {
     return CompressionUtil.decodeLZToString(text);
   }
-  
+
   /**
    * Gets title.
    *

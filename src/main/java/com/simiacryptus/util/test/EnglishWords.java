@@ -26,14 +26,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -52,7 +45,7 @@ public class EnglishWords extends TestDocument {
    */
   public static String file = "20k.txt";
   private static volatile Thread thread;
-  
+
   /**
    * Instantiates a new English words.
    *
@@ -61,7 +54,7 @@ public class EnglishWords extends TestDocument {
   public EnglishWords(CharSequence text) {
     super(text, text);
   }
-  
+
   /**
    * Clear.
    *
@@ -79,7 +72,7 @@ public class EnglishWords extends TestDocument {
       }
     }
   }
-  
+
   /**
    * Load stream.
    *
@@ -98,7 +91,7 @@ public class EnglishWords extends TestDocument {
     Iterator<EnglishWords> iterator = new AsyncListIterator<>(queue, thread);
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
   }
-  
+
   private static void read() {
     try {
       InputStream in = Util.cacheLocal(file, new URI(url));

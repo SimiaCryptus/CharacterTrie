@@ -20,13 +20,7 @@
 package com.simiacryptus.text;
 
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,14 +29,14 @@ import java.util.stream.Stream;
  * The type Classification tree.
  */
 public class ClassificationTree {
-  
+
   private final double minLeafWeight = 10;
   private final int maxLevels = 8;
   private final int minWeight = 5;
   private final double depthBias = 0.0005;
   private final int smoothing = 3;
   private PrintStream verbose = null;
-  
+
   /**
    * Categorization tree function.
    *
@@ -53,15 +47,14 @@ public class ClassificationTree {
   public Function<CharSequence, Map<CharSequence, Double>> categorizationTree(Map<CharSequence, List<CharSequence>> categories, int depth) {
     return categorizationTree(categories, depth, "");
   }
-  
+
   private Function<CharSequence, Map<CharSequence, Double>> categorizationTree(Map<CharSequence, List<CharSequence>> categories, int depth, CharSequence indent) {
     if (0 == depth) {
       return str -> {
         int sum = categories.values().stream().mapToInt(x -> x.size()).sum();
         return categories.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size() * 1.0 / sum));
       };
-    }
-    else {
+    } else {
       if (1 >= categories.values().stream().filter(x -> !x.isEmpty()).count()) {
         return categorizationTree(categories, 0, indent);
       }
@@ -69,11 +62,11 @@ public class ClassificationTree {
       if (!info.isPresent()) return categorizationTree(categories, 0, indent);
       CharSequence split = info.get().node.getString();
       Map<CharSequence, List<CharSequence>> lSet = categories.entrySet().stream().collect(
-        Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> str.toString().contains(split))
-          .collect(Collectors.toList())));
+          Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> str.toString().contains(split))
+              .collect(Collectors.toList())));
       Map<CharSequence, List<CharSequence>> rSet = categories.entrySet().stream().collect(
-        Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> !str.toString().contains(split))
-          .collect(Collectors.toList())));
+          Collectors.toMap(e -> e.getKey(), e -> e.getValue().stream().filter(str -> !str.toString().contains(split))
+              .collect(Collectors.toList())));
       int lSum = lSet.values().stream().mapToInt(x -> x.size()).sum();
       int rSum = rSet.values().stream().mapToInt(x -> x.size()).sum();
       if (0 == lSum || 0 == rSum) {
@@ -81,23 +74,22 @@ public class ClassificationTree {
       }
       if (null != verbose) {
         verbose.println(String.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%5f", split,
-          lSet.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
-          rSet.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
-          info.get().entropy));
+            lSet.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
+            rSet.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
+            info.get().entropy));
       }
       Function<CharSequence, Map<CharSequence, Double>> l = categorizationTree(lSet, depth - 1, indent + "  ");
       Function<CharSequence, Map<CharSequence, Double>> r = categorizationTree(rSet, depth - 1, indent + "  ");
       return str -> {
         if (str.toString().contains(split)) {
           return l.apply(str);
-        }
-        else {
+        } else {
           return r.apply(str);
         }
       };
     }
   }
-  
+
   private double entropy(Map<Integer, Long> sum, Map<Integer, Long> left) {
     double sumSum = sum.values().stream().mapToDouble(x -> x).sum();
     double leftSum = left.values().stream().mapToDouble(x -> x).sum();
@@ -109,12 +101,12 @@ public class ClassificationTree {
       Long leftCnt = left.getOrDefault(category, 0l);
       return leftCnt * Math.log((leftCnt + smoothing) * 1.0 / (leftSum + smoothing * sum.size()));
     }).sum() +
-      sum.keySet().stream().mapToDouble(category -> {
-        Long rightCnt = sum.getOrDefault(category, 0l) - left.getOrDefault(category, 0l);
-        return rightCnt * Math.log((rightCnt + smoothing) * 1.0 / (rightSum + smoothing * sum.size()));
-      }).sum()) / (sumSum * Math.log(2));
+        sum.keySet().stream().mapToDouble(category -> {
+          Long rightCnt = sum.getOrDefault(category, 0l) - left.getOrDefault(category, 0l);
+          return rightCnt * Math.log((rightCnt + smoothing) * 1.0 / (rightSum + smoothing * sum.size()));
+        }).sum()) / (sumSum * Math.log(2));
   }
-  
+
   private Optional<NodeInfo> categorizationSubstring(Collection<List<CharSequence>> categories) {
     CharTrieIndex trie = new CharTrieIndex();
     Map<Integer, Integer> categoryMap = new TreeMap<>();
@@ -131,7 +123,7 @@ public class ClassificationTree {
     sum = summarize(trie.root(), categoryMap);
     return categorizationSubstring(trie.root(), categoryMap, sum);
   }
-  
+
   /**
    * Gets verbose.
    *
@@ -140,7 +132,7 @@ public class ClassificationTree {
   public PrintStream getVerbose() {
     return verbose;
   }
-  
+
   /**
    * Sets verbose.
    *
@@ -151,30 +143,30 @@ public class ClassificationTree {
     this.verbose = verbose;
     return this;
   }
-  
+
   private NodeInfo info(IndexNode node, Map<Integer, Long> sum, Map<Integer, Integer> categoryMap) {
     Map<Integer, Long> summary = summarize(node, categoryMap);
     return new NodeInfo(node, summary, entropy(sum, summary));
   }
-  
+
   private Map<Integer, Long> summarize(IndexNode node, Map<Integer, Integer> categoryMap) {
     return node.getCursors().map(x -> x.getDocumentId())
-      .distinct()
-      .map(x -> categoryMap.get(x))
-      .collect(Collectors.toList()).stream()
-      .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+        .distinct()
+        .map(x -> categoryMap.get(x))
+        .collect(Collectors.toList()).stream()
+        .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
   }
-  
+
   private Optional<NodeInfo> categorizationSubstring(IndexNode node, Map<Integer, Integer> categoryMap, Map<Integer, Long> sum) {
     List<NodeInfo> childrenInfo = node.getChildren().map(n -> categorizationSubstring(n, categoryMap, sum))
-      .filter(x -> x.isPresent()).map(x -> x.get()).collect(Collectors.toList());
+        .filter(x -> x.isPresent()).map(x -> x.get()).collect(Collectors.toList());
     NodeInfo info = info(node, sum, categoryMap);
     if (info.node.getString().isEmpty() || !Double.isFinite(info.entropy)) info = null;
     Optional<NodeInfo> max = Stream.concat(null == info ? Stream.empty() : Stream.of(info), childrenInfo.stream())
-      .max(Comparator.comparing(x -> x.entropy));
+        .max(Comparator.comparing(x -> x.entropy));
     return max;
   }
-  
+
   private class NodeInfo {
     /**
      * The Node.
@@ -188,7 +180,7 @@ public class ClassificationTree {
      * The Entropy.
      */
     double entropy;
-  
+
     /**
      * Instantiates a new Node info.
      *
@@ -202,5 +194,5 @@ public class ClassificationTree {
       this.entropy = entropy + depthBias * node.getDepth();
     }
   }
-  
+
 }
