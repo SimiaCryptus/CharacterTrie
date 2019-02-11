@@ -29,11 +29,10 @@
     </parent>
 
     <artifactId>char-trie</artifactId>
-    <description>Optimized Character Trie implemented in Java 8</description>
+    <description>Optimized Character Trie Implemented in Java 8</description>
 
     <properties>
-        <github.project>utilities</github.project>
-        <github.path>java-util/</github.path>
+        <github.project>char-trie</github.project>
     </properties>
     <distributionManagement>
         <site>
