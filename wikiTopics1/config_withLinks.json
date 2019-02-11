@@ -1,0 +1,14 @@
+{
+  "embeddings": [
+    {
+      "tensorName": "wikiTopics1",
+      "tensorShape": [
+        556,
+        20
+      ],
+      "tensorPath": "https://simiacryptus.github.io/utilities/java-util/wikiTopics1/tensors.tsv",
+      "metadataPath": "https://simiacryptus.github.io/utilities/java-util/wikiTopics1/metadata.tsv",
+      "bookmarksPath": "https://simiacryptus.github.io/utilities/java-util/wikiTopics1/bookmarks.txt"
+    }
+  ]
+}
