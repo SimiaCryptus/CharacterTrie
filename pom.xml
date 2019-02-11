@@ -33,6 +33,7 @@
 
     <properties>
         <github.project>char-trie</github.project>
+        <github.path></github.path>
     </properties>
     <distributionManagement>
         <site>
