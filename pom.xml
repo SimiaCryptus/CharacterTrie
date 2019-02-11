@@ -30,9 +30,10 @@
 
     <artifactId>char-trie</artifactId>
     <description>Optimized Character Trie Implemented in Java 8</description>
+    <url>https://simiacryptus.github.io/${github.project}/${github.path}</url>
 
     <properties>
-        <github.project>char-trie</github.project>
+        <github.project>CharacterTrie</github.project>
         <github.path></github.path>
     </properties>
     <distributionManagement>
