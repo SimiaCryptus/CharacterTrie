@@ -36,41 +36,18 @@ import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- * The type Tweet sentiment.
- */
 public class TweetSentiment extends TestDocument {
   private static final ArrayList<TweetSentiment> queue = new ArrayList<>();
-  /**
-   * The constant url.
-   */
   public static String url = "http://thinknook.com/wp-content/uploads/2012/09/Sentiment-Analysis-Dataset.zip";
-  /**
-   * The constant file.
-   */
   public static String file = "Sentiment-Analysis-Dataset.zip";
   private static volatile Thread thread;
-  /**
-   * The Category.
-   */
   public final int category;
 
-  /**
-   * Instantiates a new Tweet sentiment.
-   *
-   * @param text     the text
-   * @param category the category
-   */
   public TweetSentiment(String text, int category) {
     super(text, text);
     this.category = category;
   }
 
-  /**
-   * Clear.
-   *
-   * @throws InterruptedException the interrupted exception
-   */
   public static void clear() throws InterruptedException {
     if (thread != null) {
       synchronized (WikiArticle.class) {
@@ -84,11 +61,6 @@ public class TweetSentiment extends TestDocument {
     }
   }
 
-  /**
-   * Load stream.
-   *
-   * @return the stream
-   */
   public static Stream<TweetSentiment> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {

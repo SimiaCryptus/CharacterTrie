@@ -33,35 +33,16 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/**
- * The type Shakespeare.
- */
 public class Shakespeare extends TestDocument {
   private static final ArrayList<Shakespeare> queue = new ArrayList<>();
-  /**
-   * The constant url.
-   */
   public static String url = "http://www.gutenberg.org/cacheLocal/epub/100/pg100.txt";
-  /**
-   * The constant file.
-   */
   public static String file = "Shakespeare.txt";
   private static volatile Thread thread;
 
-  /**
-   * Instantiates a new Shakespeare.
-   *
-   * @param text the text
-   */
   public Shakespeare(String text) {
     super(text, text);
   }
 
-  /**
-   * Clear.
-   *
-   * @throws InterruptedException the interrupted exception
-   */
   public static void clear() throws InterruptedException {
     if (thread != null) {
       synchronized (WikiArticle.class) {
@@ -75,11 +56,6 @@ public class Shakespeare extends TestDocument {
     }
   }
 
-  /**
-   * Load stream.
-   *
-   * @return the stream
-   */
   public static Stream<Shakespeare> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {

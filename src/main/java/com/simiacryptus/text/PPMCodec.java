@@ -29,36 +29,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
-/**
- * The type Ppm codec.
- */
 public class PPMCodec {
-  /**
-   * The constant ESCAPE.
-   */
   public static final Character ESCAPE = '\uFFFE';
-  /**
-   * The constant FALLBACK.
-   */
   public static final char FALLBACK = Character.MAX_VALUE;
-  /**
-   * The constant END_OF_STRING.
-   */
   public static final char END_OF_STRING = Character.MIN_VALUE;
-  /**
-   * The Inner.
-   */
   final CharTrie inner;
-  /**
-   * The Verbose.
-   */
   public boolean verbose = false;
 
-  /**
-   * Instantiates a new Ppm codec.
-   *
-   * @param inner the inner
-   */
   PPMCodec(CharTrie inner) {
     super();
     this.inner = inner;
@@ -71,13 +48,6 @@ public class PPMCodec {
     return right;
   }
 
-  /**
-   * Decode ppm string.
-   *
-   * @param data    the data
-   * @param context the context
-   * @return the string
-   */
   public CharSequence decodePPM(byte[] data, int context) {
     try {
       BitInputStream in = new BitInputStream(new ByteArrayInputStream(data));
@@ -139,13 +109,6 @@ public class PPMCodec {
     }
   }
 
-  /**
-   * Encode ppm bits.
-   *
-   * @param text    the text
-   * @param context the context
-   * @return the bits
-   */
   public Bits encodePPM(String text, int context) {
     final CharSequence original = text;
     //if(verbose) System.p.println(String.format("Encoding %s apply %s chars of context", text, context));
@@ -209,20 +172,10 @@ public class PPMCodec {
     }
   }
 
-  /**
-   * Gets memory size.
-   *
-   * @return the memory size
-   */
   public int getMemorySize() {
     return inner.getMemorySize();
   }
 
-  /**
-   * Copy ppm codec.
-   *
-   * @return the ppm codec
-   */
   public PPMCodec copy() {
     return new PPMCodec(inner.copy());
   }

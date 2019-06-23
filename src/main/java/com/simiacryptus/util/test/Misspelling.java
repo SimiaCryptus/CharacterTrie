@@ -29,30 +29,15 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/**
- * The type Misspelling.
- */
 public class Misspelling extends TestDocument {
 
-  /**
-   * The constant BIRKBECK.
-   */
   public static Loader BIRKBECK = new Loader(URI.create(
       "http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
 
-  /**
-   * Instantiates a new Misspelling.
-   *
-   * @param correct     the correct
-   * @param misspelling the misspelling
-   */
   public Misspelling(String correct, CharSequence misspelling) {
     super(correct, misspelling);
   }
 
-  /**
-   * The type Loader.
-   */
   public static class Loader {
     private final String url;
     private final String file;
@@ -60,12 +45,6 @@ public class Misspelling extends TestDocument {
     private final List<Misspelling> queue = Collections.synchronizedList(new ArrayList<>());
     private volatile Thread thread;
 
-    /**
-     * Instantiates a new Loader.
-     *
-     * @param uri          the uri
-     * @param articleLimit the article limit
-     */
     public Loader(URI uri, int articleLimit) {
       url = uri.toString();
       this.articleLimit = articleLimit;
@@ -74,11 +53,6 @@ public class Misspelling extends TestDocument {
       file = split[split.length - 1];
     }
 
-    /**
-     * Clear.
-     *
-     * @throws InterruptedException the interrupted exception
-     */
     public void clear() throws InterruptedException {
       if (thread != null) {
         synchronized (Misspelling.class) {
@@ -92,11 +66,6 @@ public class Misspelling extends TestDocument {
       }
     }
 
-    /**
-     * Load stream.
-     *
-     * @return the stream
-     */
     public Stream<Misspelling> load() {
       if (thread == null) {
         synchronized (Misspelling.class) {

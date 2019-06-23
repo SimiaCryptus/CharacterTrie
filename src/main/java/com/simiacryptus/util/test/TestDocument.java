@@ -21,20 +21,11 @@ package com.simiacryptus.util.test;
 
 import com.simiacryptus.text.CompressionUtil;
 
-/**
- * The type Test document.
- */
 public class TestDocument {
 
   private final CharSequence title;
   private final byte[] text;
 
-  /**
-   * Instantiates a new Test document.
-   *
-   * @param title the title
-   * @param text  the text
-   */
   public TestDocument(CharSequence title, CharSequence text) {
     this.title = title;
     this.text = CompressionUtil.encodeLZ(text);
@@ -48,20 +39,10 @@ public class TestDocument {
     return sb.toString();
   }
 
-  /**
-   * Gets text.
-   *
-   * @return the text
-   */
   public String getText() {
     return CompressionUtil.decodeLZToString(text);
   }
 
-  /**
-   * Gets title.
-   *
-   * @return the title
-   */
   public CharSequence getTitle() {
     return title;
   }

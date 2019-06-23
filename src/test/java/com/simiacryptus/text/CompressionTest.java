@@ -32,20 +32,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-/**
- * The type Compression test.
- */
 public class CompressionTest {
 
-  /**
-   * Add shared dictionary compressors.
-   *
-   * @param compressors          the compressors
-   * @param baseTree             the base tree
-   * @param dictionary_lookahead the dictionary lookahead
-   * @param dictionary_context   the dictionary context
-   * @param model_minPathWeight  the model min path weight
-   */
   static void addSharedDictionaryCompressors(
       Map<CharSequence, Compressor> compressors, final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
@@ -78,11 +66,6 @@ public class CompressionTest {
     });
   }
 
-  /**
-   * Test ppm compression basic.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPPMCompression_Basic() {
@@ -97,11 +80,6 @@ public class CompressionTest {
     org.junit.Assert.assertEquals(txt, decoded);
   }
 
-  /**
-   * Test ppm compression tweets.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void testPPMCompression_Tweets() {
@@ -141,11 +119,6 @@ public class CompressionTest {
     });
   }
 
-  /**
-   * Calc tweet compression.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.Report.class)
   public void calcTweetCompression() throws Exception {
@@ -166,11 +139,6 @@ public class CompressionTest {
     }
   }
 
-  /**
-   * Calc term compression.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.Report.class)
   public void calcTermCompression() throws Exception {
@@ -190,11 +158,6 @@ public class CompressionTest {
     log.close();
   }
 
-  /**
-   * Calc wiki compression.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.Report.class)
   public void calcWikiCompression() throws Exception {
@@ -215,18 +178,6 @@ public class CompressionTest {
     log.close();
   }
 
-  /**
-   * Build compressors apply.
-   *
-   * @param source               the source
-   * @param ppmModelDepth        the ppm model depth
-   * @param model_minPathWeight  the model min path weight
-   * @param dictionary_lookahead the dictionary lookahead
-   * @param dictionary_context   the dictionary context
-   * @param encodingContext      the encoding context
-   * @param modelCount           the model count
-   * @return the apply
-   */
   protected Map<CharSequence, Compressor> buildCompressors(Supplier<Stream<? extends TestDocument>> source, int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context, final int encodingContext, int modelCount) {
     Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
     Compressor.addGenericCompressors(compressors);

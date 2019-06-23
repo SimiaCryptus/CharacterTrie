@@ -31,35 +31,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/**
- * The type English words.
- */
 public class EnglishWords extends TestDocument {
   private static final ArrayList<EnglishWords> queue = new ArrayList<>();
-  /**
-   * The constant url.
-   */
   public static String url = "https://raw.githubusercontent.com/first20hours/google-10000-english/master/20k.txt";
-  /**
-   * The constant file.
-   */
   public static String file = "20k.txt";
   private static volatile Thread thread;
 
-  /**
-   * Instantiates a new English words.
-   *
-   * @param text the text
-   */
   public EnglishWords(CharSequence text) {
     super(text, text);
   }
 
-  /**
-   * Clear.
-   *
-   * @throws InterruptedException the interrupted exception
-   */
   public static void clear() throws InterruptedException {
     if (thread != null) {
       synchronized (WikiArticle.class) {
@@ -73,11 +54,6 @@ public class EnglishWords extends TestDocument {
     }
   }
 
-  /**
-   * Load stream.
-   *
-   * @return the stream
-   */
   public static Stream<EnglishWords> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {

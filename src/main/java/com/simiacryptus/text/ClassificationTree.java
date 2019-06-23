@@ -25,9 +25,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * The type Classification tree.
- */
 public class ClassificationTree {
 
   private final double minLeafWeight = 10;
@@ -37,13 +34,6 @@ public class ClassificationTree {
   private final int smoothing = 3;
   private PrintStream verbose = null;
 
-  /**
-   * Categorization tree function.
-   *
-   * @param categories the categories
-   * @param depth      the depth
-   * @return the function
-   */
   public Function<CharSequence, Map<CharSequence, Double>> categorizationTree(Map<CharSequence, List<CharSequence>> categories, int depth) {
     return categorizationTree(categories, depth, "");
   }
@@ -124,21 +114,10 @@ public class ClassificationTree {
     return categorizationSubstring(trie.root(), categoryMap, sum);
   }
 
-  /**
-   * Gets verbose.
-   *
-   * @return the verbose
-   */
   public PrintStream getVerbose() {
     return verbose;
   }
 
-  /**
-   * Sets verbose.
-   *
-   * @param verbose the verbose
-   * @return the verbose
-   */
   public ClassificationTree setVerbose(PrintStream verbose) {
     this.verbose = verbose;
     return this;
@@ -168,26 +147,10 @@ public class ClassificationTree {
   }
 
   private class NodeInfo {
-    /**
-     * The Node.
-     */
     IndexNode node;
-    /**
-     * The Category weights.
-     */
     Map<Integer, Long> categoryWeights;
-    /**
-     * The Entropy.
-     */
     double entropy;
 
-    /**
-     * Instantiates a new Node info.
-     *
-     * @param node            the node
-     * @param categoryWeights the category weights
-     * @param entropy         the entropy
-     */
     public NodeInfo(IndexNode node, Map<Integer, Long> categoryWeights, double entropy) {
       this.node = node;
       this.categoryWeights = categoryWeights;

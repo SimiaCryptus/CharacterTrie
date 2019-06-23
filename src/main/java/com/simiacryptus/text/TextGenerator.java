@@ -26,30 +26,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * The type Text generator.
- */
 public class TextGenerator {
 
   private final CharTrie inner;
 
-  /**
-   * Instantiates a new Text generator.
-   *
-   * @param inner the inner
-   */
   TextGenerator(CharTrie inner) {
     this.inner = inner;
   }
 
-  /**
-   * Generate markov string.
-   *
-   * @param length  the length
-   * @param context the context
-   * @param seed    the seed
-   * @return the string
-   */
   public String generateMarkov(int length, int context, String seed) {
     String str = seed;
     while (str.length() < length) {
@@ -78,31 +62,10 @@ public class TextGenerator {
     return str;
   }
 
-  /**
-   * Generate dictionary string.
-   *
-   * @param length      the length
-   * @param context     the context
-   * @param seed        the seed
-   * @param lookahead   the lookahead
-   * @param destructive the destructive
-   * @return the string
-   */
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive) {
     return generateDictionary(length, context, seed, lookahead, destructive, false);
   }
 
-  /**
-   * Generate dictionary string.
-   *
-   * @param length          the length
-   * @param context         the context
-   * @param seed            the seed
-   * @param lookahead       the lookahead
-   * @param destructive     the destructive
-   * @param terminateAtNull the terminate at null
-   * @return the string
-   */
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive, boolean terminateAtNull) {
     String str = seed;
     String prefix = "";

@@ -32,19 +32,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * The interface Compressor.
- */
 public interface Compressor {
-  /**
-   * Eval compressor table output.
-   *
-   * @param <T>         the type parameter
-   * @param data        the data
-   * @param compressors the compressors
-   * @param wide        the wide
-   * @return the table output
-   */
   static <T> TableOutput evalCompressor(Stream<? extends TestDocument> data, Map<CharSequence, Compressor> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
@@ -86,15 +74,6 @@ public interface Compressor {
     return wide ? wideTable : tallTable;
   }
 
-  /**
-   * Eval compressor cluster table output.
-   *
-   * @param <T>         the type parameter
-   * @param data        the data
-   * @param compressors the compressors
-   * @param wide        the wide
-   * @return the table output
-   */
   static <T> TableOutput evalCompressorCluster(Stream<? extends TestDocument> data, Map<CharSequence, Compressor> compressors, boolean wide) {
     Stream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet().stream();
     Collector<Map.Entry<CharSequence, Compressor>, ?, Map<CharSequence, Function<TestDocument, Double>>> collector =
@@ -105,15 +84,6 @@ public interface Compressor {
     return evalCluster(data, stream.collect(collector), wide);
   }
 
-  /**
-   * Eval cluster table output.
-   *
-   * @param <T>         the type parameter
-   * @param data        the data
-   * @param compressors the compressors
-   * @param wide        the wide
-   * @return the table output
-   */
   static <T> TableOutput evalCluster(Stream<? extends TestDocument> data, Map<CharSequence, Function<TestDocument, Double>> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
@@ -148,11 +118,6 @@ public interface Compressor {
     return wide ? wideTable : tallTable;
   }
 
-  /**
-   * Add generic compressors.
-   *
-   * @param compressors the compressors
-   */
   static void addGenericCompressors(Map<CharSequence, Compressor> compressors) {
     compressors.put("BZ0", new Compressor() {
       @Override
@@ -178,13 +143,6 @@ public interface Compressor {
     });
   }
 
-  /**
-   * Build ppm compressor compressor.
-   *
-   * @param baseTree        the base tree
-   * @param encodingContext the encoding context
-   * @return the compressor
-   */
   static Compressor buildPPMCompressor(CharTrie baseTree, final int encodingContext) {
     NodewalkerCodec codec = baseTree.getCodec();
     System.out.println(String.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
@@ -201,19 +159,7 @@ public interface Compressor {
     };
   }
 
-  /**
-   * Compress byte [ ].
-   *
-   * @param text the text
-   * @return the byte [ ]
-   */
   byte[] compress(String text);
 
-  /**
-   * Uncompress string.
-   *
-   * @param compress the compress
-   * @return the string
-   */
   CharSequence uncompress(byte[] compress);
 }
