@@ -31,9 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-/**
- * The type Gaussian test.
- */
 public class GaussianTest {
   private long decode(final Gaussian gaussian, final int max,
                       final byte[] serializedData) throws IOException {
@@ -71,11 +68,6 @@ public class GaussianTest {
     return serializedData.length;
   }
 
-  /**
-   * Test binomial random.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testBinomialRandom() throws IOException {
@@ -91,11 +83,6 @@ public class GaussianTest {
     }
   }
 
-  /**
-   * Test binomial scan.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testBinomialScan() throws IOException {
@@ -108,11 +95,6 @@ public class GaussianTest {
     }
   }
 
-  /**
-   * Test hardcoded gaussians.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testHardcodedGaussians() throws IOException {
@@ -135,11 +117,6 @@ public class GaussianTest {
 
   }
 
-  /**
-   * Test zeros.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testZeros() throws IOException {

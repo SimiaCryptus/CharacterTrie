@@ -32,16 +32,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * The type Dictionary method test.
- */
 public class DictionaryMethodTest {
 
-  /**
-   * Dictionaries tweets.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesTweets() throws Exception {
@@ -53,11 +45,6 @@ public class DictionaryMethodTest {
     }
   }
 
-  /**
-   * Dictionaries shakespeare.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesShakespeare() throws Exception {
@@ -69,11 +56,6 @@ public class DictionaryMethodTest {
     }
   }
 
-  /**
-   * Dictionaries wiki.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.Report.class)
   public void dictionariesWiki() throws Exception {

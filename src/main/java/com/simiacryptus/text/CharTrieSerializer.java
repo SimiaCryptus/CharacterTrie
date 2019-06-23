@@ -31,17 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * The type Char trie serializer.
- */
 public class CharTrieSerializer {
 
-  /**
-   * Serialize byte [ ].
-   *
-   * @param charTrie the char trie
-   * @return the byte [ ]
-   */
   public byte[] serialize(CharTrie charTrie) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     try {
@@ -101,12 +92,6 @@ public class CharTrieSerializer {
 
   }
 
-  /**
-   * Deserialize char trie.
-   *
-   * @param bytes the bytes
-   * @return the char trie
-   */
   public CharTrie deserialize(byte[] bytes) {
     CharTrie trie = new CharTrie();
     BitInputStream in = new BitInputStream(new ByteArrayInputStream(bytes));

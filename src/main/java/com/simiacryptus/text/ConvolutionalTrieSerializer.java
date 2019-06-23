@@ -32,18 +32,9 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * The type Convolutional trie serializer.
- */
 public class ConvolutionalTrieSerializer {
   private PrintStream verbose = null;
 
-  /**
-   * Serialize byte [ ].
-   *
-   * @param charTrie the char trie
-   * @return the byte [ ]
-   */
   public byte[] serialize(CharTrie charTrie) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     try {
@@ -133,12 +124,6 @@ public class ConvolutionalTrieSerializer {
 
   }
 
-  /**
-   * Deserialize char trie.
-   *
-   * @param bytes the bytes
-   * @return the char trie
-   */
   public CharTrie deserialize(byte[] bytes) {
     CharTrie trie = new CharTrie();
     BitInputStream in = new BitInputStream(new ByteArrayInputStream(bytes));
@@ -219,36 +204,16 @@ public class ConvolutionalTrieSerializer {
     return nodesRead.get();
   }
 
-  /**
-   * Gets upper bound.
-   *
-   * @param currentParent      the current parent
-   * @param currentChildren    the current children
-   * @param godchildNode       the godchild node
-   * @param godchildAdjustment the godchild adjustment
-   * @return the upper bound
-   */
   protected long getUpperBound(TrieNode currentParent, AtomicLong currentChildren, TrieNode godchildNode, int godchildAdjustment) {
     return Math.min(
         currentParent.getCursorCount() - currentChildren.get(),
         godchildNode.getCursorCount() - godchildAdjustment);
   }
 
-  /**
-   * Gets verbose.
-   *
-   * @return the verbose
-   */
   public PrintStream getVerbose() {
     return verbose;
   }
 
-  /**
-   * Sets verbose.
-   *
-   * @param verbose the verbose
-   * @return the verbose
-   */
   public ConvolutionalTrieSerializer setVerbose(PrintStream verbose) {
     this.verbose = verbose;
     return this;

@@ -38,25 +38,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * The type Trie test.
- */
 public class TrieTest {
-  /**
-   * The constant outPath.
-   */
   public static final File outPath = new File("src/site/resources/");
-  /**
-   * The constant outBaseUrl.
-   */
   public static final URL outBaseUrl = getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
-  /**
-   * Gets url.
-   *
-   * @param url the url
-   * @return the url
-   */
   public static URL getUrl(String url) {
     try {
       return new URL(url);
@@ -90,11 +75,6 @@ public class TrieTest {
     return map;
   }
 
-  /**
-   * Test functionality.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testFunctionality() {
@@ -118,11 +98,6 @@ public class TrieTest {
     Assert.assertEquals(1, tree.traverse("a quick").getCursorCount());
   }
 
-  /**
-   * Test performance.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPerformance() {
@@ -134,11 +109,6 @@ public class TrieTest {
     System.out.println(String.format("tree.truncate.getMemorySize = %s", tree.truncate().getMemorySize()));
   }
 
-  /**
-   * Test performance matrix.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPerformanceMatrix() {
@@ -153,11 +123,6 @@ public class TrieTest {
 
   }
 
-  /**
-   * Test dictionary generation meta parameters.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -291,11 +256,6 @@ public class TrieTest {
     output = new TableOutput();
   }
 
-  /**
-   * Test model metric.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -348,11 +308,6 @@ public class TrieTest {
 
   }
 
-  /**
-   * Calc wiki coords.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -416,11 +371,6 @@ public class TrieTest {
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
 
-  /**
-   * Calc tweet vectors.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -480,11 +430,6 @@ public class TrieTest {
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
 
-  /**
-   * Test tweet generation.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -526,11 +471,6 @@ public class TrieTest {
     System.out.println(output.toCSV(true));
   }
 
-  /**
-   * Calc sentence coords.
-   *
-   * @throws IOException the io exception
-   */
   @Test
   @Ignore
   public void calcSentenceCoords() throws IOException {

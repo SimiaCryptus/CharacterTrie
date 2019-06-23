@@ -19,47 +19,20 @@
 
 package com.simiacryptus.text;
 
-/**
- * The type Cursor data.
- */
 class CursorData {
-  /**
-   * The Document id.
-   */
   int documentId;
-  /**
-   * The Position.
-   */
   int position;
 
-  /**
-   * Instantiates a new Cursor data.
-   *
-   * @param documentId the document id
-   * @param position   the position
-   */
   public CursorData(int documentId, int position) {
     this.documentId = documentId;
     this.position = position;
   }
 
-  /**
-   * Sets document id.
-   *
-   * @param documentId the document id
-   * @return the document id
-   */
   public CursorData setDocumentId(int documentId) {
     this.documentId = documentId;
     return this;
   }
 
-  /**
-   * Sets position.
-   *
-   * @param position the position
-   * @return the position
-   */
   public CursorData setPosition(int position) {
     this.position = position;
     return this;

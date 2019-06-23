@@ -28,18 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * The type Char trie index.
- */
 public class CharTrieIndex extends CharTrie {
 
-  /**
-   * The Cursors.
-   */
   protected final SerialArrayList<CursorData> cursors;
-  /**
-   * The Documents.
-   */
   protected final ArrayList<CharSequence> documents;
 
   private CharTrieIndex(SerialArrayList<NodeData> nodes, SerialArrayList<CursorData> cursors,
@@ -49,43 +40,19 @@ public class CharTrieIndex extends CharTrie {
     this.documents = documents;
   }
 
-  /**
-   * Instantiates a new Char trie index.
-   *
-   * @param copyFrom the copy from
-   */
   public CharTrieIndex(CharTrieIndex copyFrom) {
     this(copyFrom.nodes.copy(), copyFrom.cursors.copy(), new ArrayList<>(copyFrom.documents));
 
   }
 
-  /**
-   * Instantiates a new Char trie index.
-   */
   public CharTrieIndex() {
     this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(NodewalkerCodec.END_OF_STRING, (short) -1, -1, -1, 0)), new SerialArrayList<>(CursorType.INSTANCE), new ArrayList<>());
   }
 
-  /**
-   * Index words char trie.
-   *
-   * @param documents the documents
-   * @param maxLevels the max levels
-   * @param minWeight the min weight
-   * @return the char trie
-   */
   public static CharTrie indexWords(Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, true);
   }
 
-  /**
-   * Index fulltext char trie.
-   *
-   * @param documents the documents
-   * @param maxLevels the max levels
-   * @param minWeight the min weight
-   * @return the char trie
-   */
   public static CharTrie indexFulltext(Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, false);
   }
@@ -126,42 +93,18 @@ public class CharTrieIndex extends CharTrie {
     return documents.isEmpty() ? super.getIndexedSize() : documents.stream().mapToInt(doc -> doc.length()).sum();
   }
 
-  /**
-   * Removes cursor data, retaining only the tree of tokens and counts. Subsequent calls to methods dealing apply cursors
-   * will fail.
-   *
-   * @return this
-   */
   public CharTrie truncate() {
     return new CharTrie(this);
   }
 
-  /**
-   * Creates the index tree using the accumulated documents
-   *
-   * @return this char trie index
-   */
   public CharTrieIndex index() {
     return index(Integer.MAX_VALUE);
   }
 
-  /**
-   * Creates the index tree using the accumulated documents
-   *
-   * @param maxLevels - Maximum depth of the tree to build
-   * @return this char trie index
-   */
   public CharTrieIndex index(int maxLevels) {
     return index(maxLevels, 0);
   }
 
-  /**
-   * Creates the index tree using the accumulated documents
-   *
-   * @param maxLevels - Maximum depth of the tree to build
-   * @param minWeight - Minimum number of cursors for a node to be index using,                  exclusive bound
-   * @return this char trie index
-   */
   public CharTrieIndex index(int maxLevels, int minWeight) {
 
     AtomicInteger numberSplit = new AtomicInteger(0);
@@ -188,12 +131,6 @@ public class CharTrieIndex extends CharTrie {
     return this;
   }
 
-  /**
-   * Adds a document to be indexed. This can only be performed before splitting.
-   *
-   * @param document the document
-   * @return this int
-   */
   public int addDictionary(CharSequence document) {
     if (root().getNumberOfChildren() >= 0) {
       throw new IllegalStateException("Tree sorting has begun");
@@ -209,12 +146,6 @@ public class CharTrieIndex extends CharTrie {
     return index;
   }
 
-  /**
-   * Adds a document to be indexed. This can only be performed before splitting.
-   *
-   * @param document the document
-   * @return this int
-   */
   public int addDocument(CharSequence document) {
     if (root().getNumberOfChildren() >= 0) {
       throw new IllegalStateException("Tree sorting has begun");
@@ -230,12 +161,6 @@ public class CharTrieIndex extends CharTrie {
     return index;
   }
 
-  /**
-   * Add alphabet char trie.
-   *
-   * @param document the document
-   * @return the char trie
-   */
   public CharTrie addAlphabet(CharSequence document) {
     document.chars().mapToObj(i -> new String(Character.toChars(i))).forEach(s -> addDocument(s));
     return this;

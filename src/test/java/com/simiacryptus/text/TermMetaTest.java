@@ -24,24 +24,10 @@ import com.simiacryptus.util.test.TestDocument;
 
 import java.util.stream.Stream;
 
-/**
- * The type Term meta test.
- */
 public class TermMetaTest {
-  /**
-   * The Test count.
-   */
   int testCount = 1000;
-  /**
-   * The Model count.
-   */
   int modelCount = 15000;
 
-  /**
-   * Source stream.
-   *
-   * @return the stream
-   */
   protected Stream<? extends TestDocument> source() {
     return EnglishWords.load().limit(modelCount + testCount);
   }

@@ -31,79 +31,34 @@ import java.util.stream.StreamSupport;
 
 import static com.simiacryptus.text.NodewalkerCodec.*;
 
-/**
- * A character sequence index using a prefix tree, commonly known as a full-text index or as the data structure behind
- * markov chains. This implementation uses serialized fixed-length ephemeral objects and a raw byte data store,
- * preventing object/reference count overhead.
- */
 public class CharTrie {
-  /**
-   * The Nodes.
-   */
   protected final SerialArrayList<NodeData> nodes;
-  /**
-   * The Parent index.
-   */
   protected int[] parentIndex = null;
-  /**
-   * The Godparent index.
-   */
   protected int[] godparentIndex = null;
 
-  /**
-   * Instantiates a new Char trie.
-   *
-   * @param nodes the nodes
-   */
   public CharTrie(SerialArrayList<NodeData> nodes) {
     super();
     this.nodes = nodes;
   }
 
-  /**
-   * Instantiates a new Char trie.
-   */
   public CharTrie() {
     this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(END_OF_STRING, (short) -1, -1, -1, 0)));
   }
 
-  /**
-   * Instantiates a new Char trie.
-   *
-   * @param charTrie the char trie
-   */
   public CharTrie(CharTrie charTrie) {
     this(charTrie.nodes.copy());
     this.parentIndex = null == charTrie.parentIndex ? null : Arrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
     this.godparentIndex = null == charTrie.godparentIndex ? null : Arrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
   }
 
-  /**
-   * Reducer bi function.
-   *
-   * @param fn the fn
-   * @return the bi function
-   */
   public static BiFunction<CharTrie, CharTrie, CharTrie> reducer(BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     return (left, right) -> left.reduce(right, fn);
   }
 
-  /**
-   * Root trie node.
-   *
-   * @return the trie node
-   */
   public TrieNode root() {
     return new TrieNode(this, 0, null);
   }
 
-  /**
-   * Ensure parent index capacity.
-   *
-   * @param start    the start
-   * @param length   the length
-   * @param parentId the parent id
-   */
   synchronized void ensureParentIndexCapacity(int start, int length, int parentId) {
     int end = start + length;
     if (null == parentIndex) {
@@ -132,11 +87,6 @@ public class CharTrie {
     }
   }
 
-  /**
-   * Reverse char trie.
-   *
-   * @return the char trie
-   */
   public CharTrie reverse() {
     CharTrie result = new CharTrieIndex();
     TreeMap<Character, ? extends TrieNode> childrenMap = root().getChildrenMap();
@@ -158,12 +108,6 @@ public class CharTrie {
     destination.getChildren().forEach(child -> reverseSubtree(childrenMap, child));
   }
 
-  /**
-   * Rewrite char trie.
-   *
-   * @param fn the fn
-   * @return the char trie
-   */
   public CharTrie rewrite(BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
     CharTrie result = new CharTrieIndex();
     rewriteSubtree(root(), result.root(), fn);
@@ -183,44 +127,18 @@ public class CharTrie {
     });
   }
 
-  /**
-   * Add char trie.
-   *
-   * @param z the z
-   * @return the char trie
-   */
   public CharTrie add(CharTrie z) {
     return reduceSimple(z, (left, right) -> (null == left ? 0 : left) + (null == right ? 0 : right));
   }
 
-  /**
-   * Product char trie.
-   *
-   * @param z the z
-   * @return the char trie
-   */
   public CharTrie product(CharTrie z) {
     return reduceSimple(z, (left, right) -> (null == left ? 0 : left) * (null == right ? 0 : right));
   }
 
-  /**
-   * Divide char trie.
-   *
-   * @param z      the z
-   * @param factor the factor
-   * @return the char trie
-   */
   public CharTrie divide(CharTrie z, int factor) {
     return reduceSimple(z, (left, right) -> (null == right ? 0 : ((null == left ? 0 : left) * factor / right)));
   }
 
-  /**
-   * Reduce simple char trie.
-   *
-   * @param z  the z
-   * @param fn the fn
-   * @return the char trie
-   */
   public CharTrie reduceSimple(CharTrie z, BiFunction<Long, Long, Long> fn) {
     return reduce(z, (left, right) -> {
       TreeMap<Character, ? extends TrieNode> leftChildren = null == left ? new TreeMap<>() : left.getChildrenMap();
@@ -239,24 +157,12 @@ public class CharTrie {
     });
   }
 
-  /**
-   * Reduce char trie.
-   *
-   * @param right the right
-   * @param fn    the fn
-   * @return the char trie
-   */
   public CharTrie reduce(CharTrie right, BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     CharTrie result = new CharTrieIndex();
     reduceSubtree(root(), right.root(), result.root(), fn);
     return result.recomputeCursorDetails();
   }
 
-  /**
-   * Recompute cursor details char trie.
-   *
-   * @return the char trie
-   */
   CharTrie recomputeCursorDetails() {
     godparentIndex = new int[getNodeCount()];
     parentIndex = new int[getNodeCount()];
@@ -306,31 +212,14 @@ public class CharTrie {
     });
   }
 
-  /**
-   * Locate a node by finding the maximum prefix match apply the given string
-   *
-   * @param search the search
-   * @return trie node
-   */
   public TrieNode traverse(String search) {
     return root().traverse(search);
   }
 
-  /**
-   * Gets node count.
-   *
-   * @return the node count
-   */
   public int getNodeCount() {
     return nodes.length();
   }
 
-  /**
-   * Match end trie node.
-   *
-   * @param search the search
-   * @return the trie node
-   */
   public TrieNode matchEnd(String search) {
     if (search.isEmpty()) return root();
     int min = 0;
@@ -353,12 +242,6 @@ public class CharTrie {
     return traverse(matched);
   }
 
-  /**
-   * Match predictor trie node.
-   *
-   * @param search the search
-   * @return the trie node
-   */
   public TrieNode matchPredictor(String search) {
     TrieNode cursor = matchEnd(search);
     if (cursor.getNumberOfChildren() > 0) {
@@ -369,65 +252,30 @@ public class CharTrie {
     return matchPredictor(string.substring(1));
   }
 
-  /**
-   * Copy char trie.
-   *
-   * @return the char trie
-   */
   public CharTrie copy() {
     return new CharTrie(this);
   }
 
-  /**
-   * Gets memory size.
-   *
-   * @return the memory size
-   */
   public int getMemorySize() {
     return this.nodes.getMemorySize();
   }
 
-  /**
-   * Gets indexed size.
-   *
-   * @return the indexed size
-   */
   public long getIndexedSize() {
     return this.nodes.get(0).cursorCount;
   }
 
-  /**
-   * Gets codec.
-   *
-   * @return the codec
-   */
   public NodewalkerCodec getCodec() {
     return new NodewalkerCodec(this);
   }
 
-  /**
-   * Gets generator.
-   *
-   * @return the generator
-   */
   public TextGenerator getGenerator() {
     return new TextGenerator(this.truncate().copy());
   }
 
-  /**
-   * Gets analyzer.
-   *
-   * @return the analyzer
-   */
   public TextAnalysis getAnalyzer() {
     return new TextAnalysis(this.truncate().copy());
   }
 
-  /**
-   * Truncate char trie.
-   *
-   * @return the char trie
-   */
   protected CharTrie truncate() {
     return this;
   }
@@ -447,35 +295,16 @@ public class CharTrie {
     return nodes.hashCode();
   }
 
-  /**
-   * Tokens set.
-   *
-   * @return the set
-   */
   public Set<Character> tokens() {
     return root().getChildrenMap().keySet().stream()
         .filter(c -> c != END_OF_STRING && c != FALLBACK && c != ESCAPE)
         .collect(Collectors.toSet());
   }
 
-  /**
-   * Contains boolean.
-   *
-   * @param text the text
-   * @return the boolean
-   */
   public boolean contains(String text) {
     return traverse(text).getString().endsWith(text);
   }
 
-  /**
-   * Max stream.
-   *
-   * @param <T>        the type parameter
-   * @param fn         the fn
-   * @param maxResults the max results
-   * @return the stream
-   */
   public <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn, int maxResults) {
     return max(fn, maxResults, root());
   }

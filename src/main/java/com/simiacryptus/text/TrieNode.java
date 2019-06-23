@@ -32,28 +32,13 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
-/**
- * The type Trie node.
- */
 public class TrieNode {
-  /**
-   * The Trie.
-   */
   protected final CharTrie trie;
-  /**
-   * The Index.
-   */
   protected final int index;
   private transient short depth = -1;
   private transient TrieNode parent = null;
   private transient NodeData data;
 
-  /**
-   * Instantiates a new Trie node.
-   *
-   * @param trie  the trie
-   * @param index the index
-   */
   public TrieNode(CharTrie trie, int index) {
     assert (0 <= index);
     assert (0 == index || trie.parentIndex[index] >= 0);
@@ -61,13 +46,6 @@ public class TrieNode {
     this.index = index;
   }
 
-  /**
-   * Instantiates a new Trie node.
-   *
-   * @param trie   the trie
-   * @param index  the index
-   * @param parent the parent
-   */
   public TrieNode(CharTrie trie, int index, TrieNode parent) {
     assert (0 <= index);
     this.trie = trie;
@@ -76,11 +54,6 @@ public class TrieNode {
     //assert(null == trie.parentIndex || 0 == index || trie.parentIndex[index]>=0);
   }
 
-  /**
-   * Gets data.
-   *
-   * @return the data
-   */
   NodeData getData() {
     if (null == data) {
       synchronized (this) {
@@ -92,11 +65,6 @@ public class TrieNode {
     return data;
   }
 
-  /**
-   * Godparent trie node.
-   *
-   * @return the trie node
-   */
   public TrieNode godparent() {
     if (0 == getDepth()) return null;
     TrieNode root = trie.root();
@@ -127,82 +95,39 @@ public class TrieNode {
     return godparent;
   }
 
-  /**
-   * New node trie node.
-   *
-   * @param index the index
-   * @return the trie node
-   */
   protected TrieNode newNode(int index) {
     return new TrieNode(trie, index);
   }
 
-  /**
-   * Refresh trie node.
-   *
-   * @return the trie node
-   */
   public TrieNode refresh() {
     this.data = null;
     return this;
   }
 
-  /**
-   * Gets string.
-   *
-   * @param root the root
-   * @return the string
-   */
   public String getString(TrieNode root) {
     if (this == root) return "";
     CharSequence parentStr = null == getParent() ? "" : getParent().getString(root);
     return parentStr + getToken();
   }
 
-  /**
-   * Gets raw string.
-   *
-   * @return the raw string
-   */
   public String getRawString() {
     return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
   }
 
-  /**
-   * Gets string.
-   *
-   * @return the string
-   */
   public String getString() {
     return (null == getParent() ? "" : getParent().getString()) + (0 == getDepth() ? "" : getToken());
   }
 
-  /**
-   * Gets debug string.
-   *
-   * @return the debug string
-   */
   public String getDebugString() {
     return getDebugString(getTrie().root());
   }
 
-  /**
-   * Gets debug string.
-   *
-   * @param root the root
-   * @return the debug string
-   */
   public String getDebugString(TrieNode root) {
     if (this == root) return "";
     CharSequence parentStr = null == getParent() ? "" : getParent().getDebugString(root);
     return parentStr.toString() + getDebugToken();
   }
 
-  /**
-   * Gets debug token.
-   *
-   * @return the debug token
-   */
   public CharSequence getDebugToken() {
     char asChar = getChar();
     if (asChar == NodewalkerCodec.FALLBACK) return "<STOP>";
@@ -213,11 +138,6 @@ public class TrieNode {
     return new String(new char[]{asChar});
   }
 
-  /**
-   * Gets token.
-   *
-   * @return the token
-   */
   public String getToken() {
     char asChar = getChar();
     if (asChar == NodewalkerCodec.FALLBACK) return "";
@@ -226,29 +146,14 @@ public class TrieNode {
     return new String(new char[]{asChar});
   }
 
-  /**
-   * Gets char.
-   *
-   * @return the char
-   */
   public char getChar() {
     return getData().token;
   }
 
-  /**
-   * Gets number of children.
-   *
-   * @return the number of children
-   */
   public short getNumberOfChildren() {
     return getData().numberOfChildren;
   }
 
-  /**
-   * Gets depth.
-   *
-   * @return the depth
-   */
   public short getDepth() {
     if (0 == index) return 0;
     if (-1 == depth) {
@@ -263,30 +168,14 @@ public class TrieNode {
     return depth;
   }
 
-  /**
-   * Gets cursor index.
-   *
-   * @return the cursor index
-   */
   public long getCursorIndex() {
     return getData().firstCursorIndex;
   }
 
-  /**
-   * Gets cursor count.
-   *
-   * @return the cursor count
-   */
   public long getCursorCount() {
     return getData().cursorCount;
   }
 
-  /**
-   * Visit first trie node.
-   *
-   * @param visitor the visitor
-   * @return the trie node
-   */
   public TrieNode visitFirst(Consumer<? super TrieNode> visitor) {
     visitor.accept(this);
     TrieNode refresh = refresh();
@@ -294,23 +183,12 @@ public class TrieNode {
     return refresh;
   }
 
-  /**
-   * Visit last trie node.
-   *
-   * @param visitor the visitor
-   * @return the trie node
-   */
   public TrieNode visitLast(Consumer<? super TrieNode> visitor) {
     getChildren().forEach(n -> n.visitLast(visitor));
     visitor.accept(this);
     return refresh();
   }
 
-  /**
-   * Gets children.
-   *
-   * @return the children
-   */
   public Stream<? extends TrieNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
       return IntStream.range(0, getData().numberOfChildren)
@@ -320,12 +198,6 @@ public class TrieNode {
     }
   }
 
-  /**
-   * Gets child.
-   *
-   * @param token the token
-   * @return the child
-   */
   public Optional<? extends TrieNode> getChild(char token) {
     NodeData data = getData();
     int min = data.firstChildIndex;
@@ -349,11 +221,6 @@ public class TrieNode {
     return Optional.empty();
   }
 
-  /**
-   * Decrement cursor count.
-   *
-   * @param count the count
-   */
   protected void decrementCursorCount(long count) {
     this.trie.nodes.update(index, data -> data.setCursorCount(Math.max(data.cursorCount - count, 0)));
     if (null != getParent()) {
@@ -361,12 +228,6 @@ public class TrieNode {
     }
   }
 
-  /**
-   * Traverse trie node.
-   *
-   * @param str the str
-   * @return the trie node
-   */
   public TrieNode traverse(String str) {
     if (str.isEmpty()) {
       return this;
@@ -374,12 +235,6 @@ public class TrieNode {
     return getChild(str.charAt(0)).map(n -> n.traverse(str.substring(1))).orElse(this);
   }
 
-  /**
-   * Contains cursor boolean.
-   *
-   * @param cursorId the cursor id
-   * @return the boolean
-   */
   public boolean containsCursor(long cursorId) {
     if (cursorId < getData().firstCursorIndex) {
       return false;
@@ -387,12 +242,6 @@ public class TrieNode {
     return cursorId < (getData().firstCursorIndex + getData().cursorCount);
   }
 
-  /**
-   * Traverse trie node.
-   *
-   * @param cursorId the cursor id
-   * @return the trie node
-   */
   public TrieNode traverse(long cursorId) {
     if (!containsCursor(cursorId)) {
       throw new IllegalArgumentException();
@@ -401,81 +250,39 @@ public class TrieNode {
         .orElse(this);
   }
 
-  /**
-   * Remove cursor count.
-   */
   public void removeCursorCount() {
     decrementCursorCount(getCursorCount());
   }
 
-  /**
-   * Bits to bits.
-   *
-   * @param toNode the to node
-   * @return the bits
-   */
   public Bits bitsTo(TrieNode toNode) {
     if (index == toNode.index) return Bits.NULL;
     return intervalTo(toNode).toBits();
   }
 
-  /**
-   * Interval to interval.
-   *
-   * @param toNode the to node
-   * @return the interval
-   */
   public Interval intervalTo(TrieNode toNode) {
     return new Interval(toNode.getCursorIndex() - this.getCursorIndex(),
         toNode.getCursorCount(), this.getCursorCount());
   }
 
-  /**
-   * Has children boolean.
-   *
-   * @return the boolean
-   */
   public boolean hasChildren() {
     return 0 < getNumberOfChildren();
   }
 
-  /**
-   * Update node data.
-   *
-   * @param update the update
-   * @return the node data
-   */
   NodeData update(Function<NodeData, NodeData> update) {
     data = trie.nodes.update(index, update);
     return data;
   }
 
-  /**
-   * Gets trie.
-   *
-   * @return the trie
-   */
   public CharTrie getTrie() {
     return trie;
   }
 
-  /**
-   * Is string terminal boolean.
-   *
-   * @return the boolean
-   */
   public boolean isStringTerminal() {
     if (getChar() == NodewalkerCodec.END_OF_STRING) return true;
     if (getChar() == NodewalkerCodec.FALLBACK && null != getParent()) return getParent().isStringTerminal();
     return false;
   }
 
-  /**
-   * Stream decendents stream.
-   *
-   * @param level the level
-   * @return the stream
-   */
   public Stream<? extends TrieNode> streamDecendents(int level) {
     assert (level > 0);
     if (level == 1) {
@@ -485,11 +292,6 @@ public class TrieNode {
     }
   }
 
-  /**
-   * Write children.
-   *
-   * @param counts the counts
-   */
   void writeChildren(TreeMap<Character, Long> counts) {
     int firstIndex = trie.nodes.length();
     counts.forEach((k, v) -> {
@@ -501,22 +303,12 @@ public class TrieNode {
     data = null;
   }
 
-  /**
-   * Gets children map.
-   *
-   * @return the children map
-   */
   public TreeMap<Character, ? extends TrieNode> getChildrenMap() {
     TreeMap<Character, TrieNode> map = new TreeMap<>();
     getChildren().forEach(x -> map.put(x.getChar(), x));
     return map;
   }
 
-  /**
-   * Gets god children.
-   *
-   * @return the god children
-   */
   public Map<Character, TrieNode> getGodChildren() {
     CharSequence postContext = this.getString().substring(1);
     return trie.tokens().stream().collect(Collectors.toMap(x -> x, token -> {
@@ -540,11 +332,6 @@ public class TrieNode {
     return getChildrenMap().hashCode() ^ Long.hashCode(getCursorCount());
   }
 
-  /**
-   * Gets parent.
-   *
-   * @return the parent
-   */
   public TrieNode getParent() {
     if (0 == index) return null;
     if (null == parent && -1 == depth) {
@@ -558,12 +345,6 @@ public class TrieNode {
     return parent;
   }
 
-  /**
-   * Gets continuation.
-   *
-   * @param c the c
-   * @return the continuation
-   */
   public TrieNode getContinuation(char c) {
     return ((Optional<TrieNode>) getChild(c)).orElseGet(() -> {
       TrieNode godparent = godparent();

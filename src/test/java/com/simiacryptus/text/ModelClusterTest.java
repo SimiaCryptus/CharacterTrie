@@ -37,39 +37,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-/**
- * The type Model cluster test.
- */
 public abstract class ModelClusterTest {
 
-  /**
-   * The constant outPath.
-   */
   public static final File outPath = new File("src/site/resources/");
-  /**
-   * The constant outBaseUrl.
-   */
   public static final URL outBaseUrl = TrieTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
-  /**
-   * Source stream.
-   *
-   * @return the stream
-   */
   protected abstract Stream<? extends TestDocument> source();
 
-  /**
-   * Gets model count.
-   *
-   * @return the model count
-   */
   public abstract int getModelCount();
 
-  /**
-   * Cluster shared dictionaries lz.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void clusterSharedDictionariesLZ() throws Exception {
@@ -124,11 +100,6 @@ public abstract class ModelClusterTest {
     }
   }
 
-  /**
-   * Calc compressor ppm.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Category(TestCategories.ResearchCode.class)
   public void calcCompressorPPM() throws Exception {
@@ -160,11 +131,6 @@ public abstract class ModelClusterTest {
     }
   }
 
-  /**
-   * Calc entropy ppm.
-   *
-   * @throws Exception the exception
-   */
   @Test
   @Ignore
   @Category(TestCategories.ResearchCode.class)
@@ -198,13 +164,7 @@ public abstract class ModelClusterTest {
     }
   }
 
-  /**
-   * The type Wikipedia.
-   */
   public static class Wikipedia extends ModelClusterTest {
-    /**
-     * The Test count.
-     */
     int testCount = 1000;
 
     @Override

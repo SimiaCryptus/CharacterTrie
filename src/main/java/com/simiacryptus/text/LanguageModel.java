@@ -25,21 +25,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
-/**
- * The enum Language model.
- */
 public enum LanguageModel {
-  /**
-   * English language model.
-   */
   English("English.trie"),
-  /**
-   * French language model.
-   */
   French("French.trie"),
-  /**
-   * German language model.
-   */
   German("German.trie");
 
   private final String resource;
@@ -49,23 +37,12 @@ public enum LanguageModel {
     this.resource = resource;
   }
 
-  /**
-   * Match language model.
-   *
-   * @param text the text
-   * @return the language model
-   */
   public static LanguageModel match(String text) {
     return Arrays.stream(LanguageModel.values()).min(Comparator.comparing(
         model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength
     )).get();
   }
 
-  /**
-   * Gets trie.
-   *
-   * @return the trie
-   */
   public CharTrie getTrie() {
     if (null == trie) {
       synchronized (this) {

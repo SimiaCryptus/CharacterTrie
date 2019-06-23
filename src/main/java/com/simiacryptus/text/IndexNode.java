@@ -28,58 +28,26 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-/**
- * The type Index node.
- */
 public class IndexNode extends TrieNode {
 
-  /**
-   * Instantiates a new Index node.
-   *
-   * @param trie   the trie
-   * @param depth  the depth
-   * @param index  the index
-   * @param parent the parent
-   */
   public IndexNode(CharTrie trie, short depth, int index, TrieNode parent) {
     super(trie, index, parent);
   }
 
-  /**
-   * Instantiates a new Index node.
-   *
-   * @param trie  the trie
-   * @param index the index
-   */
   public IndexNode(CharTrie trie, int index) {
     super(trie, index);
   }
 
-  /**
-   * Gets cursors by document.
-   *
-   * @return the cursors by document
-   */
   public Map<CharSequence, List<Cursor>> getCursorsByDocument() {
     return this.getCursors().collect(Collectors.groupingBy((Cursor x) -> x.getDocument()));
   }
 
-  /**
-   * Gets cursors.
-   *
-   * @return the cursors
-   */
   public Stream<Cursor> getCursors() {
     return LongStream.range(0, getData().cursorCount).mapToObj(i -> {
       return new Cursor((CharTrieIndex) this.trie, ((CharTrieIndex) this.trie).cursors.get((int) (i + getData().firstCursorIndex)), getDepth());
     });
   }
 
-  /**
-   * Split trie node.
-   *
-   * @return the trie node
-   */
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
       TreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new TreeMap<>(getCursors().parallel()
@@ -125,12 +93,6 @@ public class IndexNode extends TrieNode {
     return (IndexNode) super.refresh();
   }
 
-  /**
-   * Visit first index index node.
-   *
-   * @param visitor the visitor
-   * @return the index node
-   */
   public IndexNode visitFirstIndex(Consumer<? super IndexNode> visitor) {
     visitor.accept(this);
     IndexNode refresh = refresh();
@@ -138,12 +100,6 @@ public class IndexNode extends TrieNode {
     return refresh;
   }
 
-  /**
-   * Visit last index index node.
-   *
-   * @param visitor the visitor
-   * @return the index node
-   */
   public IndexNode visitLastIndex(Consumer<? super IndexNode> visitor) {
     getChildren().forEach(n -> n.visitLastIndex(visitor));
     visitor.accept(this);

@@ -30,24 +30,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-/**
- * The type Bits test.
- */
 public class BitsTest {
-  /**
-   * The Random.
-   */
   Random random = new Random();
 
   private long randomLong() {
     return this.random.nextLong() >> this.random.nextInt(62);
   }
 
-  /**
-   * Test concatenate.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testConcatenate() throws JSONException {
@@ -56,11 +45,6 @@ public class BitsTest {
     }
   }
 
-  /**
-   * Test divide.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testDivide() throws JSONException {
@@ -73,11 +57,6 @@ public class BitsTest {
     Assert.assertEquals("000010001000001", Bits.divide(91, 1368, 15).toBitString());
   }
 
-  /**
-   * Test bit stream.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testBitStream() throws JSONException {
@@ -92,11 +71,6 @@ public class BitsTest {
     Assert.assertEquals("0101", totalBits.toBitString());
   }
 
-  /**
-   * Test interval.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testInterval() throws JSONException {
@@ -130,11 +104,6 @@ public class BitsTest {
         bits.toBitString());
   }
 
-  /**
-   * Test fixed length.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testFixedLength() throws JSONException {
@@ -143,12 +112,6 @@ public class BitsTest {
     }
   }
 
-  /**
-   * Test var longs.
-   *
-   * @throws JSONException the json exception
-   * @throws IOException   the io exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testVarLongs() throws JSONException, IOException {
@@ -172,11 +135,6 @@ public class BitsTest {
     Assert.assertEquals("toString for " + value, asString, bits.toBitString());
   }
 
-  /**
-   * Test hardcoded.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testHardcoded() throws JSONException {
@@ -207,11 +165,6 @@ public class BitsTest {
     Assert.assertEquals(2, new Bits(7l, 16).getBytes().length);
   }
 
-  /**
-   * Test subrange.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testSubrange() throws JSONException {
@@ -240,11 +193,6 @@ public class BitsTest {
         subBits.toBitString());
   }
 
-  /**
-   * Test to string.
-   *
-   * @throws JSONException the json exception
-   */
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testToString() throws JSONException {

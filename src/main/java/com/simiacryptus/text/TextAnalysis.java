@@ -26,35 +26,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * The type Text analysis.
- */
 public class TextAnalysis {
 
-  /**
-   * The constant DEFAULT_THRESHOLD.
-   */
   public static final double DEFAULT_THRESHOLD = Math.log(15);
   private final CharTrie inner;
   private PrintStream verbose = null;
 
-  /**
-   * Instantiates a new Text analysis.
-   *
-   * @param inner the inner
-   */
   TextAnalysis(CharTrie inner) {
     this.inner = inner;
   }
 
-  /**
-   * Combine string.
-   *
-   * @param left       the left
-   * @param right      the right
-   * @param minOverlap the min overlap
-   * @return the string
-   */
   public static CharSequence combine(CharSequence left, CharSequence right, int minOverlap) {
     if (left.length() < minOverlap) return null;
     if (right.length() < minOverlap) return null;
@@ -89,12 +70,6 @@ public class TextAnalysis {
     return -0.0 + (null == contextNode ? Double.POSITIVE_INFINITY : (-Math.log(tokenNode.getCursorCount() * 1.0 / contextNode.getCursorCount())));
   }
 
-  /**
-   * Keywords list.
-   *
-   * @param source the source
-   * @return the list
-   */
   public List<CharSequence> keywords(final String source) {
     Map<CharSequence, Long> wordCounts = splitChars(source, DEFAULT_THRESHOLD).stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     wordCounts = aggregateKeywords(wordCounts);
@@ -132,12 +107,6 @@ public class TextAnalysis {
     }
   }
 
-  /**
-   * Spelling double.
-   *
-   * @param source the source
-   * @return the double
-   */
   public double spelling(final String source) {
     assert (source.startsWith("|"));
     assert (source.endsWith("|"));
@@ -174,13 +143,6 @@ public class TextAnalysis {
     return wordSpelling;
   }
 
-  /**
-   * Split matches list.
-   *
-   * @param text    the text
-   * @param minSize the min size
-   * @return the list
-   */
   public List<CharSequence> splitMatches(String text, int minSize) {
     TrieNode node = inner.root();
     List<CharSequence> matches = new ArrayList<>();
@@ -214,13 +176,6 @@ public class TextAnalysis {
     return tokenization;
   }
 
-  /**
-   * Split chars list.
-   *
-   * @param source    the source
-   * @param threshold the threshold
-   * @return the list
-   */
   public List<CharSequence> splitChars(final String source, double threshold) {
     List<CharSequence> output = new ArrayList<>();
     int wordStart = 0;
@@ -322,12 +277,6 @@ public class TextAnalysis {
     }));
   }
 
-  /**
-   * Entropy double.
-   *
-   * @param source the source
-   * @return the double
-   */
   public double entropy(final CharSequence source) {
     double output = 0;
     for (int i = 1; i < source.length(); i++) {
@@ -343,55 +292,27 @@ public class TextAnalysis {
     return -output / Math.log(2);
   }
 
-  /**
-   * Is verbose boolean.
-   *
-   * @return the boolean
-   */
   public boolean isVerbose() {
     return null != verbose;
   }
 
-  /**
-   * Sets verbose.
-   *
-   * @param verbose the verbose
-   * @return the verbose
-   */
   public TextAnalysis setVerbose(PrintStream verbose) {
     this.verbose = verbose;
     return this;
   }
 
-  /**
-   * Split chars list.
-   *
-   * @param text the text
-   * @return the list
-   */
   public List<CharSequence> splitChars(String text) {
     return splitChars(text, DEFAULT_THRESHOLD);
   }
 
-  /**
-   * The type Word spelling.
-   */
   public class WordSpelling {
     private final double[] linkNatsArray;
     private final List<TrieNode> leftNodes;
     private final List<TrieNode> rightNodes;
     private final String text;
     private final Random random = new Random();
-    /**
-     * The Sum.
-     */
     double sum = 0;
 
-    /**
-     * Instantiates a new Word spelling.
-     *
-     * @param source the source
-     */
     public WordSpelling(final String source) {
       this.text = source;
       linkNatsArray = new double[source.length()];
@@ -424,11 +345,6 @@ public class TextAnalysis {
       for (int i = 0; i < linkNatsArray.length; i++) linkNatsArray[i] /= sumLinkNats;
     }
 
-    /**
-     * Mutate stream.
-     *
-     * @return the stream
-     */
     public Stream<WordSpelling> mutate() {
       return IntStream.range(0, linkNatsArray.length).mapToObj(x -> x)
           .sorted(Comparator.comparingDouble(i1 -> linkNatsArray[i1]))

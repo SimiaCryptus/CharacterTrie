@@ -36,60 +36,24 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The type Wiki article.
- */
 public class WikiArticle extends TestDocument {
 
-  /**
-   * The constant ENGLISH.
-   */
   public static WikiDataLoader ENGLISH = new WikiDataLoader(URI.create(
       "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
-  /**
-   * The constant GERMAN.
-   */
   public static WikiDataLoader GERMAN = new WikiDataLoader(URI.create(
       "https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
-  /**
-   * The constant FRENCH.
-   */
   public static WikiDataLoader FRENCH = new WikiDataLoader(URI.create(
       "https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
 
-  /**
-   * Instantiates a new Wiki article.
-   *
-   * @param title the title
-   * @param text  the text
-   */
   public WikiArticle(String title, String text) {
     super(title, text);
   }
 
-  /**
-   * The type Wiki data loader.
-   */
   public static class WikiDataLoader extends DataLoader<WikiArticle> {
-    /**
-     * The Url.
-     */
     protected final String url;
-    /**
-     * The File.
-     */
     protected final String file;
-    /**
-     * The Article limit.
-     */
     protected final int articleLimit;
 
-    /**
-     * Instantiates a new Wiki data loader.
-     *
-     * @param uri          the uri
-     * @param articleLimit the article limit
-     */
     public WikiDataLoader(URI uri, int articleLimit) {
       super();
       this.url = uri.toString();
