@@ -67,6 +67,12 @@ public class DictionaryMethodTest {
     }
   }
 
+  public void test() {
+    CharTrieIndex tree = new CharTrieIndex();
+    tree.addDocument("");
+    tree.index(8, 0).getGenerator().generateDictionary(16 * 1024, 8, "", 3, true, false);
+  }
+
   private void test(NotebookOutput log, Supplier<Stream<? extends TestDocument>> source, int modelCount) {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
