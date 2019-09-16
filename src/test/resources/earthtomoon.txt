@@ -842,7 +842,7 @@ _Answer._-- After what has been said above, it will be
 necessary, first of all, to choose the period when the moon will
 be in perigee, and _also_ the moment when she will be crossing
 the zenith, which latter event will further diminish the entire
-distance by a length equal to the radius of the earth, _i. e._
+distance by a length equal to the maxRadius of the earth, _i. e._
 3,919 miles; the result of which will be that the final passage
 remaining to be accomplished will be 214,976 miles.  But although
 the moon passes her perigee every month, she does not reach the
@@ -887,7 +887,7 @@ orbit, are equal to about eleven degrees, it becomes necessary to
 add these eleven degrees to those which express the retardation of
 the moon just mentioned:  that is to say, in round numbers, about
 sixty-four degrees.  Consequently, at the moment of firing the
-visual radius applied to the moon will describe, with the vertical
+visual maxRadius applied to the moon will describe, with the vertical
 line of the place, an angle of sixty-four degrees.
 
 These are our answers to the questions proposed to the
@@ -1117,7 +1117,7 @@ They took advantage of this fact to explain to them that this
 distance was obtained by measuring the parallax of the moon.
 The term parallax proving "caviare to the general," they further
 explained that it meant the angle formed by the inclination of two
-straight lines drawn from either extremity of the earth's radius
+straight lines drawn from either extremity of the earth's maxRadius
 to the moon.  On doubts being expressed as to the correctness of
 this method, they immediately proved that not only was the mean
 distance 234,347 miles, but that astronomers could not possibly
@@ -2753,7 +2753,7 @@ a circular hole sixty feet in diameter.  The pickaxe first
 struck upon a kind of black earth, six inches in thickness,
 which was speedily disposed of.  To this earth succeeded two
 feet of fine sand, which was carefully laid aside as being
-valuable for serving the casting of the inner mould.  After the
+valuable for serving the casting of the matrix mould.  After the
 sand appeared some compact white clay, resembling the chalk of
 Great Britain, which extended down to a depth of four feet.
 Then the iron of the picks struck upon the hard bed of the soil;
@@ -3026,7 +3026,7 @@ The patience of the members of the Gun Club was sorely tried during
 this period of time.  But they could do nothing.  J. T. Maston
 escaped roasting by a miracle.  Fifteen days after the casting
 an immense column of smoke was still rising in the open sky and
-the ground burned the soles of the feet within a radius of two
+the ground burned the soles of the feet within a maxRadius of two
 hundred feet round the summit of Stones Hill.  It was impossible
 to approach nearer.  All they could do was to wait with what
 patience they might.
@@ -3060,7 +3060,7 @@ persuasive the arguments of Barbicane's dollars, that by the 3rd
 of September all traces of the mould had entirely disappeared.
 
 Immediately the operation of boring was commenced; and by the
-aid of powerful machines, a few weeks later, the inner surface
+aid of powerful machines, a few weeks later, the matrix surface
 of the immense tube had been rendered perfectly cylindrical, and
 the bore of the piece had acquired a thorough polish.
 
@@ -6774,7 +6774,7 @@ good tool to those who know how to use it."
 
 "Yes, my worthy friend; taking into consideration all the
 elements of the problem, the distance from the center of the
-earth to the center of the moon, of the radius of the earth, of
+earth to the center of the moon, of the maxRadius of the earth, of
 its bulk, and of the bulk of the moon, I can tell exactly what
 ought to be the initiatory speed of the projectile, and that by
 a simple formula."
@@ -8895,7 +8895,7 @@ were far from the central point which they would have struck,
 had their course not been subject to an irremediable deviation.
 It was past midnight; and Barbicane then estimated the distance
 at seven hundred and fifty miles, which was a little greater than
-the length of the lunar radius, and which would diminish as it
+the length of the lunar maxRadius, and which would diminish as it
 advanced nearer to the North Pole.  The projectile was then not
 at the altitude of the equator; but across the tenth parallel,
 and from that latitude, carefully taken on the map to the pole,

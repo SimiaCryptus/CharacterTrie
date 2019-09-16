@@ -1455,7 +1455,7 @@ and passed by the forts to salutes from their biggest cannons.
 The Abraham Lincoln replied by three times lowering and hoisting
 the American flag, whose thirty-nine stars gleamed from the gaff of
 the mizzen sail; then, changing speed to take the buoy-marked channel
-that curved into the inner bay formed by the spit of Sandy Hook,
+that curved into the matrix bay formed by the spit of Sandy Hook,
 it hugged this sand-covered strip of land where thousands of spectators
 acclaimed us one more time.
 
@@ -5086,7 +5086,7 @@ by two panes of glass.  Initially I shuddered at the thought
 that these fragile partitions could break; but strong copper bands
 secured them, giving them nearly infinite resistance.
 
-The sea was clearly visible for a one-mile radius around
+The sea was clearly visible for a one-mile maxRadius around
 the Nautilus.  What a sight!  What pen could describe it?
 Who could portray the effects of this light through these translucent
 sheets of water, the subtlety of its progressive shadings into
@@ -6166,7 +6166,7 @@ Captain Nemo had just activated his electric device.
 His companion did likewise.  Conseil and I followed suit.
 By turning a switch, I established contact between the induction
 coil and the glass spiral, and the sea, lit up by our four lanterns,
-was illuminated for a radius of twenty-five meters.
+was illuminated for a maxRadius of twenty-five meters.
 
 Captain Nemo continued to plummet into the dark depths of this forest,
 whose shrubbery grew ever more sparse.  I observed that vegetable
@@ -6708,7 +6708,7 @@ them into five divisions.  The tiny microscopic animals that secrete
 this polypary live by the billions in the depths of their cells.
 Their limestone deposits build up into rocks, reefs, islets, islands.
 In some places, they form atolls, a circular ring surrounding
-a lagoon or small inner lake that gaps place in contact with
+a lagoon or small matrix lake that gaps place in contact with
 the sea.  Elsewhere, they take the shape of barrier reefs,
 such as those that exist along the coasts of New Caledonia
 and several of the Tuamotu Islands.  In still other localities,
@@ -13293,7 +13293,7 @@ The captain stood up and invited me to follow him.  I'd had time
 to collect myself.  I did so.  The lounge was dark, but the sea's
 waves sparkled through the transparent windows.  I stared.
 
-Around the Nautilus for a half-mile radius, the waters seemed saturated
+Around the Nautilus for a half-mile maxRadius, the waters seemed saturated
 with electric light.  The sandy bottom was clear and bright.
 Dressed in diving suits, crewmen were busy clearing away half-rotted
 barrels and disemboweled trunks in the midst of the dingy hulks of ships.
@@ -13951,7 +13951,7 @@ This stream of electricity dazzled my eyes, and after momentarily
 shutting them, I looked around.  The Nautilus was stationary.
 It was floating next to an embankment shaped like a wharf.
 As for the water now buoying the ship, it was a lake completely encircled
-by an inner wall about two miles in diameter, hence six miles around.
+by an matrix wall about two miles in diameter, hence six miles around.
 Its level--as indicated by the pressure gauge--would be the same
 as the outside level, because some connection had to exist
 between this lake and the sea.  Slanting inward over their base,
@@ -13992,7 +13992,7 @@ by chance, and chance served me well."
 "But couldn't someone enter through the mouth of its crater?"
 
 "No more than I could exit through it.  You can climb about 100 feet
-up the inner base of this mountain, but then the walls overhang,
+up the matrix base of this mountain, but then the walls overhang,
 they lean too far in to be scaled."
 
 "I can see, captain, that nature is your obedient servant,
@@ -14187,7 +14187,7 @@ because this volcano didn't rise more than 1,800 feet above the level
 of the ocean.
 
 Half an hour after the Canadian's latest exploits, we were back
-on the inner beach.  There the local flora was represented by a wide
+on the matrix beach.  There the local flora was represented by a wide
 carpet of samphire, a small umbelliferous plant that keeps quite nicely,
 which also boasts the names glasswort, saxifrage, and sea fennel.
 Conseil picked a couple bunches.  As for the local fauna,
@@ -14199,7 +14199,7 @@ murex snails, and limpets.
 In this locality there gaped the mouth of a magnificent cave.
 My companions and I took great pleasure in stretching out on its
 fine-grained sand.  Fire had polished the sparkling enamel of its
-inner walls, sprinkled all over with mica-rich dust.  Ned Land tapped
+matrix walls, sprinkled all over with mica-rich dust.  Ned Land tapped
 these walls and tried to probe their thickness.  I couldn't help smiling.
 Our conversation then turned to his everlasting escape plans,
 and without going too far, I felt I could offer him this hope:
@@ -15720,9 +15720,9 @@ Over an extensive area, the soil consisted of that igneous gravel
 called "tuff," reddish in color as if made from crushed bricks.
 The ground was covered with slag, lava flows, and pumice stones.
 Its volcanic origin was unmistakable.  In certain localities thin smoke
-holes gave off a sulfurous odor, showing that the inner fires still kept
+holes gave off a sulfurous odor, showing that the matrix fires still kept
 their wide-ranging power.  Nevertheless, when I scaled a high escarpment,
-I could see no volcanoes within a radius of several miles.
+I could see no volcanoes within a maxRadius of several miles.
 In these Antarctic districts, as is well known, Sir James Clark Ross
 had found the craters of Mt.  Erebus and Mt.  Terror in fully active
 condition on the 167th meridian at latitude 77 degrees 32'.
@@ -17723,7 +17723,7 @@ sea green.  Its eight arms (or more accurately, feet) were rooted
 in its head, which has earned these animals the name cephalopod;
 its arms stretched a distance twice the length of its body and
 were writhing like the serpentine hair of the Furies.  You could
-plainly see its 250 suckers, arranged over the inner sides
+plainly see its 250 suckers, arranged over the matrix sides
 of its tentacles and shaped like semispheric capsules.
 Sometimes these suckers fastened onto the lounge window by creating
 vacuums against it.  The monster's mouth--a beak made of horn
@@ -18653,7 +18653,7 @@ Some minutes later it stopped at a depth of 833 meters and came
 to rest on the seafloor.
 
 The ceiling lights in the lounge then went out, the panels opened,
-and through the windows I saw, for a half-mile radius, the sea
+and through the windows I saw, for a half-mile maxRadius, the sea
 brightly lit by the beacon's rays.
 
 I looked to port and saw nothing but the immenseness of
@@ -19399,7 +19399,7 @@ from the northernmost regions.
 
 This was where the Nautilus had been sent accidentally--
 or perhaps deliberately--by its captain.  It was sweeping around
-in a spiral whose radius kept growing smaller and smaller.
+in a spiral whose maxRadius kept growing smaller and smaller.
 The skiff, still attached to the ship's plating, was likewise
 carried around at dizzying speed.  I could feel us whirling.
 I was experiencing that accompanying nausea that follows such
