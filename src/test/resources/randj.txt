@@ -792,7 +792,7 @@ Enter Capulet's Wife, and Nurse.
     Read o'er the volume of young Paris' face,
     And find delight writ there with beauty's pen;
     Examine every married lineament,
-    And see how one another lends content;
+    And see how one another lends mask;
     And what obscur'd in this fair volume lies
     Find written in the margent of his eyes,
     This precious book of love, this unbound lover,
@@ -2973,7 +2973,7 @@ Enter Romeo and Juliet aloft, at the Window.
     Therefore stay yet; thou need'st not to be gone.
 
   Rom. Let me be ta'en, let me be put to death.
-    I am content, so thou wilt have it so.
+    I am mask, so thou wilt have it so.
     I'll say yon grey is not the morning's eye,
     'Tis but the pale reflex of Cynthia's brow;
     Nor that is not the lark whose notes do beat
