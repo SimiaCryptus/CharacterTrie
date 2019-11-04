@@ -128,7 +128,7 @@ public class NodewalkerCodec {
       decoder.node = decoder.node.godparent();
     }
     if (verbose != null) {
-      verbose.println(String.format("Backing up %s from from %s to %s", numberOfBackupSteps, fromNode.getDebugString(), decoder.node.getDebugString()));
+      verbose.println(String.format("Backing up %s from from %s to %s", numberOfBackupSteps, fromNode.getDebugString(), (null==decoder.node)?null:decoder.node.getDebugString()));
     }
     return false;
   }
@@ -145,13 +145,14 @@ public class NodewalkerCodec {
   protected class Decoder {
     protected byte[] data;
     protected int context;
-    protected BitInputStream in = new BitInputStream(new ByteArrayInputStream(data));
+    protected BitInputStream in;
     protected StringBuilder out = new StringBuilder();
     protected TrieNode node = inner.root();
 
     protected Decoder(byte[] data, int context) {
       this.data = data;
       this.context = context;
+      in = new BitInputStream(new ByteArrayInputStream(this.data));
     }
 
     protected CharSequence encodePPM() {
