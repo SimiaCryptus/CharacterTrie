@@ -23,6 +23,7 @@ import com.simiacryptus.util.data.SerialType;
 
 import java.nio.ByteBuffer;
 
+@com.simiacryptus.ref.lang.RefAware
 class CursorType implements SerialType<CursorData> {
 
   static CursorType INSTANCE = new CursorType();

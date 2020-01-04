@@ -27,17 +27,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class TweetSentiment extends TestDocument {
-  private static final ArrayList<TweetSentiment> queue = new ArrayList<>();
+public @com.simiacryptus.ref.lang.RefAware
+class TweetSentiment extends TestDocument {
+  private static final com.simiacryptus.ref.wrappers.RefArrayList<TweetSentiment> queue = new com.simiacryptus.ref.wrappers.RefArrayList<>();
   public static String url = "http://thinknook.com/wp-content/uploads/2012/09/Sentiment-Analysis-Dataset.zip";
   public static String file = "Sentiment-Analysis-Dataset.zip";
   private static volatile Thread thread;
@@ -61,7 +57,7 @@ public class TweetSentiment extends TestDocument {
     }
   }
 
-  public static Stream<TweetSentiment> load() {
+  public static com.simiacryptus.ref.wrappers.RefStream<TweetSentiment> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
@@ -71,8 +67,11 @@ public class TweetSentiment extends TestDocument {
         }
       }
     }
-    Iterator<TweetSentiment> iterator = new AsyncListIterator<>(queue, thread);
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
+    com.simiacryptus.ref.wrappers.RefIteratorBase<TweetSentiment> iterator = new AsyncListIterator<>(queue, thread);
+    return com.simiacryptus.ref.wrappers.RefStreamSupport
+        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
+            false)
+        .filter(x -> x != null);
   }
 
   private static void read() {
@@ -92,7 +91,8 @@ public class TweetSentiment extends TestDocument {
     } catch (final IOException e) {
       // Ignore... end of stream
     } catch (final RuntimeException e) {
-      if (!(e.getCause() instanceof InterruptedException)) throw e;
+      if (!(e.getCause() instanceof InterruptedException))
+        throw e;
     } catch (final Exception e) {
       throw new RuntimeException(e);
     }

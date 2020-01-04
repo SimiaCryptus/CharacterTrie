@@ -29,16 +29,17 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Misspelling extends TestDocument {
+public @com.simiacryptus.ref.lang.RefAware
+class Misspelling extends TestDocument {
 
-  public static Loader BIRKBECK = new Loader(URI.create(
-      "http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
+  public static Loader BIRKBECK = new Loader(URI.create("http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
 
   public Misspelling(String correct, CharSequence misspelling) {
     super(correct, misspelling);
   }
 
-  public static class Loader {
+  public static @com.simiacryptus.ref.lang.RefAware
+  class Loader {
     private final String url;
     private final String file;
     private final int articleLimit;
@@ -76,8 +77,10 @@ public class Misspelling extends TestDocument {
           }
         }
       }
-      Iterator<Misspelling> iterator = new AsyncListIterator<>(queue, thread);
-      return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
+      return StreamSupport
+          .stream(Spliterators.spliteratorUnknownSize(queue.iterator(), Spliterator.DISTINCT),
+              false)
+          .filter(x -> x != null);
     }
 
     private void read() {
@@ -96,7 +99,8 @@ public class Misspelling extends TestDocument {
 
         }
       } catch (final RuntimeException e) {
-        if (!(e.getCause() instanceof InterruptedException)) e.printStackTrace();
+        if (!(e.getCause() instanceof InterruptedException))
+          e.printStackTrace();
       } catch (final Exception e) {
         e.printStackTrace();
       } finally {

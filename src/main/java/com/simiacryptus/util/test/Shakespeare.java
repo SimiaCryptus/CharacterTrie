@@ -26,15 +26,11 @@ import org.apache.commons.compress.utils.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-public class Shakespeare extends TestDocument {
-  private static final ArrayList<Shakespeare> queue = new ArrayList<>();
+public @com.simiacryptus.ref.lang.RefAware
+class Shakespeare extends TestDocument {
+  private static final com.simiacryptus.ref.wrappers.RefArrayList<Shakespeare> queue = new com.simiacryptus.ref.wrappers.RefArrayList<>();
   public static String url = "http://www.gutenberg.org/cacheLocal/epub/100/pg100.txt";
   public static String file = "Shakespeare.txt";
   private static volatile Thread thread;
@@ -56,7 +52,7 @@ public class Shakespeare extends TestDocument {
     }
   }
 
-  public static Stream<Shakespeare> load() {
+  public static com.simiacryptus.ref.wrappers.RefStream<Shakespeare> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
@@ -66,8 +62,11 @@ public class Shakespeare extends TestDocument {
         }
       }
     }
-    Iterator<Shakespeare> iterator = new AsyncListIterator<>(queue, thread);
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
+    com.simiacryptus.ref.wrappers.RefIteratorBase<Shakespeare> iterator = new AsyncListIterator<>(queue, thread);
+    return com.simiacryptus.ref.wrappers.RefStreamSupport
+        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
+            false)
+        .filter(x -> x != null);
   }
 
   private static void read() {
@@ -80,7 +79,8 @@ public class Shakespeare extends TestDocument {
     } catch (final IOException e) {
       // Ignore... end of stream
     } catch (final RuntimeException e) {
-      if (!(e.getCause() instanceof InterruptedException)) throw e;
+      if (!(e.getCause() instanceof InterruptedException))
+        throw e;
     } catch (final Exception e) {
       throw new RuntimeException(e);
     }

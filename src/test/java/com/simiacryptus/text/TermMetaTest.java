@@ -22,48 +22,46 @@ package com.simiacryptus.text;
 import com.simiacryptus.util.test.EnglishWords;
 import com.simiacryptus.util.test.TestDocument;
 
-import java.util.stream.Stream;
-
-public class TermMetaTest {
+public @com.simiacryptus.ref.lang.RefAware
+class TermMetaTest {
   int testCount = 1000;
   int modelCount = 15000;
 
-  protected Stream<? extends TestDocument> source() {
+  protected com.simiacryptus.ref.wrappers.RefStream<? extends TestDocument> source() {
     return EnglishWords.load().limit(modelCount + testCount);
   }
 
-
-//  /**
-//   * Calc compressor ppm.
-//   *
-//   * @throws Exception the exception
-//   */
-//  @Test
-//  @Category(TestCategories.Report.class)
-//  public void calcCompressorPPM() throws Exception {
-//    NotebookOutput log = MarkdownNotebookOutput.get(this);
-//    CharTrieIndex baseTree = new CharTrieIndex();
-//    log.p("Preparing %s documents", modelCount);
-//    source().limit(modelCount).forEach(txt -> {
-//      //System.p.println(String.format("Adding %s", txt.title));
-//      baseTree.addDocument(txt.getText());
-//    });
-//    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
-//
-//    Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
-//
-//    int model_minPathWeight = 1;
-//    for (int ppmModelDepth : Arrays.asList(8, 9, 10, 11, 12)) {
-//      for (int encodingContext : Arrays.asList(0, 1, 2, 3, 4, 5)) {
-//        CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
-//        CharSequence name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
-//        compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
-//      }
-//    }
-//
-//    TableOutput output = Compressor.evalCompressor(source().skip(modelCount), compressors, true);
-//    //log.p(output.toTextTable());
-//    log.p(output.calcNumberStats().toCSV(true));
-//    log.close();
-//  }
+  //  /**
+  //   * Calc compressor ppm.
+  //   *
+  //   * @throws Exception the exception
+  //   */
+  //  @Test
+  //  @Category(TestCategories.Report.class)
+  //  public void calcCompressorPPM() throws Exception {
+  //    NotebookOutput log = MarkdownNotebookOutput.get(this);
+  //    CharTrieIndex baseTree = new CharTrieIndex();
+  //    log.p("Preparing %s documents", modelCount);
+  //    source().limit(modelCount).forEach(txt -> {
+  //      //System.p.println(String.format("Adding %s", txt.title));
+  //      baseTree.addDocument(txt.getText());
+  //    });
+  //    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);
+  //
+  //    Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
+  //
+  //    int model_minPathWeight = 1;
+  //    for (int ppmModelDepth : Arrays.asList(8, 9, 10, 11, 12)) {
+  //      for (int encodingContext : Arrays.asList(0, 1, 2, 3, 4, 5)) {
+  //        CharTrie ppmTree = baseTree.copy().index(ppmModelDepth, model_minPathWeight);
+  //        CharSequence name = String.format("PPM%s_%s", encodingContext, ppmModelDepth);
+  //        compressors.put(name, Compressor.buildPPMCompressor(ppmTree, encodingContext));
+  //      }
+  //    }
+  //
+  //    TableOutput output = Compressor.evalCompressor(source().skip(modelCount), compressors, true);
+  //    //log.p(output.toTextTable());
+  //    log.p(output.calcNumberStats().toCSV(true));
+  //    log.close();
+  //  }
 }

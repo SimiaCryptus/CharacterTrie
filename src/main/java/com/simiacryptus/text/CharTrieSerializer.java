@@ -31,7 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CharTrieSerializer {
+public @com.simiacryptus.ref.lang.RefAware
+class CharTrieSerializer {
 
   public byte[] serialize(CharTrie charTrie) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -45,6 +46,16 @@ public class CharTrieSerializer {
       throw new RuntimeException(e);
     }
     return buffer.toByteArray();
+  }
+
+  public CharTrie deserialize(byte[] bytes) {
+    CharTrie trie = new CharTrie();
+    BitInputStream in = new BitInputStream(new ByteArrayInputStream(bytes));
+    int level = 0;
+    while (deserialize(trie.root(), in, level++) > 0) {
+    }
+    trie.recomputeCursorDetails();
+    return trie;
   }
 
   private int serialize(TrieNode root, BitOutputStream out, int level) {
@@ -70,7 +81,8 @@ public class CharTrieSerializer {
       root.streamDecendents(level).forEach(node -> {
         TrieNode godparent = node.godparent();
         Stream<TrieNode> stream = godparent.getChildren().map(x -> x);
-        TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
+        TreeMap<Character, ? extends TrieNode> godchildren = godparent
+            .getChildrenMap();
         Stream<TrieNode> stream1 = node.getChildren().map(x -> x);
         TreeMap<Character, ? extends TrieNode> children = node.getChildrenMap();
         godchildren.forEach((token, godchild) -> {
@@ -92,16 +104,6 @@ public class CharTrieSerializer {
 
   }
 
-  public CharTrie deserialize(byte[] bytes) {
-    CharTrie trie = new CharTrie();
-    BitInputStream in = new BitInputStream(new ByteArrayInputStream(bytes));
-    int level = 0;
-    while (deserialize(trie.root(), in, level++) > 0) {
-    }
-    trie.recomputeCursorDetails();
-    return trie;
-  }
-
   private int deserialize(TrieNode root, BitInputStream in, int level) {
     AtomicInteger nodesRead = new AtomicInteger(0);
     if (0 == level) {
@@ -121,8 +123,10 @@ public class CharTrieSerializer {
     } else {
       root.streamDecendents(level).forEach(node -> {
         TrieNode godparent = node.godparent();
-        List<NodeData> list = godparent.getChildren().map(x -> x.getData()).collect(Collectors.toList());
-        TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
+        List<NodeData> list = godparent.getChildren().map(x -> x.getData())
+            .collect(Collectors.toList());
+        TreeMap<Character, ? extends TrieNode> godchildren = godparent
+            .getChildrenMap();
         TreeMap<Character, Long> children = new TreeMap<>();
         godchildren.forEach((token, godchild) -> {
           try {

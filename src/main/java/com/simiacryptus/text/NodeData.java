@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+@com.simiacryptus.ref.lang.RefAware
 class NodeData {
   // Primary data defining the tree
   char token;
@@ -36,13 +37,8 @@ class NodeData {
     this.firstCursorIndex = firstCursorIndex;
   }
 
-  public NodeData setToken(char token) {
-    this.token = token;
-    return this;
-  }
-
-  public NodeData setNumberOfChildren(short numberOfChildren) {
-    this.numberOfChildren = numberOfChildren;
+  public NodeData setCursorCount(long cursorCount) {
+    this.cursorCount = cursorCount;
     return this;
   }
 
@@ -51,13 +47,18 @@ class NodeData {
     return this;
   }
 
-  public NodeData setCursorCount(long cursorCount) {
-    this.cursorCount = cursorCount;
+  public NodeData setFirstCursorIndex(long firstCursorIndex) {
+    this.firstCursorIndex = firstCursorIndex;
     return this;
   }
 
-  public NodeData setFirstCursorIndex(long firstCursorIndex) {
-    this.firstCursorIndex = firstCursorIndex;
+  public NodeData setNumberOfChildren(short numberOfChildren) {
+    this.numberOfChildren = numberOfChildren;
+    return this;
+  }
+
+  public NodeData setToken(char token) {
+    this.token = token;
     return this;
   }
 

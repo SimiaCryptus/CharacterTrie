@@ -30,26 +30,25 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WikiArticle extends TestDocument {
+public @com.simiacryptus.ref.lang.RefAware
+class WikiArticle extends TestDocument {
 
-  public static WikiDataLoader ENGLISH = new WikiDataLoader(URI.create(
-      "https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
-  public static WikiDataLoader GERMAN = new WikiDataLoader(URI.create(
-      "https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
-  public static WikiDataLoader FRENCH = new WikiDataLoader(URI.create(
-      "https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
+  public static WikiDataLoader ENGLISH = new WikiDataLoader(
+      URI.create("https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
+  public static WikiDataLoader GERMAN = new WikiDataLoader(
+      URI.create("https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
+  public static WikiDataLoader FRENCH = new WikiDataLoader(
+      URI.create("https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
 
   public WikiArticle(String title, String text) {
     super(title, text);
   }
 
-  public static class WikiDataLoader extends DataLoader<WikiArticle> {
+  public static @com.simiacryptus.ref.lang.RefAware
+  class WikiDataLoader extends DataLoader<WikiArticle> {
     protected final String url;
     protected final String file;
     protected final int articleLimit;
@@ -64,7 +63,7 @@ public class WikiArticle extends TestDocument {
     }
 
     @Override
-    protected void read(List<WikiArticle> queue) {
+    protected void read(com.simiacryptus.ref.wrappers.RefList<WikiArticle> queue) {
       try {
         try (final InputStream in = new BZip2CompressorInputStream(Util.cacheLocal(file, new URI(url)), true)) {
           final SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -72,13 +71,12 @@ public class WikiArticle extends TestDocument {
           final SAXParser saxParser = spf.newSAXParser();
           saxParser.parse(in, new DefaultHandler() {
             Stack<CharSequence> prefix = new Stack<CharSequence>();
-            Stack<Map<CharSequence, AtomicInteger>> indexes = new Stack<Map<CharSequence, AtomicInteger>>();
+            Stack<com.simiacryptus.ref.wrappers.RefMap<CharSequence, AtomicInteger>> indexes = new Stack<com.simiacryptus.ref.wrappers.RefMap<CharSequence, AtomicInteger>>();
             StringBuilder nodeString = new StringBuilder();
             private String title;
 
             @Override
-            public void characters(final char[] ch, final int start,
-                                   final int length) throws SAXException {
+            public void characters(final char[] ch, final int start, final int length) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }
@@ -92,8 +90,7 @@ public class WikiArticle extends TestDocument {
             }
 
             @Override
-            public void endElement(final String uri, final String localName,
-                                   final String qName) throws SAXException {
+            public void endElement(final String uri, final String localName, final String qName) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }
@@ -124,15 +121,14 @@ public class WikiArticle extends TestDocument {
             }
 
             @Override
-            public void startElement(final String uri, final String localName,
-                                     final String qName, final Attributes attributes)
-                throws SAXException {
+            public void startElement(final String uri, final String localName, final String qName,
+                                     final Attributes attributes) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }
               int idx;
               if (0 < this.indexes.size()) {
-                final Map<CharSequence, AtomicInteger> index = this.indexes.peek();
+                final com.simiacryptus.ref.wrappers.RefMap<CharSequence, AtomicInteger> index = this.indexes.peek();
                 AtomicInteger cnt = index.get(qName);
                 if (null == cnt) {
                   cnt = new AtomicInteger(-1);
@@ -147,14 +143,15 @@ public class WikiArticle extends TestDocument {
                 path += "[" + idx + "]";
               }
               this.prefix.push(path);
-              this.indexes.push(new HashMap<CharSequence, AtomicInteger>());
+              this.indexes.push(new com.simiacryptus.ref.wrappers.RefHashMap<CharSequence, AtomicInteger>());
               super.startElement(uri, localName, qName, attributes);
             }
 
           }, null);
         }
       } catch (final RuntimeException e) {
-        if (!(e.getCause() instanceof InterruptedException)) e.printStackTrace();
+        if (!(e.getCause() instanceof InterruptedException))
+          e.printStackTrace();
       } catch (final Exception e) {
         e.printStackTrace();
       } finally {

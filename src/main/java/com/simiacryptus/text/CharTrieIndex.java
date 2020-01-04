@@ -19,6 +19,8 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.wrappers.RefCollectors;
+import com.simiacryptus.ref.wrappers.RefIntStream;
 import com.simiacryptus.util.data.SerialArrayList;
 
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class CharTrieIndex extends CharTrie {
+public @com.simiacryptus.ref.lang.RefAware
+class CharTrieIndex extends CharTrie {
 
   protected final SerialArrayList<CursorData> cursors;
   protected final ArrayList<CharSequence> documents;
@@ -41,23 +44,38 @@ public class CharTrieIndex extends CharTrie {
   }
 
   public CharTrieIndex(CharTrieIndex copyFrom) {
-    this(copyFrom.nodes.copy(), copyFrom.cursors.copy(), new ArrayList<>(copyFrom.documents));
+    this(copyFrom.nodes.copy(), copyFrom.cursors.copy(),
+        new ArrayList<>(copyFrom.documents));
 
   }
 
   public CharTrieIndex() {
-    this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(NodewalkerCodec.END_OF_STRING, (short) -1, -1, -1, 0)), new SerialArrayList<>(CursorType.INSTANCE), new ArrayList<>());
+    this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(NodewalkerCodec.END_OF_STRING, (short) -1, -1, -1, 0)),
+        new SerialArrayList<>(CursorType.INSTANCE), new ArrayList<>());
   }
 
-  public static CharTrie indexWords(Collection<CharSequence> documents, int maxLevels, int minWeight) {
+  @Override
+  public long getIndexedSize() {
+    return documents.isEmpty() ? super.getIndexedSize() : documents.stream().mapToInt(doc -> doc.length()).sum();
+  }
+
+  @Override
+  public int getMemorySize() {
+    return cursors.getMemorySize() + nodes.getMemorySize();
+  }
+
+  public static CharTrie indexWords(Collection<CharSequence> documents, int maxLevels,
+                                    int minWeight) {
     return create(documents, maxLevels, minWeight, true);
   }
 
-  public static CharTrie indexFulltext(Collection<CharSequence> documents, int maxLevels, int minWeight) {
+  public static CharTrie indexFulltext(Collection<CharSequence> documents,
+                                       int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, false);
   }
 
-  private static CharTrie create(Collection<CharSequence> documents, int maxLevels, int minWeight, boolean words) {
+  private static CharTrie create(Collection<CharSequence> documents, int maxLevels,
+                                 int minWeight, boolean words) {
     List<List<CharSequence>> a = new ArrayList<>();
     List<CharSequence> b = new ArrayList<>();
     int blockSize = 1024 * 1024;
@@ -81,16 +99,6 @@ public class CharTrieIndex extends CharTrie {
       trie.index(maxLevels, minWeight);
       return (CharTrie) trie;
     }).reduce((l, r) -> l.add(r)).get();
-  }
-
-  @Override
-  public int getMemorySize() {
-    return cursors.getMemorySize() + nodes.getMemorySize();
-  }
-
-  @Override
-  public long getIndexedSize() {
-    return documents.isEmpty() ? super.getIndexedSize() : documents.stream().mapToInt(doc -> doc.length()).sum();
   }
 
   public CharTrie truncate() {
@@ -140,8 +148,8 @@ public class CharTrieIndex extends CharTrie {
       index = documents.size();
       documents.add(document);
     }
-    cursors.addAll(
-        IntStream.range(0, 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+    cursors.addAll(RefIntStream.range(0, 1).mapToObj(i -> new CursorData(index, i))
+        .collect(RefCollectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
@@ -155,8 +163,8 @@ public class CharTrieIndex extends CharTrie {
       index = documents.size();
       documents.add(document);
     }
-    cursors.addAll(
-        IntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i)).collect(Collectors.toList()));
+    cursors.addAll(RefIntStream.range(0, document.length() + 1)
+        .mapToObj(i -> new CursorData(index, i)).collect(RefCollectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
@@ -164,11 +172,6 @@ public class CharTrieIndex extends CharTrie {
   public CharTrie addAlphabet(CharSequence document) {
     document.chars().mapToObj(i -> new String(Character.toChars(i))).forEach(s -> addDocument(s));
     return this;
-  }
-
-  @Override
-  CharTrieIndex recomputeCursorDetails() {
-    return (CharTrieIndex) super.recomputeCursorDetails();
   }
 
   public CharTrieIndex copy() {
@@ -183,6 +186,11 @@ public class CharTrieIndex extends CharTrie {
   @Override
   public IndexNode traverse(String search) {
     return root().traverse(search);
+  }
+
+  @Override
+  CharTrieIndex recomputeCursorDetails() {
+    return (CharTrieIndex) super.recomputeCursorDetails();
   }
 
 }

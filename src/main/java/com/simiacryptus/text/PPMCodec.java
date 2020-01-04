@@ -29,7 +29,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
-public class PPMCodec {
+public @com.simiacryptus.ref.lang.RefAware
+class PPMCodec {
   public static final Character ESCAPE = '\uFFFE';
   public static final char FALLBACK = Character.MAX_VALUE;
   public static final char END_OF_STRING = Character.MIN_VALUE;
@@ -39,6 +40,10 @@ public class PPMCodec {
   PPMCodec(CharTrie inner) {
     super();
     this.inner = inner;
+  }
+
+  public int getMemorySize() {
+    return inner.getMemorySize();
   }
 
   private static String getRight(String str, int count) {
@@ -55,36 +60,41 @@ public class PPMCodec {
       String contextStr = "";
       while (true) {
         TrieNode fromNode = inner.matchPredictor(getRight(contextStr, context));
-        if (0 == fromNode.getNumberOfChildren()) return "";
+        if (0 == fromNode.getNumberOfChildren())
+          return "";
         long seek = in.peekLongCoord(fromNode.getCursorCount());
         TrieNode toNode = fromNode.traverse(seek + fromNode.getCursorIndex());
         String newSegment = toNode.getString(fromNode);
         Interval interval = fromNode.intervalTo(toNode);
         Bits bits = interval.toBits();
         if (verbose) {
-          System.out.println(String.format(
-              "Using prefix \"%s\", seek to %s pos, path \"%s\" apply %s -> %s, input buffer = %s",
-              fromNode.getDebugString(), seek, toNode.getDebugString(fromNode), interval, bits, in.peek(24)));
+          System.out.println(
+              String.format("Using prefix \"%s\", seek to %s pos, path \"%s\" apply %s -> %s, input buffer = %s",
+                  fromNode.getDebugString(), seek, toNode.getDebugString(fromNode), interval, bits, in.peek(24)));
         }
         in.expect(bits);
         if (toNode.isStringTerminal()) {
-          if (verbose) System.out.println("Inserting null char to terminate string");
+          if (verbose)
+            System.out.println("Inserting null char to terminate string");
           newSegment += END_OF_STRING;
         }
         if (!newSegment.isEmpty()) {
           if (newSegment.endsWith("\u0000")) {
             out.append(newSegment, 0, newSegment.length() - 1);
-            if (verbose) System.out.println(String.format("Null char reached"));
+            if (verbose)
+              System.out.println(String.format("Null char reached"));
             break;
           } else {
             contextStr += newSegment;
             out.append(newSegment);
           }
         } else if (in.availible() == 0) {
-          if (verbose) System.out.println(String.format("No More Data"));
+          if (verbose)
+            System.out.println(String.format("No More Data"));
           break;
         } else if (toNode.getChar() == END_OF_STRING) {
-          if (verbose) System.out.println(String.format("End code"));
+          if (verbose)
+            System.out.println(String.format("End code"));
           break;
           //throw new RuntimeException("Cannot decode text");
         } else if (toNode.getChar() == FALLBACK) {
@@ -94,11 +104,12 @@ public class PPMCodec {
           char exotic = (char) charBits.toLong();
           out.append(new String(new char[]{exotic}));
           if (verbose) {
-            System.out.println(String.format(
-                "Read exotic byte %s -> %s, input buffer = %s", exotic, charBits, in.peek(24)));
+            System.out
+                .println(String.format("Read exotic byte %s -> %s, input buffer = %s", exotic, charBits, in.peek(24)));
           }
         } else {
-          if (verbose) System.out.println(String.format("Cannot decode text"));
+          if (verbose)
+            System.out.println(String.format("Cannot decode text"));
           break;
           //throw new RuntimeException("Cannot decode text");
         }
@@ -112,7 +123,8 @@ public class PPMCodec {
   public Bits encodePPM(String text, int context) {
     final CharSequence original = text;
     //if(verbose) System.p.println(String.format("Encoding %s apply %s chars of context", text, context));
-    if (!text.endsWith("\u0000")) text += END_OF_STRING;
+    if (!text.endsWith("\u0000"))
+      text += END_OF_STRING;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     BitOutputStream out = new BitOutputStream(buffer);
     String contextStr = "";
@@ -137,8 +149,7 @@ public class PPMCodec {
         Interval interval = fromNode.intervalTo(toNode);
         Bits segmentData = interval.toBits();
         if (verbose) {
-          System.out.println(String.format(
-              "Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
+          System.out.println(String.format("Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
               fromNode.getDebugString(), toNode.getDebugString(fromNode), segmentChars, interval, segmentData));
         }
         out.write(segmentData);
@@ -149,8 +160,7 @@ public class PPMCodec {
             char exotic = text.charAt(0);
             out.write(exotic);
             if (verbose) {
-              System.out.println(String.format(
-                  "Writing exotic character %s -> %s", exotic, new Bits(exotic, 16)));
+              System.out.println(String.format("Writing exotic character %s -> %s", exotic, new Bits(exotic, 16)));
             }
             text = text.substring(1);
           } else if (toNode.getChar() == FALLBACK) {
@@ -170,10 +180,6 @@ public class PPMCodec {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public int getMemorySize() {
-    return inner.getMemorySize();
   }
 
   public PPMCodec copy() {

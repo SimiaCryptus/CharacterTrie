@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-
-public class TrieNode {
+public @com.simiacryptus.ref.lang.RefAware
+class TrieNode {
   protected final CharTrie trie;
   protected final int index;
   private transient short depth = -1;
@@ -54,6 +54,33 @@ public class TrieNode {
     //assert(null == trie.parentIndex || 0 == index || trie.parentIndex[index]>=0);
   }
 
+  public char getChar() {
+    return getData().token;
+  }
+
+  public Stream<? extends TrieNode> getChildren() {
+    if (getData().firstChildIndex >= 0) {
+      return IntStream.range(0, getData().numberOfChildren)
+          .mapToObj(i -> new TrieNode(this.trie, getData().firstChildIndex + i, TrieNode.this));
+    } else {
+      return Stream.empty();
+    }
+  }
+
+  public TreeMap<Character, ? extends TrieNode> getChildrenMap() {
+    TreeMap<Character, TrieNode> map = new TreeMap<>();
+    getChildren().forEach(x -> map.put(x.getChar(), x));
+    return map;
+  }
+
+  public long getCursorCount() {
+    return getData().cursorCount;
+  }
+
+  public long getCursorIndex() {
+    return getData().firstCursorIndex;
+  }
+
   NodeData getData() {
     if (null == data) {
       synchronized (this) {
@@ -65,10 +92,104 @@ public class TrieNode {
     return data;
   }
 
+  public String getDebugString() {
+    return getDebugString(getTrie().root());
+  }
+
+  public CharSequence getDebugToken() {
+    char asChar = getChar();
+    if (asChar == NodewalkerCodec.FALLBACK)
+      return "<STOP>";
+    if (asChar == NodewalkerCodec.END_OF_STRING)
+      return "<NULL>";
+    if (asChar == NodewalkerCodec.ESCAPE)
+      return "<ESC>";
+    if (asChar == '\\')
+      return "\\\\";
+    if (asChar == '\n')
+      return "\\n";
+    return new String(new char[]{asChar});
+  }
+
+  public short getDepth() {
+    if (0 == index)
+      return 0;
+    if (-1 == depth) {
+      synchronized (this) {
+        if (-1 == depth) {
+          TrieNode parent = getParent();
+          assert (null == parent || parent.index < index);
+          depth = (short) (null == parent ? 0 : (parent.getDepth() + 1));
+        }
+      }
+    }
+    return depth;
+  }
+
+  public Map<Character, TrieNode> getGodChildren() {
+    CharSequence postContext = this.getString().substring(1);
+    return trie.tokens().stream().collect(Collectors.toMap(x -> x, token -> {
+      TrieNode traverse = trie.traverse(token.toString() + postContext);
+      return traverse.getString().equals(token.toString() + postContext) ? traverse : null;
+    })).entrySet().stream().filter(e -> null != e.getValue())
+        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+  }
+
+  public short getNumberOfChildren() {
+    return getData().numberOfChildren;
+  }
+
+  public TrieNode getParent() {
+    if (0 == index)
+      return null;
+    if (null == parent && -1 == depth) {
+      synchronized (this) {
+        if (null == parent) {
+          parent = newNode(trie.parentIndex[index]);
+          assert (parent.index < index);
+        }
+      }
+    }
+    return parent;
+  }
+
+  public String getRawString() {
+    return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
+  }
+
+  public String getString() {
+    return (null == getParent() ? "" : getParent().getString()) + (0 == getDepth() ? "" : getToken());
+  }
+
+  public String getToken() {
+    char asChar = getChar();
+    if (asChar == NodewalkerCodec.FALLBACK)
+      return "";
+    if (asChar == NodewalkerCodec.END_OF_STRING)
+      return "";
+    if (asChar == NodewalkerCodec.ESCAPE)
+      return "";
+    return new String(new char[]{asChar});
+  }
+
+  public CharTrie getTrie() {
+    return trie;
+  }
+
+  public boolean isStringTerminal() {
+    if (getChar() == NodewalkerCodec.END_OF_STRING)
+      return true;
+    if (getChar() == NodewalkerCodec.FALLBACK && null != getParent())
+      return getParent().isStringTerminal();
+    return false;
+  }
+
   public TrieNode godparent() {
-    if (0 == getDepth()) return null;
+    if (0 == getDepth())
+      return null;
     TrieNode root = trie.root();
-    if (1 == getDepth()) return root;
+    if (1 == getDepth())
+      return root;
     if (null != trie.godparentIndex && trie.godparentIndex.length > index) {
       int godparentIndex = trie.godparentIndex[this.index];
       if (godparentIndex >= 0) {
@@ -84,8 +205,7 @@ public class TrieNode {
       if (null == greatgodparent) {
         godparent = root;
       } else {
-        godparent = greatgodparent.getChild(getChar())
-            .map(x -> (TrieNode) x).orElseGet(() -> root);
+        godparent = greatgodparent.getChild(getChar()).map(x -> (TrieNode) x).orElseGet(() -> root);
       }
       //assert(getString().isEmpty() || getString().substring(1).equals(godparent.getString()));
     }
@@ -95,85 +215,23 @@ public class TrieNode {
     return godparent;
   }
 
-  protected TrieNode newNode(int index) {
-    return new TrieNode(trie, index);
-  }
-
   public TrieNode refresh() {
     this.data = null;
     return this;
   }
 
   public String getString(TrieNode root) {
-    if (this == root) return "";
+    if (this == root)
+      return "";
     CharSequence parentStr = null == getParent() ? "" : getParent().getString(root);
     return parentStr + getToken();
   }
 
-  public String getRawString() {
-    return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
-  }
-
-  public String getString() {
-    return (null == getParent() ? "" : getParent().getString()) + (0 == getDepth() ? "" : getToken());
-  }
-
-  public String getDebugString() {
-    return getDebugString(getTrie().root());
-  }
-
   public String getDebugString(TrieNode root) {
-    if (this == root) return "";
+    if (this == root)
+      return "";
     CharSequence parentStr = null == getParent() ? "" : getParent().getDebugString(root);
     return parentStr.toString() + getDebugToken();
-  }
-
-  public CharSequence getDebugToken() {
-    char asChar = getChar();
-    if (asChar == NodewalkerCodec.FALLBACK) return "<STOP>";
-    if (asChar == NodewalkerCodec.END_OF_STRING) return "<NULL>";
-    if (asChar == NodewalkerCodec.ESCAPE) return "<ESC>";
-    if (asChar == '\\') return "\\\\";
-    if (asChar == '\n') return "\\n";
-    return new String(new char[]{asChar});
-  }
-
-  public String getToken() {
-    char asChar = getChar();
-    if (asChar == NodewalkerCodec.FALLBACK) return "";
-    if (asChar == NodewalkerCodec.END_OF_STRING) return "";
-    if (asChar == NodewalkerCodec.ESCAPE) return "";
-    return new String(new char[]{asChar});
-  }
-
-  public char getChar() {
-    return getData().token;
-  }
-
-  public short getNumberOfChildren() {
-    return getData().numberOfChildren;
-  }
-
-  public short getDepth() {
-    if (0 == index) return 0;
-    if (-1 == depth) {
-      synchronized (this) {
-        if (-1 == depth) {
-          TrieNode parent = getParent();
-          assert (null == parent || parent.index < index);
-          depth = (short) (null == parent ? 0 : (parent.getDepth() + 1));
-        }
-      }
-    }
-    return depth;
-  }
-
-  public long getCursorIndex() {
-    return getData().firstCursorIndex;
-  }
-
-  public long getCursorCount() {
-    return getData().cursorCount;
   }
 
   public TrieNode visitFirst(Consumer<? super TrieNode> visitor) {
@@ -187,15 +245,6 @@ public class TrieNode {
     getChildren().forEach(n -> n.visitLast(visitor));
     visitor.accept(this);
     return refresh();
-  }
-
-  public Stream<? extends TrieNode> getChildren() {
-    if (getData().firstChildIndex >= 0) {
-      return IntStream.range(0, getData().numberOfChildren)
-          .mapToObj(i -> new TrieNode(this.trie, getData().firstChildIndex + i, TrieNode.this));
-    } else {
-      return Stream.empty();
-    }
   }
 
   public Optional<? extends TrieNode> getChild(char token) {
@@ -219,13 +268,6 @@ public class TrieNode {
     }
     //assert !getChildren().keywords(x -> x.getChar() == token).findFirst().isPresent();
     return Optional.empty();
-  }
-
-  protected void decrementCursorCount(long count) {
-    this.trie.nodes.update(index, data -> data.setCursorCount(Math.max(data.cursorCount - count, 0)));
-    if (null != getParent()) {
-      getParent().decrementCursorCount(count);
-    }
   }
 
   public TrieNode traverse(String str) {
@@ -255,32 +297,18 @@ public class TrieNode {
   }
 
   public Bits bitsTo(TrieNode toNode) {
-    if (index == toNode.index) return Bits.NULL;
+    if (index == toNode.index)
+      return Bits.NULL;
     return intervalTo(toNode).toBits();
   }
 
   public Interval intervalTo(TrieNode toNode) {
-    return new Interval(toNode.getCursorIndex() - this.getCursorIndex(),
-        toNode.getCursorCount(), this.getCursorCount());
+    return new Interval(toNode.getCursorIndex() - this.getCursorIndex(), toNode.getCursorCount(),
+        this.getCursorCount());
   }
 
   public boolean hasChildren() {
     return 0 < getNumberOfChildren();
-  }
-
-  NodeData update(Function<NodeData, NodeData> update) {
-    data = trie.nodes.update(index, update);
-    return data;
-  }
-
-  public CharTrie getTrie() {
-    return trie;
-  }
-
-  public boolean isStringTerminal() {
-    if (getChar() == NodewalkerCodec.END_OF_STRING) return true;
-    if (getChar() == NodewalkerCodec.FALLBACK && null != getParent()) return getParent().isStringTerminal();
-    return false;
   }
 
   public Stream<? extends TrieNode> streamDecendents(int level) {
@@ -292,38 +320,16 @@ public class TrieNode {
     }
   }
 
-  void writeChildren(TreeMap<Character, Long> counts) {
-    int firstIndex = trie.nodes.length();
-    counts.forEach((k, v) -> {
-      if (v > 0) trie.nodes.add(new NodeData(k, (short) -1, -1, v, -1));
-    });
-    short length = (short) (trie.nodes.length() - firstIndex);
-    trie.ensureParentIndexCapacity(firstIndex, length, index);
-    update(n -> n.setFirstChildIndex(firstIndex).setNumberOfChildren(length));
-    data = null;
-  }
-
-  public TreeMap<Character, ? extends TrieNode> getChildrenMap() {
-    TreeMap<Character, TrieNode> map = new TreeMap<>();
-    getChildren().forEach(x -> map.put(x.getChar(), x));
-    return map;
-  }
-
-  public Map<Character, TrieNode> getGodChildren() {
-    CharSequence postContext = this.getString().substring(1);
-    return trie.tokens().stream().collect(Collectors.toMap(x -> x, token -> {
-      TrieNode traverse = trie.traverse(token.toString() + postContext);
-      return traverse.getString().equals(token.toString() + postContext) ? traverse : null;
-    })).entrySet().stream().filter(e -> null != e.getValue()).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
-  }
-
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
     TrieNode trieNode = (TrieNode) o;
-    if (getCursorCount() != ((TrieNode) o).getCursorCount()) return false;
+    if (getCursorCount() != ((TrieNode) o).getCursorCount())
+      return false;
     return getChildrenMap().equals(trieNode.getChildrenMap());
   }
 
@@ -332,24 +338,40 @@ public class TrieNode {
     return getChildrenMap().hashCode() ^ Long.hashCode(getCursorCount());
   }
 
-  public TrieNode getParent() {
-    if (0 == index) return null;
-    if (null == parent && -1 == depth) {
-      synchronized (this) {
-        if (null == parent) {
-          parent = newNode(trie.parentIndex[index]);
-          assert (parent.index < index);
-        }
-      }
-    }
-    return parent;
-  }
-
   public TrieNode getContinuation(char c) {
     return ((Optional<TrieNode>) getChild(c)).orElseGet(() -> {
       TrieNode godparent = godparent();
-      if (null == godparent) return null;
+      if (null == godparent)
+        return null;
       return godparent.getContinuation(c);
     });
+  }
+
+  NodeData update(Function<NodeData, NodeData> update) {
+    data = trie.nodes.update(index, update);
+    return data;
+  }
+
+  void writeChildren(TreeMap<Character, Long> counts) {
+    int firstIndex = trie.nodes.length();
+    counts.forEach((k, v) -> {
+      if (v > 0)
+        trie.nodes.add(new NodeData(k, (short) -1, -1, v, -1));
+    });
+    short length = (short) (trie.nodes.length() - firstIndex);
+    trie.ensureParentIndexCapacity(firstIndex, length, index);
+    update(n -> n.setFirstChildIndex(firstIndex).setNumberOfChildren(length));
+    data = null;
+  }
+
+  protected TrieNode newNode(int index) {
+    return new TrieNode(trie, index);
+  }
+
+  protected void decrementCursorCount(long count) {
+    this.trie.nodes.update(index, data -> data.setCursorCount(Math.max(data.cursorCount - count, 0)));
+    if (null != getParent()) {
+      getParent().decrementCursorCount(count);
+    }
   }
 }

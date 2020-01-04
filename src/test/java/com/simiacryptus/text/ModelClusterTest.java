@@ -31,18 +31,14 @@ import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
-public abstract class ModelClusterTest {
+public abstract @com.simiacryptus.ref.lang.RefAware
+class ModelClusterTest {
 
   public static final File outPath = new File("src/site/resources/");
   public static final URL outBaseUrl = TrieTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
-
-  protected abstract Stream<? extends TestDocument> source();
 
   public abstract int getModelCount();
 
@@ -55,14 +51,15 @@ public abstract class ModelClusterTest {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
       AtomicInteger index = new AtomicInteger(0);
-      Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Compressor> compressors = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex baseTree = new CharTrieIndex();
         baseTree.addDocument(text.getText());
         CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
         int i = index.incrementAndGet();
         compressors.put(String.format("LZ_%s", i), new Compressor() {
-          String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "", dictionary_lookahead, true);
+          String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "",
+              dictionary_lookahead, true);
 
           @Override
           public byte[] compress(String text) {
@@ -90,7 +87,6 @@ public abstract class ModelClusterTest {
         });
       });
 
-
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
       log.p(output.toCSV(true));
       log.p(output.calcNumberStats().toCSV(true));
@@ -110,7 +106,7 @@ public abstract class ModelClusterTest {
       int encodingContext = 2;
 
       log.p("Generating Compressor Models");
-      Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Compressor> compressors = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
@@ -142,7 +138,7 @@ public abstract class ModelClusterTest {
       int encodingContext = 2;
 
       log.p("Generating Compressor Models");
-      Map<CharSequence, Function<TestDocument, Double>> compressors = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Function<TestDocument, Double>> compressors = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
@@ -164,22 +160,24 @@ public abstract class ModelClusterTest {
     }
   }
 
-  public static class Wikipedia extends ModelClusterTest {
-    int testCount = 1000;
+  protected abstract com.simiacryptus.ref.wrappers.RefStream<? extends TestDocument> source();
 
-    @Override
-    protected Stream<? extends TestDocument> source() {
-      return WikiArticle.ENGLISH.stream().filter(wikiArticle -> {
-        int kb = wikiArticle.getText().length() / 1024;
-        return kb > 50 && kb < 150;
-      }).limit(getModelCount() + testCount);
-    }
+  public static @com.simiacryptus.ref.lang.RefAware
+  class Wikipedia extends ModelClusterTest {
+    int testCount = 1000;
 
     @Override
     public int getModelCount() {
       return 20;
     }
-  }
 
+    @Override
+    protected com.simiacryptus.ref.wrappers.RefStream<? extends TestDocument> source() {
+      return WikiArticle.ENGLISH.stream().filter(wikiArticle -> {
+        int kb = wikiArticle.getText().length() / 1024;
+        return kb > 50 && kb < 150;
+      }).limit(getModelCount() + testCount);
+    }
+  }
 
 }

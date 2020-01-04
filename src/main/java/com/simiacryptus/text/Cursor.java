@@ -19,7 +19,8 @@
 
 package com.simiacryptus.text;
 
-public class Cursor {
+public @com.simiacryptus.ref.lang.RefAware
+class Cursor {
   final CursorData data;
   private final CharTrieIndex charTrieIndex;
   private final short depth;
@@ -34,8 +35,12 @@ public class Cursor {
     return this.charTrieIndex.documents.get(data.documentId);
   }
 
-  public boolean hasNext() {
-    return (getPosition() + 1) < getDocument().length();
+  public int getDocumentId() {
+    return data.documentId;
+  }
+
+  public int getPosition() {
+    return data.position + depth - 1;
   }
 
   public char getToken() {
@@ -44,15 +49,11 @@ public class Cursor {
     return index >= document.length() ? NodewalkerCodec.END_OF_STRING : document.charAt(index);
   }
 
+  public boolean hasNext() {
+    return (getPosition() + 1) < getDocument().length();
+  }
+
   public Cursor next() {
     return new Cursor(this.charTrieIndex, data, (short) (depth + 1));
-  }
-
-  public int getPosition() {
-    return data.position + depth - 1;
-  }
-
-  public int getDocumentId() {
-    return data.documentId;
   }
 }

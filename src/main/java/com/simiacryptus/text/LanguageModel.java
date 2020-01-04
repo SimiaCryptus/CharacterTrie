@@ -22,25 +22,15 @@ package com.simiacryptus.text;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
 
 public enum LanguageModel {
-  English("English.trie"),
-  French("French.trie"),
-  German("German.trie");
+  English("English.trie"), French("French.trie"), German("German.trie");
 
   private final String resource;
   private volatile CharTrie trie;
 
   LanguageModel(String resource) {
     this.resource = resource;
-  }
-
-  public static LanguageModel match(String text) {
-    return Arrays.stream(LanguageModel.values()).min(Comparator.comparing(
-        model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength
-    )).get();
   }
 
   public CharTrie getTrie() {
@@ -58,6 +48,13 @@ public enum LanguageModel {
       }
     }
     return trie;
+  }
+
+  public static LanguageModel match(String text) {
+    return com.simiacryptus.ref.wrappers.RefArrays.stream(LanguageModel.values())
+        .min(com.simiacryptus.ref.wrappers.RefComparator
+            .comparing(model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength))
+        .get();
   }
 
 }

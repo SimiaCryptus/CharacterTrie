@@ -27,13 +27,13 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-public class CompressionUtil {
+public @com.simiacryptus.ref.lang.RefAware
+class CompressionUtil {
   public static final Random random = new Random();
 
   public static byte[] encodeLZ(CharSequence data, String dictionary) {
@@ -65,7 +65,7 @@ public class CompressionUtil {
     compresser.finish();
     int compressedDataLength = compresser.deflate(output);
     compresser.end();
-    return Arrays.copyOf(output, compressedDataLength);
+    return com.simiacryptus.ref.wrappers.RefArrays.copyOf(output, compressedDataLength);
   }
 
   public static byte[] decodeLZ(byte[] data, String dictionary) {
@@ -84,7 +84,7 @@ public class CompressionUtil {
       }
       resultLength = decompresser.inflate(result);
       decompresser.end();
-      return Arrays.copyOfRange(result, 0, resultLength);
+      return com.simiacryptus.ref.wrappers.RefArrays.copyOfRange(result, 0, resultLength);
     } catch (DataFormatException | UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
@@ -180,9 +180,7 @@ public class CompressionUtil {
   public static byte[] encodeBZ(byte[] asBytes, String dictionary) {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
-      VCDiffEncoder<OutputStream> encoder = VCDiffEncoderBuilder.builder()
-          .withDictionary(dictBytes)
-          .buildSimple();
+      VCDiffEncoder<OutputStream> encoder = VCDiffEncoderBuilder.builder().withDictionary(dictBytes).buildSimple();
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
       encoder.encode(asBytes, buffer);
       return encodeBZ(buffer.toByteArray());

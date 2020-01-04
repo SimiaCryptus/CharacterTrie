@@ -21,14 +21,11 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.util.data.SerialArrayList;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.Optional;
 
-public class IndexNode extends TrieNode {
+public @com.simiacryptus.ref.lang.RefAware
+class IndexNode extends TrieNode {
 
   public IndexNode(CharTrie trie, short depth, int index, TrieNode parent) {
     super(trie, index, parent);
@@ -38,26 +35,40 @@ public class IndexNode extends TrieNode {
     super(trie, index);
   }
 
-  public Map<CharSequence, List<Cursor>> getCursorsByDocument() {
-    return this.getCursors().collect(Collectors.groupingBy((Cursor x) -> x.getDocument()));
+  @Override
+  public com.simiacryptus.ref.wrappers.RefStream<? extends IndexNode> getChildren() {
+    if (getData().firstChildIndex >= 0) {
+      return com.simiacryptus.ref.wrappers.RefIntStream.range(0, getData().numberOfChildren)
+          .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
+    } else {
+      return com.simiacryptus.ref.wrappers.RefStream.empty();
+    }
   }
 
-  public Stream<Cursor> getCursors() {
-    return LongStream.range(0, getData().cursorCount).mapToObj(i -> {
-      return new Cursor((CharTrieIndex) this.trie, ((CharTrieIndex) this.trie).cursors.get((int) (i + getData().firstCursorIndex)), getDepth());
+  public com.simiacryptus.ref.wrappers.RefStream<Cursor> getCursors() {
+    return com.simiacryptus.ref.wrappers.RefLongStream.range(0, getData().cursorCount).mapToObj(i -> {
+      return new Cursor((CharTrieIndex) this.trie,
+          ((CharTrieIndex) this.trie).cursors.get((int) (i + getData().firstCursorIndex)), getDepth());
     });
+  }
+
+  public com.simiacryptus.ref.wrappers.RefMap<CharSequence, com.simiacryptus.ref.wrappers.RefList<Cursor>> getCursorsByDocument() {
+    return this.getCursors()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.groupingBy((Cursor x) -> x.getDocument()));
   }
 
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
-      TreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new TreeMap<>(getCursors().parallel()
-          .collect(Collectors.groupingBy(y -> y.next().getToken(),
-              Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
-                  cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
-                  (left, right) -> left.add(right)))));
+      com.simiacryptus.ref.wrappers.RefTreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new com.simiacryptus.ref.wrappers.RefTreeMap<>(
+          getCursors().parallel()
+              .collect(com.simiacryptus.ref.wrappers.RefCollectors.groupingBy(y -> y.next().getToken(),
+                  com.simiacryptus.ref.wrappers.RefCollectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
+                      cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
+                      (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
       //System.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
-      ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
+      com.simiacryptus.ref.wrappers.RefArrayList<NodeData> childNodes = new com.simiacryptus.ref.wrappers.RefArrayList<>(
+          sortedChildren.size());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
         int length = e.getValue().length();
         ((CharTrieIndex) this.trie).cursors.putAll(e.getValue(), (int) cursorWriteIndex);
@@ -68,19 +79,12 @@ public class IndexNode extends TrieNode {
       short size = (short) childNodes.size();
       trie.ensureParentIndexCapacity(firstChildIndex, size, index);
       this.trie.nodes.update(index, data -> {
-        return data
-            .setFirstChildIndex(firstChildIndex)
-            .setNumberOfChildren(size);
+        return data.setFirstChildIndex(firstChildIndex).setNumberOfChildren(size);
       });
       return new IndexNode(this.trie, getDepth(), index, getParent());
     } else {
       return this;
     }
-  }
-
-  @Override
-  protected TrieNode newNode(int index) {
-    return new IndexNode(trie, index);
   }
 
   @Override
@@ -93,27 +97,17 @@ public class IndexNode extends TrieNode {
     return (IndexNode) super.refresh();
   }
 
-  public IndexNode visitFirstIndex(Consumer<? super IndexNode> visitor) {
+  public IndexNode visitFirstIndex(com.simiacryptus.ref.wrappers.RefConsumer<? super IndexNode> visitor) {
     visitor.accept(this);
     IndexNode refresh = refresh();
     refresh.getChildren().forEach(n -> n.visitFirstIndex(visitor));
     return refresh;
   }
 
-  public IndexNode visitLastIndex(Consumer<? super IndexNode> visitor) {
+  public IndexNode visitLastIndex(com.simiacryptus.ref.wrappers.RefConsumer<? super IndexNode> visitor) {
     getChildren().forEach(n -> n.visitLastIndex(visitor));
     visitor.accept(this);
     return refresh();
-  }
-
-  @Override
-  public Stream<? extends IndexNode> getChildren() {
-    if (getData().firstChildIndex >= 0) {
-      return IntStream.range(0, getData().numberOfChildren)
-          .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
-    } else {
-      return Stream.empty();
-    }
   }
 
   @Override
@@ -148,5 +142,10 @@ public class IndexNode extends TrieNode {
   @Override
   public IndexNode traverse(long cursorId) {
     return (IndexNode) super.traverse(cursorId);
+  }
+
+  @Override
+  protected TrieNode newNode(int index) {
+    return new IndexNode(trie, index);
   }
 }

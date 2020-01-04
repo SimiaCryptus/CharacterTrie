@@ -24,7 +24,6 @@ import com.simiacryptus.util.data.DoubleStatistics;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -33,12 +32,12 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.UUID;
 
-public class TrieTest {
+public @com.simiacryptus.ref.lang.RefAware
+class TrieTest {
   public static final File outPath = new File("src/site/resources/");
   public static final URL outBaseUrl = getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
@@ -50,7 +49,8 @@ public class TrieTest {
     }
   }
 
-  private static void testRow(int maxLevels, int minWeight, Stream<CharSequence> documents) {
+  private static void testRow(int maxLevels, int minWeight,
+                              com.simiacryptus.ref.wrappers.RefStream<CharSequence> documents) {
     CharTrieIndex tree = new CharTrieIndex();
     long startTime = System.currentTimeMillis();
     documents.forEach(i -> tree.addDocument(i));
@@ -61,11 +61,14 @@ public class TrieTest {
             elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
   }
 
-  private static Map<CharSequence, Object> evaluateDictionary(List<CharSequence> sentances, CharSequence dictionary, Map<CharSequence, Object> map) {
-    Arrays.asList(1, 4, 16, 32).stream().forEach(k -> {
+  private static com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> evaluateDictionary(
+      com.simiacryptus.ref.wrappers.RefList<CharSequence> sentances, CharSequence dictionary,
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map) {
+    com.simiacryptus.ref.wrappers.RefArrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
         int length0 = CompressionUtil.encodeLZ(line, "").length;
-        int lengthK = CompressionUtil.encodeLZ(line, dictionary.subSequence(0, Math.min(k * 1024, dictionary.length())).toString()).length;
+        int lengthK = CompressionUtil.encodeLZ(line,
+            dictionary.subSequence(0, Math.min(k * 1024, dictionary.length())).toString()).length;
         return (length0 - lengthK) * 1.0;
       }).collect(DoubleStatistics.COLLECTOR);
       map.put(String.format("%sk.sum", k), (int) statistics.getSum() / 1024);
@@ -82,27 +85,28 @@ public class TrieTest {
     tree.addDocument("a quick brown fox jumped over the lazy dog");
     tree.addDocument("this is a test. this is only a test. - nikola tesla");
     tree.index(3);
-    Assert.assertEquals(8, tree.traverse("t").getCursorCount());
-    Assert.assertEquals("t", tree.traverse("t").getString());
-    Assert.assertEquals("te", tree.traverse("te").getString());
-    Assert.assertEquals(3, tree.traverse("te").getCursorCount());
-    Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
-    Assert.assertEquals("dog", tree.traverse("dog").getString());
-    Assert.assertEquals(1, tree.traverse("do").getCursorCount());
-    Assert.assertEquals(6, tree.traverse("o").getCursorCount());
-    Assert.assertEquals(3, tree.traverse("test").getCursorCount());
-    Assert.assertEquals("tes", tree.traverse("test").getString());
-    Assert.assertEquals(2, tree.traverse("this ").getCursorCount());
-    Assert.assertEquals(1, tree.traverse(" dog").getCursorCount());
-    Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
-    Assert.assertEquals(1, tree.traverse("a quick").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(8, tree.traverse("t").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals("t", tree.traverse("t").getString());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals("te", tree.traverse("te").getString());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(3, tree.traverse("te").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(1, tree.traverse("dog").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals("dog", tree.traverse("dog").getString());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(1, tree.traverse("do").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(6, tree.traverse("o").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(3, tree.traverse("test").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals("tes", tree.traverse("test").getString());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(2, tree.traverse("this ").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(1, tree.traverse(" dog").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(1, tree.traverse("dog").getCursorCount());
+    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(1, tree.traverse("a quick").getCursorCount());
   }
 
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPerformance() {
     CharTrieIndex tree = new CharTrieIndex();
-    IntStream.range(0, 30000).parallel().forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
+    com.simiacryptus.ref.wrappers.RefIntStream.range(0, 30000).parallel()
+        .forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
     tree.index();
     System.out.println(String.format("tree.getIndexedSize = %s", tree.getIndexedSize()));
     System.out.println(String.format("tree.getMemorySize = %s", tree.getMemorySize()));
@@ -115,8 +119,8 @@ public class TrieTest {
     for (int count = 100; count < 50000; count *= 2) {
       for (int maxLevels = 1; maxLevels < 64; maxLevels = Math.max(maxLevels * 4, maxLevels + 1)) {
         for (int minWeight = 1; minWeight < 64; minWeight *= 4) {
-          testRow(maxLevels, minWeight,
-              IntStream.range(0, count).parallel().mapToObj(i -> UUID.randomUUID().toString()));
+          testRow(maxLevels, minWeight, com.simiacryptus.ref.wrappers.RefIntStream.range(0, count).parallel()
+              .mapToObj(i -> UUID.randomUUID().toString()));
         }
       }
     }
@@ -132,21 +136,25 @@ public class TrieTest {
     try (Scanner scanner = new Scanner(getClass().getClassLoader().getResourceAsStream("earthtomoon.txt"))) {
       content = scanner.useDelimiter("\\Z").next().replaceAll("[ \n\r\t]+", " ");
     }
-    List<CharSequence> sentances = Arrays.stream(content.split("\\.+")).map(line -> line.trim() + ".")
-        .filter(line -> line.length() > 12).collect(Collectors.toList());
+    com.simiacryptus.ref.wrappers.RefList<CharSequence> sentances = com.simiacryptus.ref.wrappers.RefArrays
+        .stream(content.split("\\.+")).map(line -> line.trim() + ".").filter(line -> line.length() > 12)
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList());
 
     int size = 32 * 1024;
     int sampleLength = 80;
 
-    Map<CharSequence, Long> wordCounts = Arrays.stream(content.replaceAll("[^\\w\\s]", "").split(" +")).map(s -> s.trim())
-        .filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, Long> wordCounts = com.simiacryptus.ref.wrappers.RefArrays
+        .stream(content.replaceAll("[^\\w\\s]", "").split(" +")).map(s -> s.trim()).filter(s -> !s.isEmpty())
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.groupingBy(x -> x,
+            com.simiacryptus.ref.wrappers.RefCollectors.counting()));
 
     {
       CharSequence commonTerms = wordCounts.entrySet().stream()
-          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
-              .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
+          .sorted(com.simiacryptus.ref.wrappers.RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(
+              e -> -e.getValue())
+              .thenComparing(com.simiacryptus.ref.wrappers.RefComparator.comparingLong(e -> -e.getKey().length())))
           .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
-      Map<CharSequence, Object> map = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       map.put("type", "CommonTerm");
       evaluateDictionary(sentances, commonTerms, map);
       map.put("sampleTxt", commonTerms.subSequence(0, sampleLength));
@@ -159,11 +167,11 @@ public class TrieTest {
     for (int encodingPenalty = -4; encodingPenalty < 4; encodingPenalty++) {
       int _encodingPenalty = encodingPenalty;
       CharSequence meritTerms = wordCounts.entrySet().stream()
-          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(
+          .sorted(com.simiacryptus.ref.wrappers.RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(
               e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
-              .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
+              .thenComparing(com.simiacryptus.ref.wrappers.RefComparator.comparingLong(e -> -e.getKey().length())))
           .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
-      Map<CharSequence, Object> map = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       map.put("type", "MeritTerm");
       map.put("encodingPenalty", encodingPenalty);
       evaluateDictionary(sentances, meritTerms, map);
@@ -176,10 +184,11 @@ public class TrieTest {
 
     {
       CharSequence uncommonTerms = wordCounts.entrySet().stream()
-          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> e.getValue())
-              .thenComparing(Comparator.comparingLong(e -> e.getKey().length())))
+          .sorted(com.simiacryptus.ref.wrappers.RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(
+              e -> e.getValue())
+              .thenComparing(com.simiacryptus.ref.wrappers.RefComparator.comparingLong(e -> e.getKey().length())))
           .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
-      Map<CharSequence, Object> map = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       map.put("type", "UncommonTerm,");
       evaluateDictionary(sentances, uncommonTerms, map);
       map.put("sampleTxt", uncommonTerms.subSequence(0, sampleLength));
@@ -208,7 +217,7 @@ public class TrieTest {
       CharTrie copy = tree.copy();
       for (int attempt = 0; attempt < 1; attempt++) {
         String dictionary = copy.getGenerator().generateMarkov(size, context, ".");
-        Map<CharSequence, Object> map = new LinkedHashMap<>();
+        com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
         map.put("type", "generateMarkov");
         map.put("context", context);
         evaluateDictionary(sentances, dictionary, map);
@@ -224,7 +233,7 @@ public class TrieTest {
       for (int context = 0; context < maxLevels - lookahead; context++) {
         for (int attempt = 0; attempt < 1; attempt++) {
           String dictionary = tree.copy().getGenerator().generateDictionary(size, context, ".", lookahead, true);
-          Map<CharSequence, Object> map = new LinkedHashMap<>();
+          com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
           map.put("type", "generateDictionary1");
           map.put("context", context);
           map.put("lookahead", lookahead);
@@ -242,7 +251,7 @@ public class TrieTest {
     for (int lookahead = 0; lookahead < 3; lookahead++) {
       for (int context = 0; context < maxLevels - lookahead; context++) {
         String dictionary = tree.getGenerator().generateDictionary(size, context, ".", lookahead, false);
-        Map<CharSequence, Object> map = new LinkedHashMap<>();
+        com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
         map.put("type", "generateDictionary2");
         map.put("context", context);
         map.put("lookahead", lookahead);
@@ -260,14 +269,16 @@ public class TrieTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void testModelMetric() {
-    Map<CharSequence, CharSequence> content = new HashMap<>();
-    for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharSequence> content = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+    for (String name : com.simiacryptus.ref.wrappers.RefArrays.asList("earthtomoon.txt", "20000leagues.txt",
+        "macbeth.txt", "randj.txt")) {
       content.put(name, new Scanner(getClass().getClassLoader().getResourceAsStream(name)).useDelimiter("\\Z").next()
           .replaceAll("[ \n\r\t]+", " "));
     }
 
     CharSequence characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+        .mapToObj(c -> new String(Character.toChars(c))).sorted()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.joining(""));
     System.out.println("Character Set:" + characterSet);
     int maxLevels = 5;
     int minWeight = 1;
@@ -275,8 +286,8 @@ public class TrieTest {
     int sampleSize = 64 * 1024;
 
     long startTime = System.currentTimeMillis();
-    Map<CharSequence, CharTrie> trees = new HashMap<>();
-    Map<CharSequence, CharSequence> dictionaries = new HashMap<>();
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharTrie> trees = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharSequence> dictionaries = new com.simiacryptus.ref.wrappers.RefHashMap<>();
     for (Map.Entry<CharSequence, CharSequence> e : content.entrySet()) {
       CharTrieIndex tree = new CharTrieIndex();
       tree.addDocument(characterSet);
@@ -297,7 +308,7 @@ public class TrieTest {
       for (Map.Entry<CharSequence, CharTrie> eb : trees.entrySet()) {
         String str = ea.getValue().getGenerator().generateMarkov(sampleSize, maxLevels - 1, "");
         Double crossEntropy = eb.getValue().getAnalyzer().entropy(str) / str.length();
-        HashMap<CharSequence, Object> map = new HashMap<>();
+        com.simiacryptus.ref.wrappers.RefHashMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefHashMap<>();
         map.put("source", ea.getKey());
         map.put("model", eb.getKey());
         map.put("crossEntropy", crossEntropy);
@@ -322,43 +333,49 @@ public class TrieTest {
     int articleCount = 1000;
     double selectivity = 0.1;
 
-    Map<CharSequence, CharSequence> articles = WikiArticle.ENGLISH.stream().filter(x -> x.getText().length() > minArticleLength)
-        .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount))
-        .collect(Collectors.toMap(d -> d.getTitle(), d -> d.getText()));
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharSequence> articles = WikiArticle.ENGLISH.stream()
+        .filter(x -> x.getText().length() > minArticleLength).filter(x -> selectivity > Math.random())
+        .limit(Math.max(articleCount, dictionaryCount))
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap(d -> d.getTitle(), d -> d.getText()));
 
     CharSequence characterSet = articles.values().stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+        .mapToObj(c -> new String(Character.toChars(c))).sorted()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.joining(""));
     System.out.println("Character Set:" + characterSet);
 
-    Stream<Map.Entry<CharSequence, CharSequence>> stream = articles.entrySet().stream().limit(dictionaryCount);
-    Map<CharSequence, CharTrie> models = stream
-        .collect(Collectors.toMap((Map.Entry<CharSequence, CharSequence> d) -> d.getKey(), (Map.Entry<CharSequence, CharSequence> d) -> {
-          CharSequence article = d.getValue();
-          CharSequence title = d.getKey();
-          CharTrieIndex tree = new CharTrieIndex();
-          tree.addDocument(characterSet);
-          tree.addDocument(article);
-          tree.index(maxLevels, minWeight).truncate();
-          System.out.println(
-              String.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
-          System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
-          return tree;
-        }));
-    Map<CharSequence, CharSequence> dictionaries = models.entrySet().stream()
-        .collect(Collectors.toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(), (Map.Entry<CharSequence, CharTrie> d) -> {
-          return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
-        }));
+    com.simiacryptus.ref.wrappers.RefStream<Map.Entry<CharSequence, CharSequence>> stream = articles.entrySet().stream()
+        .limit(dictionaryCount);
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharTrie> models = stream.collect(
+        com.simiacryptus.ref.wrappers.RefCollectors.toMap((Map.Entry<CharSequence, CharSequence> d) -> d.getKey(),
+            (Map.Entry<CharSequence, CharSequence> d) -> {
+              CharSequence article = d.getValue();
+              CharSequence title = d.getKey();
+              CharTrieIndex tree = new CharTrieIndex();
+              tree.addDocument(characterSet);
+              tree.addDocument(article);
+              tree.index(maxLevels, minWeight).truncate();
+              System.out.println(
+                  String.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
+              System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+              return tree;
+            }));
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharSequence> dictionaries = models.entrySet().stream()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(),
+            (Map.Entry<CharSequence, CharTrie> d) -> {
+              return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+            }));
 
     TableOutput output = new TableOutput();
-    articles.entrySet().stream().limit(articleCount).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
+    articles.entrySet().stream().limit(articleCount)
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap(e -> e.getKey(), e -> e.getValue()))
         .forEach((dataTitle, article) -> {
-          HashMap<CharSequence, Object> map = new LinkedHashMap<>();
+          com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
           map.put("dataTitle", dataTitle);
           dictionaries.forEach((modelTitle, dictionary) -> {
-            int sumA = IntStream.range(0, article.length() / chunkSize)
+            int sumA = com.simiacryptus.ref.wrappers.RefIntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.subSequence(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
                 .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
-            int sumB = IntStream.range(0, article.length() / chunkSize)
+            int sumB = com.simiacryptus.ref.wrappers.RefIntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.subSequence(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
                 .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary.toString()).length).sum();
             double bytes = (sumA - sumB) * 1.0 / sumA;
@@ -385,16 +402,18 @@ public class TrieTest {
     int articleCount = 1000;
     double selectivity = 0.1;
 
-    List<CharSequence> articles = TweetSentiment.load().filter(x -> x.getText().length() > minArticleLength)
-        .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount)).map(t -> t.getText())
-        .collect(Collectors.toList());
+    com.simiacryptus.ref.wrappers.RefList<CharSequence> articles = TweetSentiment.load()
+        .filter(x -> x.getText().length() > minArticleLength).filter(x -> selectivity > Math.random())
+        .limit(Math.max(articleCount, dictionaryCount)).map(t -> t.getText())
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList());
 
     CharSequence characterSet = articles.stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+        .mapToObj(c -> new String(Character.toChars(c))).sorted()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.joining(""));
     System.out.println("Character Set:" + characterSet);
 
-    Map<CharSequence, CharTrie> models = articles.stream().limit(dictionaryCount)
-        .collect(Collectors.toMap((CharSequence d) -> d, (CharSequence text) -> {
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharTrie> models = articles.stream().limit(dictionaryCount)
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap((CharSequence d) -> d, (CharSequence text) -> {
           CharTrieIndex tree = new CharTrieIndex();
           tree.addDocument(characterSet);
           tree.addDocument(text);
@@ -404,27 +423,29 @@ public class TrieTest {
           System.out.println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
           return tree;
         }));
-    Map<CharSequence, CharSequence> dictionaries = models.entrySet().stream()
-        .collect(Collectors.toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(), (Map.Entry<CharSequence, CharTrie> d) -> {
-          return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
-        }));
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharSequence> dictionaries = models.entrySet().stream()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(),
+            (Map.Entry<CharSequence, CharTrie> d) -> {
+              return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+            }));
 
     TableOutput output = new TableOutput();
-    articles.stream().limit(articleCount).collect(Collectors.toList()).forEach((text) -> {
-      HashMap<CharSequence, Object> map = new LinkedHashMap<>();
-      map.put("text", text);
-      dictionaries.forEach((modelTitle, dictionary) -> {
-        int sumA = IntStream.range(0, text.length() / chunkSize)
-            .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-            .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
-        int sumB = IntStream.range(0, text.length() / chunkSize)
-            .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
-            .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary.toString()).length).sum();
-        double bytes = (sumA - sumB) * 1.0 / sumA;
-        map.put(Integer.toHexString(modelTitle.hashCode()), bytes);
-      });
-      output.putRow(map);
-    });
+    articles.stream().limit(articleCount).collect(com.simiacryptus.ref.wrappers.RefCollectors.toList())
+        .forEach((text) -> {
+          com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
+          map.put("text", text);
+          dictionaries.forEach((modelTitle, dictionary) -> {
+            int sumA = com.simiacryptus.ref.wrappers.RefIntStream.range(0, text.length() / chunkSize)
+                .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
+                .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
+            int sumB = com.simiacryptus.ref.wrappers.RefIntStream.range(0, text.length() / chunkSize)
+                .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
+                .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary.toString()).length).sum();
+            double bytes = (sumA - sumB) * 1.0 / sumA;
+            map.put(Integer.toHexString(modelTitle.hashCode()), bytes);
+          });
+          output.putRow(map);
+        });
     // System.p.println(output.toTextTable());
     String outputDirName = "tweets/";
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
@@ -458,14 +479,16 @@ public class TrieTest {
     System.out.println(String.format("tree.getMemorySize = %s KB", tree_bad.getMemorySize() / 1024));
 
     TableOutput output = new TableOutput();
-    IntStream.range(0, articleCount).forEach(i -> {
-      HashMap<CharSequence, Object> goodRow = new LinkedHashMap<>();
+    com.simiacryptus.ref.wrappers.RefIntStream.range(0, articleCount).forEach(i -> {
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> goodRow = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       goodRow.put("type", "good");
-      goodRow.put("text", tree_good.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
+      goodRow.put("text", tree_good.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true)
+          .substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(goodRow);
-      HashMap<CharSequence, Object> badRow = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> badRow = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       badRow.put("type", "bad");
-      badRow.put("text", tree_bad.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true).substring(3).replaceAll("\u0000", "\n\t"));
+      badRow.put("text", tree_bad.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true)
+          .substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(badRow);
     });
     System.out.println(output.toCSV(true));
@@ -474,18 +497,21 @@ public class TrieTest {
   @Test
   @Ignore
   public void calcSentenceCoords() throws IOException {
-    Map<CharSequence, CharSequence> content = new HashMap<>();
-    for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharSequence> content = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+    for (String name : com.simiacryptus.ref.wrappers.RefArrays.asList("earthtomoon.txt", "20000leagues.txt",
+        "macbeth.txt", "randj.txt")) {
       content.put(name, new Scanner(getClass().getClassLoader().getResourceAsStream(name)).useDelimiter("\\Z").next()
           .replaceAll("[ \n\r\t]+", " "));
     }
-    String allContent = content.values().stream().collect(Collectors.joining("\n"));
-    List<CharSequence> sentances = Arrays.stream(allContent.split("\\.+")).map(line -> line.trim() + ".")
-        .filter(line -> line.length() > 12).collect(Collectors.toList());
-    Collections.shuffle(sentances);
+    String allContent = content.values().stream().collect(com.simiacryptus.ref.wrappers.RefCollectors.joining("\n"));
+    com.simiacryptus.ref.wrappers.RefList<CharSequence> sentances = com.simiacryptus.ref.wrappers.RefArrays
+        .stream(allContent.split("\\.+")).map(line -> line.trim() + ".").filter(line -> line.length() > 12)
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList());
+    com.simiacryptus.ref.wrappers.RefCollections.shuffle(sentances);
 
     CharSequence characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+        .mapToObj(c -> new String(Character.toChars(c))).sorted()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.joining(""));
     System.out.println("Character Set:" + characterSet);
 
     int maxLevels = 7;
@@ -493,8 +519,8 @@ public class TrieTest {
     double smoothness = 1.0;
 
     long startTime = System.currentTimeMillis();
-    Map<CharSequence, CharTrie> trees = new HashMap<>();
-    Map<CharSequence, CharSequence> dictionaries = new HashMap<>();
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharTrie> trees = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+    com.simiacryptus.ref.wrappers.RefMap<CharSequence, CharSequence> dictionaries = new com.simiacryptus.ref.wrappers.RefHashMap<>();
     for (Map.Entry<CharSequence, CharSequence> e : content.entrySet()) {
       CharTrieIndex tree = new CharTrieIndex();
       tree.addDocument(characterSet);
@@ -512,13 +538,13 @@ public class TrieTest {
     TableOutput output1 = new TableOutput();
     TableOutput output2 = new TableOutput();
     sentances.stream().limit(1000).forEach(s -> {
-      HashMap<CharSequence, Object> map2 = new LinkedHashMap<>();
+      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map2 = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
       // map2.put("rawBits", s.length() * 8);
       // map2.put("decompressBits0", CharTreeUtil.compress("", s).length * 8);
       content.keySet().stream().forEach(key -> {
         CharTrie tree = trees.get(key);
         CharSequence dictionary = dictionaries.get(key);
-        HashMap<CharSequence, Object> map1 = new LinkedHashMap<>();
+        com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map1 = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
         map1.put("key", key);
         map1.put("rawBits", s.length() * 8);
         map1.put("decompressBits0", CompressionUtil.encodeLZ(s, "").length * 8);
