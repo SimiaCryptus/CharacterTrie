@@ -20,7 +20,6 @@
 package com.simiacryptus.util.test;
 
 import com.simiacryptus.util.Util;
-import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.InputStream;

@@ -313,7 +313,7 @@ class TextAnalysis {
   }
 
   private Map<Character, Long> getJointExpectation(TrieNode priorNode,
-                                                                                    TrieNode followingNode) {
+                                                   TrieNode followingNode) {
     TrieNode priorParent = priorNode.getParent();
     TreeMap<Character, ? extends TrieNode> childrenMap = null == priorParent
         ? inner.root().getChildrenMap()

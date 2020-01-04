@@ -214,7 +214,7 @@ class CharTrie {
   }
 
   public <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn,
-                                                                                         int maxResults) {
+                                                        int maxResults) {
     return max(fn, maxResults, root());
   }
 
@@ -338,7 +338,7 @@ class CharTrie {
   }
 
   private <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn,
-                                                                                          int maxResults, TrieNode node) {
+                                                         int maxResults, TrieNode node) {
     return StreamSupport
         .stream(
             Spliterators
