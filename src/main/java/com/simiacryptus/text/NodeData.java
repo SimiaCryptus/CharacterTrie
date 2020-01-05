@@ -92,7 +92,7 @@ class NodeData {
 
   @Override
   public int hashCode() {
-    int result = (int) token;
+    int result = token;
     result = 31 * result + (int) numberOfChildren;
     result = 31 * result + firstChildIndex;
     result = 31 * result + Long.hashCode(cursorCount);
