@@ -19,6 +19,8 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TextGenerator {
 
   private final CharTrie inner;

@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.Util;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -28,7 +29,7 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class Misspelling extends TestDocument {
 
   public static Loader BIRKBECK = new Loader(URI.create("http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
@@ -37,7 +38,7 @@ class Misspelling extends TestDocument {
     super(correct, misspelling);
   }
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class Loader {
     private final String url;
     private final String file;

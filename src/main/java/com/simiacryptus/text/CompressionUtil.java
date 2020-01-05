@@ -22,6 +22,8 @@ package com.simiacryptus.text;
 import com.davidehrmann.vcdiff.VCDiffDecoderBuilder;
 import com.davidehrmann.vcdiff.VCDiffEncoder;
 import com.davidehrmann.vcdiff.VCDiffEncoderBuilder;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
@@ -32,7 +34,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class CompressionUtil {
   public static final Random random = new Random();
 
@@ -65,7 +67,7 @@ class CompressionUtil {
     compresser.finish();
     int compressedDataLength = compresser.deflate(output);
     compresser.end();
-    return com.simiacryptus.ref.wrappers.RefArrays.copyOf(output, compressedDataLength);
+    return RefArrays.copyOf(output, compressedDataLength);
   }
 
   public static byte[] decodeLZ(byte[] data, String dictionary) {
@@ -84,7 +86,7 @@ class CompressionUtil {
       }
       resultLength = decompresser.inflate(result);
       decompresser.end();
-      return com.simiacryptus.ref.wrappers.RefArrays.copyOfRange(result, 0, resultLength);
+      return RefArrays.copyOfRange(result, 0, resultLength);
     } catch (DataFormatException | UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }

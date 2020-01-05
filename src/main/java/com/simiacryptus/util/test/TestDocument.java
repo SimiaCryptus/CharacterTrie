@@ -19,9 +19,10 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.text.CompressionUtil;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TestDocument {
 
   private final CharSequence title;

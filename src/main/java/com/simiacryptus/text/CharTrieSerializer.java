@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 
@@ -31,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class CharTrieSerializer {
 
   public byte[] serialize(CharTrie charTrie) {

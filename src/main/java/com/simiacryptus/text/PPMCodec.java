@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -29,7 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class PPMCodec {
   public static final Character ESCAPE = '\uFFFE';
   public static final char FALLBACK = Character.MAX_VALUE;

@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.Interval;
 
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TrieNode {
   protected final CharTrie trie;
   protected final int index;

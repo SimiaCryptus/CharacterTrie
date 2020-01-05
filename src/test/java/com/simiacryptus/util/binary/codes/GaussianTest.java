@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.binary.codes;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefAssert;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.test.TestCategories;
@@ -30,7 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class GaussianTest {
   @Test
   @Category(TestCategories.UnitTest.class)
@@ -78,9 +80,9 @@ class GaussianTest {
     for (int value = 0; value <= 0; value++) {
       final Gaussian gaussian = new Gaussian(100, 10);
       final byte[] serializedData = this.encode(gaussian, 0, 0);
-      com.simiacryptus.ref.wrappers.RefAssert.assertEquals(0, serializedData.length);
+      RefAssert.assertEquals(0, serializedData.length);
       final long decoded = this.decode(gaussian, 0, serializedData);
-      com.simiacryptus.ref.wrappers.RefAssert.assertEquals(value, decoded);
+      RefAssert.assertEquals(value, decoded);
     }
   }
 
@@ -111,7 +113,7 @@ class GaussianTest {
   private int test(final Gaussian gaussian, final int max, final int value) throws IOException {
     final byte[] serializedData = this.encode(gaussian, max, value);
     final long decoded = this.decode(gaussian, max, serializedData);
-    com.simiacryptus.ref.wrappers.RefAssert.assertEquals(value, decoded);
+    RefAssert.assertEquals(value, decoded);
     return serializedData.length;
   }
 }

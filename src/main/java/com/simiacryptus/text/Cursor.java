@@ -19,7 +19,9 @@
 
 package com.simiacryptus.text;
 
-public @com.simiacryptus.ref.lang.RefAware
+import com.simiacryptus.ref.lang.RefAware;
+
+public @RefAware
 class Cursor {
   final CursorData data;
   private final CharTrieIndex charTrieIndex;

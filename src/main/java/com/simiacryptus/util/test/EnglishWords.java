@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
@@ -28,9 +30,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Spliterator;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class EnglishWords extends TestDocument {
-  private static final com.simiacryptus.ref.wrappers.RefArrayList<EnglishWords> queue = new com.simiacryptus.ref.wrappers.RefArrayList<>();
+  private static final RefArrayList<EnglishWords> queue = new RefArrayList<>();
   public static String url = "https://raw.githubusercontent.com/first20hours/google-10000-english/master/20k.txt";
   public static String file = "20k.txt";
   private static volatile Thread thread;
@@ -52,7 +54,7 @@ class EnglishWords extends TestDocument {
     }
   }
 
-  public static com.simiacryptus.ref.wrappers.RefStream<EnglishWords> load() {
+  public static RefStream<EnglishWords> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
@@ -62,9 +64,9 @@ class EnglishWords extends TestDocument {
         }
       }
     }
-    com.simiacryptus.ref.wrappers.RefIteratorBase<EnglishWords> iterator = new AsyncListIterator<>(queue, thread);
-    return com.simiacryptus.ref.wrappers.RefStreamSupport
-        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
+    RefIteratorBase<EnglishWords> iterator = new AsyncListIterator<>(queue, thread);
+    return RefStreamSupport
+        .stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
             false)
         .filter(x -> x != null);
   }
@@ -73,10 +75,10 @@ class EnglishWords extends TestDocument {
     try {
       InputStream in = Util.cacheLocal(file, new URI(url));
       String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
-      com.simiacryptus.ref.wrappers.RefList<CharSequence> list = com.simiacryptus.ref.wrappers.RefArrays
+      RefList<CharSequence> list = RefArrays
           .stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", ""))
-          .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList());
-      com.simiacryptus.ref.wrappers.RefCollections.shuffle(list);
+          .collect(RefCollectors.toList());
+      RefCollections.shuffle(list);
       for (CharSequence paragraph : list) {
         queue.add(new EnglishWords(paragraph));
       }

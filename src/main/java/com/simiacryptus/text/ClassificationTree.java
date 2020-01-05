@@ -19,12 +19,15 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.*;
+
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class ClassificationTree {
 
   private final double minLeafWeight = 10;
@@ -43,20 +46,20 @@ class ClassificationTree {
     return this;
   }
 
-  public Function<CharSequence, com.simiacryptus.ref.wrappers.RefMap<CharSequence, Double>> categorizationTree(
-      com.simiacryptus.ref.wrappers.RefMap<CharSequence, com.simiacryptus.ref.wrappers.RefList<CharSequence>> categories,
+  public Function<CharSequence, RefMap<CharSequence, Double>> categorizationTree(
+      RefMap<CharSequence, RefList<CharSequence>> categories,
       int depth) {
     return categorizationTree(categories, depth, "");
   }
 
-  private Function<CharSequence, com.simiacryptus.ref.wrappers.RefMap<CharSequence, Double>> categorizationTree(
-      com.simiacryptus.ref.wrappers.RefMap<CharSequence, com.simiacryptus.ref.wrappers.RefList<CharSequence>> categories,
+  private Function<CharSequence, RefMap<CharSequence, Double>> categorizationTree(
+      RefMap<CharSequence, RefList<CharSequence>> categories,
       int depth, CharSequence indent) {
     if (0 == depth) {
       return str -> {
         int sum = categories.values().stream().mapToInt(x -> x.size()).sum();
         return categories.entrySet().stream().collect(
-            com.simiacryptus.ref.wrappers.RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size() * 1.0 / sum));
+            RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size() * 1.0 / sum));
       };
     } else {
       if (1 >= categories.values().stream().filter(x -> !x.isEmpty()).count()) {
@@ -66,16 +69,16 @@ class ClassificationTree {
       if (!info.isPresent())
         return categorizationTree(categories, 0, indent);
       CharSequence split = info.get().node.getString();
-      com.simiacryptus.ref.wrappers.RefMap<CharSequence, com.simiacryptus.ref.wrappers.RefList<CharSequence>> lSet = categories
+      RefMap<CharSequence, RefList<CharSequence>> lSet = categories
           .entrySet().stream()
-          .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap(e -> e.getKey(),
+          .collect(RefCollectors.toMap(e -> e.getKey(),
               e -> e.getValue().stream().filter(str -> str.toString().contains(split))
-                  .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList())));
-      com.simiacryptus.ref.wrappers.RefMap<CharSequence, com.simiacryptus.ref.wrappers.RefList<CharSequence>> rSet = categories
+                  .collect(RefCollectors.toList())));
+      RefMap<CharSequence, RefList<CharSequence>> rSet = categories
           .entrySet().stream()
-          .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap(e -> e.getKey(),
+          .collect(RefCollectors.toMap(e -> e.getKey(),
               e -> e.getValue().stream().filter(str -> !str.toString().contains(split))
-                  .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList())));
+                  .collect(RefCollectors.toList())));
       int lSum = lSet.values().stream().mapToInt(x -> x.size()).sum();
       int rSum = rSet.values().stream().mapToInt(x -> x.size()).sum();
       if (0 == lSum || 0 == rSum) {
@@ -84,14 +87,14 @@ class ClassificationTree {
       if (null != verbose) {
         verbose.println(String.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%5f", split,
             lSet.entrySet().stream()
-                .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
+                .collect(RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
             rSet.entrySet().stream()
-                .collect(com.simiacryptus.ref.wrappers.RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
+                .collect(RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
             info.get().entropy));
       }
-      Function<CharSequence, com.simiacryptus.ref.wrappers.RefMap<CharSequence, Double>> l = categorizationTree(lSet,
+      Function<CharSequence, RefMap<CharSequence, Double>> l = categorizationTree(lSet,
           depth - 1, indent + "  ");
-      Function<CharSequence, com.simiacryptus.ref.wrappers.RefMap<CharSequence, Double>> r = categorizationTree(rSet,
+      Function<CharSequence, RefMap<CharSequence, Double>> r = categorizationTree(rSet,
           depth - 1, indent + "  ");
       return str -> {
         if (str.toString().contains(split)) {
@@ -103,8 +106,8 @@ class ClassificationTree {
     }
   }
 
-  private double entropy(com.simiacryptus.ref.wrappers.RefMap<Integer, Long> sum,
-                         com.simiacryptus.ref.wrappers.RefMap<Integer, Long> left) {
+  private double entropy(RefMap<Integer, Long> sum,
+                         RefMap<Integer, Long> left) {
     double sumSum = sum.values().stream().mapToDouble(x -> x).sum();
     double leftSum = left.values().stream().mapToDouble(x -> x).sum();
     double rightSum = sumSum - leftSum;
@@ -123,12 +126,12 @@ class ClassificationTree {
   }
 
   private Optional<NodeInfo> categorizationSubstring(
-      com.simiacryptus.ref.wrappers.RefCollection<com.simiacryptus.ref.wrappers.RefList<CharSequence>> categories) {
+      RefCollection<RefList<CharSequence>> categories) {
     CharTrieIndex trie = new CharTrieIndex();
-    com.simiacryptus.ref.wrappers.RefMap<Integer, Integer> categoryMap = new com.simiacryptus.ref.wrappers.RefTreeMap<>();
+    RefMap<Integer, Integer> categoryMap = new RefTreeMap<>();
     int categoryNumber = 0;
-    com.simiacryptus.ref.wrappers.RefMap<Integer, Long> sum = new com.simiacryptus.ref.wrappers.RefHashMap<>();
-    for (com.simiacryptus.ref.wrappers.RefList<CharSequence> category : categories) {
+    RefMap<Integer, Long> sum = new RefHashMap<>();
+    for (RefList<CharSequence> category : categories) {
       categoryNumber += 1;
       for (CharSequence text : category) {
         sum.put(categoryNumber, sum.getOrDefault(categoryNumber, 0l) + text.length() + 1);
@@ -140,37 +143,37 @@ class ClassificationTree {
     return categorizationSubstring(trie.root(), categoryMap, sum);
   }
 
-  private NodeInfo info(IndexNode node, com.simiacryptus.ref.wrappers.RefMap<Integer, Long> sum,
-                        com.simiacryptus.ref.wrappers.RefMap<Integer, Integer> categoryMap) {
-    com.simiacryptus.ref.wrappers.RefMap<Integer, Long> summary = summarize(node, categoryMap);
+  private NodeInfo info(IndexNode node, RefMap<Integer, Long> sum,
+                        RefMap<Integer, Integer> categoryMap) {
+    RefMap<Integer, Long> summary = summarize(node, categoryMap);
     return new NodeInfo(node, summary, entropy(sum, summary));
   }
 
-  private com.simiacryptus.ref.wrappers.RefMap<Integer, Long> summarize(IndexNode node,
-                                                                        com.simiacryptus.ref.wrappers.RefMap<Integer, Integer> categoryMap) {
+  private RefMap<Integer, Long> summarize(IndexNode node,
+                                          RefMap<Integer, Integer> categoryMap) {
     return node.getCursors().map(x -> x.getDocumentId()).distinct().map(x -> categoryMap.get(x))
-        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList()).stream()
-        .collect(com.simiacryptus.ref.wrappers.RefCollectors.groupingBy(x -> x,
-            com.simiacryptus.ref.wrappers.RefCollectors.counting()));
+        .collect(RefCollectors.toList()).stream()
+        .collect(RefCollectors.groupingBy(x -> x,
+            RefCollectors.counting()));
   }
 
   private Optional<NodeInfo> categorizationSubstring(IndexNode node,
-                                                     com.simiacryptus.ref.wrappers.RefMap<Integer, Integer> categoryMap,
-                                                     com.simiacryptus.ref.wrappers.RefMap<Integer, Long> sum) {
-    com.simiacryptus.ref.wrappers.RefList<NodeInfo> childrenInfo = node.getChildren()
+                                                     RefMap<Integer, Integer> categoryMap,
+                                                     RefMap<Integer, Long> sum) {
+    RefList<NodeInfo> childrenInfo = node.getChildren()
         .map(n -> categorizationSubstring(n, categoryMap, sum)).filter(x -> x.isPresent()).map(x -> x.get())
-        .collect(com.simiacryptus.ref.wrappers.RefCollectors.toList());
+        .collect(RefCollectors.toList());
     NodeInfo info = info(node, sum, categoryMap);
     if (info.node.getString().isEmpty() || !Double.isFinite(info.entropy))
       info = null;
-    Optional<NodeInfo> max = com.simiacryptus.ref.wrappers.RefStream
-        .concat(null == info ? com.simiacryptus.ref.wrappers.RefStream.empty()
-            : com.simiacryptus.ref.wrappers.RefStream.of(info), childrenInfo.stream())
-        .max(com.simiacryptus.ref.wrappers.RefComparator.comparing(x -> x.entropy));
+    Optional<NodeInfo> max = RefStream
+        .concat(null == info ? RefStream.empty()
+            : RefStream.of(info), childrenInfo.stream())
+        .max(RefComparator.comparing(x -> x.entropy));
     return max;
   }
 
-  private @com.simiacryptus.ref.lang.RefAware
+  private @RefAware
   class NodeInfo {
     IndexNode node;
     Map<Integer, Long> categoryWeights;

@@ -19,12 +19,14 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.data.SerialArrayList;
 
 import java.util.Map;
 import java.util.Optional;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class IndexNode extends TrieNode {
 
   public IndexNode(CharTrie trie, short depth, int index, TrieNode parent) {
@@ -36,38 +38,38 @@ class IndexNode extends TrieNode {
   }
 
   @Override
-  public com.simiacryptus.ref.wrappers.RefStream<? extends IndexNode> getChildren() {
+  public RefStream<? extends IndexNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
-      return com.simiacryptus.ref.wrappers.RefIntStream.range(0, getData().numberOfChildren)
+      return RefIntStream.range(0, getData().numberOfChildren)
           .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
     } else {
-      return com.simiacryptus.ref.wrappers.RefStream.empty();
+      return RefStream.empty();
     }
   }
 
-  public com.simiacryptus.ref.wrappers.RefStream<Cursor> getCursors() {
-    return com.simiacryptus.ref.wrappers.RefLongStream.range(0, getData().cursorCount).mapToObj(i -> {
+  public RefStream<Cursor> getCursors() {
+    return RefLongStream.range(0, getData().cursorCount).mapToObj(i -> {
       return new Cursor((CharTrieIndex) this.trie,
           ((CharTrieIndex) this.trie).cursors.get((int) (i + getData().firstCursorIndex)), getDepth());
     });
   }
 
-  public com.simiacryptus.ref.wrappers.RefMap<CharSequence, com.simiacryptus.ref.wrappers.RefList<Cursor>> getCursorsByDocument() {
+  public RefMap<CharSequence, RefList<Cursor>> getCursorsByDocument() {
     return this.getCursors()
-        .collect(com.simiacryptus.ref.wrappers.RefCollectors.groupingBy((Cursor x) -> x.getDocument()));
+        .collect(RefCollectors.groupingBy((Cursor x) -> x.getDocument()));
   }
 
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
-      com.simiacryptus.ref.wrappers.RefTreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new com.simiacryptus.ref.wrappers.RefTreeMap<>(
+      RefTreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new RefTreeMap<>(
           getCursors().parallel()
-              .collect(com.simiacryptus.ref.wrappers.RefCollectors.groupingBy(y -> y.next().getToken(),
-                  com.simiacryptus.ref.wrappers.RefCollectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
+              .collect(RefCollectors.groupingBy(y -> y.next().getToken(),
+                  RefCollectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
                       cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
                       (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
       //System.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
-      com.simiacryptus.ref.wrappers.RefArrayList<NodeData> childNodes = new com.simiacryptus.ref.wrappers.RefArrayList<>(
+      RefArrayList<NodeData> childNodes = new RefArrayList<>(
           sortedChildren.size());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
         int length = e.getValue().length();
@@ -97,14 +99,14 @@ class IndexNode extends TrieNode {
     return (IndexNode) super.refresh();
   }
 
-  public IndexNode visitFirstIndex(com.simiacryptus.ref.wrappers.RefConsumer<? super IndexNode> visitor) {
+  public IndexNode visitFirstIndex(RefConsumer<? super IndexNode> visitor) {
     visitor.accept(this);
     IndexNode refresh = refresh();
     refresh.getChildren().forEach(n -> n.visitFirstIndex(visitor));
     return refresh;
   }
 
-  public IndexNode visitLastIndex(com.simiacryptus.ref.wrappers.RefConsumer<? super IndexNode> visitor) {
+  public IndexNode visitLastIndex(RefConsumer<? super IndexNode> visitor) {
     getChildren().forEach(n -> n.visitLastIndex(visitor));
     visitor.accept(this);
     return refresh();

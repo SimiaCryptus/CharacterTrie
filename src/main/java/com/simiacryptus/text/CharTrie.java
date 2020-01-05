@@ -20,6 +20,8 @@
 package com.simiacryptus.text;
 
 import com.google.common.collect.Iterators;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.util.data.SerialArrayList;
 
 import java.util.*;
@@ -31,7 +33,7 @@ import java.util.stream.StreamSupport;
 
 import static com.simiacryptus.text.NodewalkerCodec.*;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class CharTrie {
   protected final SerialArrayList<NodeData> nodes;
   protected int[] parentIndex = null;
@@ -49,9 +51,9 @@ class CharTrie {
   public CharTrie(CharTrie charTrie) {
     this(charTrie.nodes.copy());
     this.parentIndex = null == charTrie.parentIndex ? null
-        : com.simiacryptus.ref.wrappers.RefArrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
+        : RefArrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
     this.godparentIndex = null == charTrie.godparentIndex ? null
-        : com.simiacryptus.ref.wrappers.RefArrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
+        : RefArrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
   }
 
   public TextAnalysis getAnalyzer() {

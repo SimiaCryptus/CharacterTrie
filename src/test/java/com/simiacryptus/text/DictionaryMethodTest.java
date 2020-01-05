@@ -22,6 +22,8 @@ package com.simiacryptus.text;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -30,7 +32,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class DictionaryMethodTest {
 
   @Test
@@ -75,15 +77,15 @@ class DictionaryMethodTest {
   }
 
   private void test(NotebookOutput log,
-                    Supplier<com.simiacryptus.ref.wrappers.RefStream<? extends TestDocument>> source, int modelCount) {
+                    Supplier<RefStream<? extends TestDocument>> source, int modelCount) {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
-    com.simiacryptus.ref.wrappers.RefMap<CharSequence, Compressor> compressors = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
+    RefMap<CharSequence, Compressor> compressors = new RefLinkedHashMap<>();
     addCompressors(log, compressors, baseTree, 4, 2, 3);
     addCompressors(log, compressors, baseTree, 5, 2, 3);
     addCompressors(log, compressors, baseTree, 6, 2, 3);
-    com.simiacryptus.ref.wrappers.RefStream<TestDocument> limit = source.get().limit(modelCount).map(x -> x);
-    addWordCountCompressor(log, compressors, limit.collect(com.simiacryptus.ref.wrappers.RefCollectors.toList()));
+    RefStream<TestDocument> limit = source.get().limit(modelCount).map(x -> x);
+    addWordCountCompressor(log, compressors, limit.collect(RefCollectors.toList()));
     Compressor.addGenericCompressors(compressors);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
@@ -91,17 +93,17 @@ class DictionaryMethodTest {
   }
 
   private void addWordCountCompressor(NotebookOutput log,
-                                      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Compressor> compressors,
-                                      com.simiacryptus.ref.wrappers.RefList<? extends TestDocument> content) {
-    com.simiacryptus.ref.wrappers.RefMap<CharSequence, Long> wordCounts = content.stream()
+                                      RefMap<CharSequence, Compressor> compressors,
+                                      RefList<? extends TestDocument> content) {
+    RefMap<CharSequence, Long> wordCounts = content.stream()
         .flatMap(
-            c -> com.simiacryptus.ref.wrappers.RefArrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
-        .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(com.simiacryptus.ref.wrappers.RefCollectors
-            .groupingBy(x -> x, com.simiacryptus.ref.wrappers.RefCollectors.counting()));
+            c -> RefArrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +")))
+        .map(s -> s.trim()).filter(s -> !s.isEmpty()).collect(RefCollectors
+            .groupingBy(x -> x, RefCollectors.counting()));
     CharSequence dictionary = wordCounts.entrySet().stream()
         .sorted(
-            com.simiacryptus.ref.wrappers.RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
-                .thenComparing(com.simiacryptus.ref.wrappers.RefComparator.comparingLong(e -> -e.getKey().length())))
+            RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
+                .thenComparing(RefComparator.comparingLong(e -> -e.getKey().length())))
         .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, 8 * 1024);
     CharSequence key = "LZ8k_commonWords";
     int dictSampleSize = 512;
@@ -121,7 +123,7 @@ class DictionaryMethodTest {
   }
 
   private void addCompressors(NotebookOutput log,
-                              com.simiacryptus.ref.wrappers.RefMap<CharSequence, Compressor> compressors, CharTrieIndex baseTree,
+                              RefMap<CharSequence, Compressor> compressors, CharTrieIndex baseTree,
                               final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "",

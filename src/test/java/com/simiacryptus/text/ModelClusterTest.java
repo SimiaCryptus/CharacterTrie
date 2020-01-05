@@ -22,6 +22,10 @@ package com.simiacryptus.text;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefLinkedHashMap;
+import com.simiacryptus.ref.wrappers.RefMap;
+import com.simiacryptus.ref.wrappers.RefStream;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.WikiArticle;
@@ -34,7 +38,7 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-public abstract @com.simiacryptus.ref.lang.RefAware
+public abstract @RefAware
 class ModelClusterTest {
 
   public static final File outPath = new File("src/site/resources/");
@@ -51,7 +55,7 @@ class ModelClusterTest {
       int model_minPathWeight = 3;
       int dictionary_lookahead = 2;
       AtomicInteger index = new AtomicInteger(0);
-      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Compressor> compressors = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
+      RefMap<CharSequence, Compressor> compressors = new RefLinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex baseTree = new CharTrieIndex();
         baseTree.addDocument(text.getText());
@@ -106,7 +110,7 @@ class ModelClusterTest {
       int encodingContext = 2;
 
       log.p("Generating Compressor Models");
-      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Compressor> compressors = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
+      RefMap<CharSequence, Compressor> compressors = new RefLinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
@@ -138,7 +142,7 @@ class ModelClusterTest {
       int encodingContext = 2;
 
       log.p("Generating Compressor Models");
-      com.simiacryptus.ref.wrappers.RefMap<CharSequence, Function<TestDocument, Double>> compressors = new com.simiacryptus.ref.wrappers.RefLinkedHashMap<>();
+      RefMap<CharSequence, Function<TestDocument, Double>> compressors = new RefLinkedHashMap<>();
       source().parallel().limit(getModelCount()).forEach(text -> {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
@@ -160,9 +164,9 @@ class ModelClusterTest {
     }
   }
 
-  protected abstract com.simiacryptus.ref.wrappers.RefStream<? extends TestDocument> source();
+  protected abstract RefStream<? extends TestDocument> source();
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class Wikipedia extends ModelClusterTest {
     int testCount = 1000;
 
@@ -172,7 +176,7 @@ class ModelClusterTest {
     }
 
     @Override
-    protected com.simiacryptus.ref.wrappers.RefStream<? extends TestDocument> source() {
+    protected RefStream<? extends TestDocument> source() {
       return WikiArticle.ENGLISH.stream().filter(wikiArticle -> {
         int kb = wikiArticle.getText().length() / 1024;
         return kb > 50 && kb < 150;

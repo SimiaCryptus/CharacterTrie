@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
@@ -28,9 +30,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Spliterator;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class Shakespeare extends TestDocument {
-  private static final com.simiacryptus.ref.wrappers.RefArrayList<Shakespeare> queue = new com.simiacryptus.ref.wrappers.RefArrayList<>();
+  private static final RefArrayList<Shakespeare> queue = new RefArrayList<>();
   public static String url = "http://www.gutenberg.org/cacheLocal/epub/100/pg100.txt";
   public static String file = "Shakespeare.txt";
   private static volatile Thread thread;
@@ -52,7 +54,7 @@ class Shakespeare extends TestDocument {
     }
   }
 
-  public static com.simiacryptus.ref.wrappers.RefStream<Shakespeare> load() {
+  public static RefStream<Shakespeare> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
@@ -62,9 +64,9 @@ class Shakespeare extends TestDocument {
         }
       }
     }
-    com.simiacryptus.ref.wrappers.RefIteratorBase<Shakespeare> iterator = new AsyncListIterator<>(queue, thread);
-    return com.simiacryptus.ref.wrappers.RefStreamSupport
-        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
+    RefIteratorBase<Shakespeare> iterator = new AsyncListIterator<>(queue, thread);
+    return RefStreamSupport
+        .stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
             false)
         .filter(x -> x != null);
   }

@@ -19,6 +19,10 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefHashMap;
+import com.simiacryptus.ref.wrappers.RefList;
+import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.DataLoader;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
@@ -33,7 +37,7 @@ import java.net.URI;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class WikiArticle extends TestDocument {
 
   public static WikiDataLoader ENGLISH = new WikiDataLoader(
@@ -47,7 +51,7 @@ class WikiArticle extends TestDocument {
     super(title, text);
   }
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class WikiDataLoader extends DataLoader<WikiArticle> {
     protected final String url;
     protected final String file;
@@ -63,7 +67,7 @@ class WikiArticle extends TestDocument {
     }
 
     @Override
-    protected void read(com.simiacryptus.ref.wrappers.RefList<WikiArticle> queue) {
+    protected void read(RefList<WikiArticle> queue) {
       try {
         try (final InputStream in = new BZip2CompressorInputStream(Util.cacheLocal(file, new URI(url)), true)) {
           final SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -71,7 +75,7 @@ class WikiArticle extends TestDocument {
           final SAXParser saxParser = spf.newSAXParser();
           saxParser.parse(in, new DefaultHandler() {
             Stack<CharSequence> prefix = new Stack<CharSequence>();
-            Stack<com.simiacryptus.ref.wrappers.RefMap<CharSequence, AtomicInteger>> indexes = new Stack<com.simiacryptus.ref.wrappers.RefMap<CharSequence, AtomicInteger>>();
+            Stack<RefMap<CharSequence, AtomicInteger>> indexes = new Stack<RefMap<CharSequence, AtomicInteger>>();
             StringBuilder nodeString = new StringBuilder();
             private String title;
 
@@ -128,7 +132,7 @@ class WikiArticle extends TestDocument {
               }
               int idx;
               if (0 < this.indexes.size()) {
-                final com.simiacryptus.ref.wrappers.RefMap<CharSequence, AtomicInteger> index = this.indexes.peek();
+                final RefMap<CharSequence, AtomicInteger> index = this.indexes.peek();
                 AtomicInteger cnt = index.get(qName);
                 if (null == cnt) {
                   cnt = new AtomicInteger(-1);
@@ -143,7 +147,7 @@ class WikiArticle extends TestDocument {
                 path += "[" + idx + "]";
               }
               this.prefix.push(path);
-              this.indexes.push(new com.simiacryptus.ref.wrappers.RefHashMap<CharSequence, AtomicInteger>());
+              this.indexes.push(new RefHashMap<CharSequence, AtomicInteger>());
               super.startElement(uri, localName, qName, attributes);
             }
 

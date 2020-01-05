@@ -19,6 +19,8 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
+
 import java.io.PrintStream;
 import java.util.*;
 import java.util.function.ToDoubleFunction;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TextAnalysis {
 
   public static final double DEFAULT_THRESHOLD = Math.log(15);
@@ -329,7 +331,7 @@ class TextAnalysis {
     }));
   }
 
-  public @com.simiacryptus.ref.lang.RefAware
+  public @RefAware
   class WordSpelling {
     private final double[] linkNatsArray;
     private final List<TrieNode> leftNodes;

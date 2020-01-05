@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -30,7 +31,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Optional;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class NodewalkerCodec {
   public static final Character ESCAPE = '\uFFFE';
   public static final char FALLBACK = Character.MAX_VALUE;
@@ -153,7 +154,7 @@ class NodewalkerCodec {
     encoder.out.writeVarShort((short) 0, 3);
   }
 
-  protected @com.simiacryptus.ref.lang.RefAware
+  protected @RefAware
   class Decoder {
     protected byte[] data;
     protected int context;
@@ -188,7 +189,7 @@ class NodewalkerCodec {
     }
   }
 
-  protected @com.simiacryptus.ref.lang.RefAware
+  protected @RefAware
   class Encoder {
     protected String text;
     protected int context;

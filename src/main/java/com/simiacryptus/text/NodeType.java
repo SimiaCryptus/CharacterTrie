@@ -19,11 +19,12 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.data.SerialType;
 
 import java.nio.ByteBuffer;
 
-@com.simiacryptus.ref.lang.RefAware
+@RefAware
 class NodeType implements SerialType<NodeData> {
 
   static NodeType INSTANCE = new NodeType();
