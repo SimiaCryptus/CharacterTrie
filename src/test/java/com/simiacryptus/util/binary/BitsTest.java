@@ -21,6 +21,7 @@ package com.simiacryptus.util.binary;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefAssert;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.test.TestCategories;
 import org.json.JSONException;
 import org.junit.Test;
@@ -168,7 +169,7 @@ class BitsTest {
     final Bits bitsA = new Bits(a);
     final Bits bitsB = new Bits(b);
     final Bits bits = bitsA.concatenate(bitsB);
-    RefAssert.assertEquals(String.format("Concatenate %s and %s", a, b), asString,
+    RefAssert.assertEquals(RefString.format("Concatenate %s and %s", a, b), asString,
         bits.toBitString());
   }
 
@@ -194,7 +195,7 @@ class BitsTest {
   private void testSubrange(final Bits bits, final String asString, final int from, final int to) {
     final CharSequence subStr = asString.substring(from, to);
     final Bits subBits = bits.range(from, to - from);
-    RefAssert.assertEquals(String.format("Substring (%s,%s) of %s", from, to, bits),
+    RefAssert.assertEquals(RefString.format("Substring (%s,%s) of %s", from, to, bits),
         subStr, subBits.toBitString());
   }
 

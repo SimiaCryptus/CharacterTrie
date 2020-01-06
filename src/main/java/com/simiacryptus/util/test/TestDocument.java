@@ -43,7 +43,7 @@ class TestDocument {
 
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer(getClass().getSimpleName() + "{");
+    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder(getClass().getSimpleName() + "{");
     sb.append("title='").append(getTitle()).append('\'');
     sb.append('}');
     return sb.toString();

@@ -27,6 +27,7 @@ import com.simiacryptus.ref.wrappers.RefAssert;
 import com.simiacryptus.ref.wrappers.RefLinkedHashMap;
 import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.ref.wrappers.RefStream;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
@@ -79,7 +80,7 @@ class CompressionTest {
     tree.addDocument("ababababab");
     tree = tree.index(2, 0);
     NodewalkerCodec codec = tree.getCodec();
-    codec.setVerbose(System.out);
+    codec.setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out);
     String txt = "ab ba";
     Bits encoded = codec.encodePPM(txt, 1);
     CharSequence decoded = codec.decodePPM(encoded.getBytes(), 1);
@@ -104,22 +105,22 @@ class CompressionTest {
         Bits encoded = codec.encodePPM(txt, encodingContext);
         CharSequence decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
         RefAssert.assertEquals(txt, decoded);
-        System.out
-            .println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
+        com.simiacryptus.ref.wrappers.RefSystem.out
+            .println(RefString.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
       } catch (Throwable e) {
         synchronized (modelTree) {
-          System.out.println(String.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
+          com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
           try {
-            NodewalkerCodec codec2 = codec.setVerbose(System.out);
+            NodewalkerCodec codec2 = codec.setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out);
             Bits encoded = codec2.encodePPM(txt, encodingContext);
             CharSequence decoded = codec2.decodePPM(encoded.getBytes(), encodingContext);
             RefAssert.assertEquals(txt, decoded);
-            System.out
-                .println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
+            com.simiacryptus.ref.wrappers.RefSystem.out
+                .println(RefString.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
             throw e;
           } catch (Throwable e2) {
             throw e2;
-            //System.p.println(String.format("Error encoding \"%s\" - %s", txt, e2.getMessage()));
+            //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Error encoding \"%s\" - %s", txt, e2.getMessage()));
             //throw new RuntimeException(e);
           }
         }
@@ -198,15 +199,15 @@ class CompressionTest {
       int modelCount) {
     RefMap<CharSequence, Compressor> compressors = new RefLinkedHashMap<>();
     Compressor.addGenericCompressors(compressors);
-    System.out.println(String.format("Preparing %s documents", modelCount));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Preparing %s documents", modelCount));
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> {
-      //System.p.println(String.format("Adding %s", txt.title));
+      //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.getText());
     });
-    System.out.println(String.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
     baseTree.index(ppmModelDepth, model_minPathWeight);
-    System.out.println(String.format("Generating dictionaries"));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Generating dictionaries"));
     addSharedDictionaryCompressors(compressors, baseTree, dictionary_lookahead, dictionary_context,
         model_minPathWeight);
     compressors.put("PPM" + encodingContext, Compressor.buildPPMCompressor(baseTree, encodingContext));

@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -57,7 +58,7 @@ class PPMCodec {
   public CharSequence decodePPM(byte[] data, int context) {
     try {
       BitInputStream in = new BitInputStream(new ByteArrayInputStream(data));
-      StringBuilder out = new StringBuilder();
+      com.simiacryptus.ref.wrappers.RefStringBuilder out = new com.simiacryptus.ref.wrappers.RefStringBuilder();
       String contextStr = "";
       while (true) {
         TrieNode fromNode = inner.matchPredictor(getRight(contextStr, context));
@@ -69,21 +70,21 @@ class PPMCodec {
         Interval interval = fromNode.intervalTo(toNode);
         Bits bits = interval.toBits();
         if (verbose) {
-          System.out.println(
-              String.format("Using prefix \"%s\", seek to %s pos, path \"%s\" apply %s -> %s, input buffer = %s",
+          com.simiacryptus.ref.wrappers.RefSystem.out.println(
+              RefString.format("Using prefix \"%s\", seek to %s pos, path \"%s\" apply %s -> %s, input buffer = %s",
                   fromNode.getDebugString(), seek, toNode.getDebugString(fromNode), interval, bits, in.peek(24)));
         }
         in.expect(bits);
         if (toNode.isStringTerminal()) {
           if (verbose)
-            System.out.println("Inserting null char to terminate string");
+            com.simiacryptus.ref.wrappers.RefSystem.out.println("Inserting null char to terminate string");
           newSegment += END_OF_STRING;
         }
         if (!newSegment.isEmpty()) {
           if (newSegment.endsWith("\u0000")) {
             out.append(newSegment, 0, newSegment.length() - 1);
             if (verbose)
-              System.out.println(String.format("Null char reached"));
+              com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Null char reached"));
             break;
           } else {
             contextStr += newSegment;
@@ -91,11 +92,11 @@ class PPMCodec {
           }
         } else if (in.availible() == 0) {
           if (verbose)
-            System.out.println(String.format("No More Data"));
+            com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("No More Data"));
           break;
         } else if (toNode.getChar() == END_OF_STRING) {
           if (verbose)
-            System.out.println(String.format("End code"));
+            com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("End code"));
           break;
           //throw new RuntimeException("Cannot decode text");
         } else if (toNode.getChar() == FALLBACK) {
@@ -105,12 +106,12 @@ class PPMCodec {
           char exotic = (char) charBits.toLong();
           out.append(new String(new char[]{exotic}));
           if (verbose) {
-            System.out
-                .println(String.format("Read exotic byte %s -> %s, input buffer = %s", exotic, charBits, in.peek(24)));
+            com.simiacryptus.ref.wrappers.RefSystem.out
+                .println(RefString.format("Read exotic byte %s -> %s, input buffer = %s", exotic, charBits, in.peek(24)));
           }
         } else {
           if (verbose)
-            System.out.println(String.format("Cannot decode text"));
+            com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Cannot decode text"));
           break;
           //throw new RuntimeException("Cannot decode text");
         }
@@ -123,7 +124,7 @@ class PPMCodec {
 
   public Bits encodePPM(String text, int context) {
     final CharSequence original = text;
-    //if(verbose) System.p.println(String.format("Encoding %s apply %s chars of context", text, context));
+    //if(verbose) com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Encoding %s apply %s chars of context", text, context));
     if (!text.endsWith("\u0000"))
       text += END_OF_STRING;
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -150,7 +151,7 @@ class PPMCodec {
         Interval interval = fromNode.intervalTo(toNode);
         Bits segmentData = interval.toBits();
         if (verbose) {
-          System.out.println(String.format("Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
+          com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
               fromNode.getDebugString(), toNode.getDebugString(fromNode), segmentChars, interval, segmentData));
         }
         out.write(segmentData);
@@ -161,7 +162,7 @@ class PPMCodec {
             char exotic = text.charAt(0);
             out.write(exotic);
             if (verbose) {
-              System.out.println(String.format("Writing exotic character %s -> %s", exotic, new Bits(exotic, 16)));
+              com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Writing exotic character %s -> %s", exotic, new Bits(exotic, 16)));
             }
             text = text.substring(1);
           } else if (toNode.getChar() == FALLBACK) {
@@ -176,7 +177,7 @@ class PPMCodec {
       }
       out.flush();
       Bits bits = new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
-      //if(verbose) System.p.println(String.format("Encoded %s to %s", original, bits));
+      //if(verbose) com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Encoded %s to %s", original, bits));
       return bits;
     } catch (IOException e) {
       throw new RuntimeException(e);

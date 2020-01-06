@@ -21,6 +21,7 @@ package com.simiacryptus.util.binary.codes;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefAssert;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.test.TestCategories;
@@ -55,7 +56,7 @@ class GaussianTest {
     for (double probability = 0.01; probability <= 0.99; probability += .01) {
       for (int max = 1; max < 255; max += 1) {
         @SuppressWarnings("unused") final double result = this.test(Gaussian.fromBinomial(probability, max), max);
-        // System.p.println(String.format("P=%s,N=%s: %s", probability, max, result));
+        // com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("P=%s,N=%s: %s", probability, max, result));
       }
     }
   }
@@ -63,14 +64,14 @@ class GaussianTest {
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testHardcodedGaussians() throws IOException {
-    System.out.println(String.format("T: %s", this.test(new Gaussian(100, 3), 255)));
-    System.out.println(String.format("T: %s", this.test(new Gaussian(100, 10), 255)));
-    System.out.println(String.format("T: %s", this.test(new Gaussian(100, 200), 255)));
-    System.out.println(String.format("T: %s", this.test(new Gaussian(100, 500), 255)));
-    System.out.println(String.format("T: %s", this.test(new Gaussian(500, 10), 255)));
-    System.out.println(String.format("T: %s", this.test(new Gaussian(-100, 10), 255)));
-    System.out.println(String.format("T: %s", this.test(Gaussian.fromBinomial(0.7, 3), 3)));
-    System.out.println(String.format("T: %s", this.test(Gaussian.fromBinomial(0.5, 1), 1)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(new Gaussian(100, 3), 255)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(new Gaussian(100, 10), 255)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(new Gaussian(100, 200), 255)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(new Gaussian(100, 500), 255)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(new Gaussian(500, 10), 255)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(new Gaussian(-100, 10), 255)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.7, 3), 3)));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.5, 1), 1)));
 
   }
 

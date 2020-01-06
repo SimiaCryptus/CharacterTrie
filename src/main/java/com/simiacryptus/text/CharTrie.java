@@ -255,11 +255,11 @@ class CharTrie {
     parentIndex = new int[getNodeCount()];
     Arrays.fill(godparentIndex, 0, godparentIndex.length, -1);
     Arrays.fill(parentIndex, 0, parentIndex.length, -1);
-    System.gc();
+    com.simiacryptus.ref.wrappers.RefSystem.gc();
     recomputeCursorTotals(root());
-    System.gc();
+    com.simiacryptus.ref.wrappers.RefSystem.gc();
     recomputeCursorPositions(root(), 0);
-    System.gc();
+    com.simiacryptus.ref.wrappers.RefSystem.gc();
     return this;
   }
 
@@ -269,7 +269,7 @@ class CharTrie {
 
   private void reverseSubtree(TreeMap<Character, ? extends TrieNode> childrenMap,
                               TrieNode destination) {
-    String suffix = new StringBuilder(destination.getRawString()).reverse().toString();
+    String suffix = new com.simiacryptus.ref.wrappers.RefStringBuilder(destination.getRawString()).reverse().toString();
     TreeMap<Character, Long> children = new TreeMap<>();
     childrenMap.forEach((token, node) -> {
       TrieNode analog = node.traverse(suffix);

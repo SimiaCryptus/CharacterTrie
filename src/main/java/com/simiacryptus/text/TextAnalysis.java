@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefString;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -95,7 +96,7 @@ class TextAnalysis {
         Comparator.comparing(x -> -entropy(x.getKey()) * Math.pow(x.getValue(), 0.3)))
         .map(e -> {
           if (isVerbose()) {
-            verbose.println(String.format("KEYWORD: \"%s\" - %s * %.3f / %s", e.getKey(), e.getValue(),
+            verbose.println(RefString.format("KEYWORD: \"%s\" - %s * %.3f / %s", e.getKey(), e.getValue(),
                 entropy(e.getKey()), e.getKey().length()));
           }
           return e.getKey();
@@ -167,10 +168,10 @@ class TextAnalysis {
       //double jointNats = getJointNats(priorNode, followingNode);
       double linkNats = aprioriNats + aposterioriNatsPrev;
       if (isVerbose()) {
-        verbose.println(String.format("%10s\t%10s\t%s", '"' + priorNode.getString().replaceAll("\n", "\\n") + '"',
+        verbose.println(RefString.format("%10s\t%10s\t%s", '"' + priorNode.getString().replaceAll("\n", "\\n") + '"',
             '"' + followingNode.getString().replaceAll("\n", "\\n") + '"',
             Arrays.asList(aprioriNats, aposterioriNats, linkNats).stream()
-                .map(x -> String.format("%.4f", x))
+                .map(x -> RefString.format("%.4f", x))
                 .collect(Collectors.joining("\t"))));
       }
       CharSequence word = i < 2 ? "" : source.substring(wordStart, i - 2);
@@ -178,7 +179,7 @@ class TextAnalysis {
         wordStart = i - 2;
         output.add(word);
         if (isVerbose())
-          verbose.println(String.format("Recognized token \"%s\"", word));
+          verbose.println(RefString.format("Recognized token \"%s\"", word));
         prevLink = linkNats;
         aposterioriNatsPrev = aposterioriNats;
         isIncreasing = false;
@@ -241,7 +242,7 @@ class TextAnalysis {
     int maxCorrections = 10;
     int trials = 10;
     if (null != verbose)
-      verbose.println(String.format("START: \"%s\"\t%.5f", wordSpelling.text, wordSpelling.sum));
+      verbose.println(RefString.format("START: \"%s\"\t%.5f", wordSpelling.text, wordSpelling.sum));
     while (timesWithoutImprovement++ < 100) {
       WordSpelling _wordSpelling = wordSpelling;
       ToDoubleFunction<WordSpelling> fitness = mutant -> mutant.sum * 1.0 / mutant.text.length();
@@ -252,7 +253,7 @@ class TextAnalysis {
       }).min(Comparator.comparingDouble(fitness::applyAsDouble)).get();
       if (fitness.applyAsDouble(mutant) < fitness.applyAsDouble(wordSpelling)) {
         if (null != verbose)
-          verbose.println(String.format("IMPROVEMENT: \"%s\"\t%.5f", mutant.text, mutant.sum));
+          verbose.println(RefString.format("IMPROVEMENT: \"%s\"\t%.5f", mutant.text, mutant.sum));
         wordSpelling = mutant;
         timesWithoutImprovement = 0;
         if (maxCorrections-- <= 0)
@@ -262,7 +263,7 @@ class TextAnalysis {
       }
       if (inner.contains(wordSpelling.text)) {
         if (null != verbose)
-          verbose.println(String.format("WORD: \"%s\"\t%.5f", mutant.text, mutant.sum));
+          verbose.println(RefString.format("WORD: \"%s\"\t%.5f", mutant.text, mutant.sum));
         break;
       }
     }

@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -89,7 +90,7 @@ class ConvolutionalTrieSerializer {
       children.forEach((token, child) -> {
         try {
           if (null != verbose)
-            verbose.println(String.format("Write token %s", child.getChar()));
+            verbose.println(RefString.format("Write token %s", child.getChar()));
           out.write(child.getChar());
           out.writeVarLong(null == child ? 0 : child.getCursorCount());
           nodesWritten.incrementAndGet();
@@ -112,7 +113,7 @@ class ConvolutionalTrieSerializer {
         }
         if (null != verbose) {
           verbose.println(
-              String.format("Recursing %s apply godparent %s and %s of %s potential children %s", node.getDebugString(),
+              RefString.format("Recursing %s apply godparent %s and %s of %s potential children %s", node.getDebugString(),
                   godparent.getDebugString(), children.size(), godchildren.size(), godchildren.keySet()));
         }
         godchildren.forEach((token, godchild) -> {
@@ -124,7 +125,7 @@ class ConvolutionalTrieSerializer {
               if (null == child) {
                 if (null != verbose) {
                   verbose
-                      .println(String.format("Write ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
+                      .println(RefString.format("Write ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
                 }
                 out.write(Bits.ZERO);
               } else {
@@ -134,7 +135,7 @@ class ConvolutionalTrieSerializer {
                 assert (childCount > 0);
                 Bits bits = out.writeBoundedLong(childCount, upperBound);
                 if (null != verbose) {
-                  verbose.println(String.format("Write token %s = %s/%s -> %s",
+                  verbose.println(RefString.format("Write token %s = %s/%s -> %s",
                       node.getDebugString() + godchild.getDebugToken(), childCount, upperBound, bits));
                 }
                 nodesWritten.incrementAndGet();
@@ -145,7 +146,7 @@ class ConvolutionalTrieSerializer {
             } else {
               if (null != verbose) {
                 verbose
-                    .println(String.format("Implicit ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
+                    .println(RefString.format("Implicit ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
               }
             }
           } catch (IOException e) {
@@ -168,7 +169,7 @@ class ConvolutionalTrieSerializer {
           char c = (char) in.read(16).toLong();
           long cnt = in.readVarLong();
           if (null != verbose)
-            verbose.println(String.format("Read char %s = %s", c, cnt));
+            verbose.println(RefString.format("Read char %s = %s", c, cnt));
           children.put(c, cnt);
           nodesRead.incrementAndGet();
         }
@@ -193,7 +194,7 @@ class ConvolutionalTrieSerializer {
         }
         if (null != verbose) {
           verbose.println(
-              String.format("Recursing %s apply godparent %s and %s of %s potential children %s", node.getDebugString(),
+              RefString.format("Recursing %s apply godparent %s and %s of %s potential children %s", node.getDebugString(),
                   godparent.getDebugString(), numberOfChildren, godchildren.size(), godchildren.keySet()));
         }
         godchildren.forEach((token, godchild) -> {
@@ -203,13 +204,13 @@ class ConvolutionalTrieSerializer {
             if (upperBound > 0) {
               if (!in.readBool()) {
                 if (null != verbose) {
-                  verbose.println(String.format("Read ZERO token %s, input buffer = %s",
+                  verbose.println(RefString.format("Read ZERO token %s, input buffer = %s",
                       node.getDebugString() + godchild.getDebugToken(), in.peek(24)));
                 }
               } else {
                 long childCount = in.readBoundedLong(upperBound);
                 if (null != verbose) {
-                  verbose.println(String.format("Read token %s = %s/%s, input buffer = %s",
+                  verbose.println(RefString.format("Read token %s = %s/%s, input buffer = %s",
                       node.getDebugString() + godchild.getDebugToken(), childCount, upperBound, in.peek(24)));
                 }
                 assert (childCount >= 0);
@@ -220,7 +221,7 @@ class ConvolutionalTrieSerializer {
               }
             } else {
               if (null != verbose) {
-                verbose.println(String.format("Implicit ZERO token %s, input buffer = %s",
+                verbose.println(RefString.format("Implicit ZERO token %s, input buffer = %s",
                     node.getDebugString() + godchild.getDebugToken(), in.peek(24)));
               }
             }

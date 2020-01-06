@@ -45,7 +45,7 @@ class TermMetaTest {
   //    CharTrieIndex baseTree = new CharTrieIndex();
   //    log.p("Preparing %s documents", modelCount);
   //    source().limit(modelCount).forEach(txt -> {
-  //      //System.p.println(String.format("Adding %s", txt.title));
+  //      //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Adding %s", txt.title));
   //      baseTree.addDocument(txt.getText());
   //    });
   //    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);

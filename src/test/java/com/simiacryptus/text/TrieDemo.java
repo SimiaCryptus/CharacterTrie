@@ -110,7 +110,7 @@
 //      log.p("Now we can search for a string:");
 //      Map<CharSequence, Long> codec = log.code(() -> {
 //        IndexNode match = trie.traverse("Computer");
-//        System.out.println("Found string matches for " + match.getString());
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println("Found string matches for " + match.getString());
 //        return match.getCursors().map(cursor -> {
 //          return documents.get(cursor.getDocumentId());
 //        }).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
@@ -154,7 +154,7 @@
 //      {
 //        CharSequence compressed = log.code(() -> {
 //          Bits bits = codec.encodePPM(wikiArticle.getText(), 2);
-//          System.out.print("Bit Length: " + bits.bitLength);
+//          com.simiacryptus.ref.wrappers.RefSystem.out.print("Bit Length: " + bits.bitLength);
 //          return bits.toBase64String();
 //        });
 //
@@ -173,7 +173,7 @@
 //      log.p("\n\nThen, we use it to encode strings:");
 //      String compressed = log.code(() -> {
 //        byte[] bits = CompressionUtil.encodeLZ(wikiArticle.getText(), dictionary);
-//        System.out.print("Compressed Bytes: " + bits.length);
+//        com.simiacryptus.ref.wrappers.RefSystem.out.print("Compressed Bytes: " + bits.length);
 //        return Base64.getEncoder().encodeToString(bits);
 //      });
 //
@@ -270,19 +270,19 @@
 //      IntStream.range(0, 3).forEach(l -> {
 //        IntStream.range(1, context).forEach(ctx -> {
 //          log.code(() -> {
-//            System.out.println(String.format("Sum characteristic string apply %s context and %s lookahead", ctx, l));
+//            com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Sum characteristic string apply %s context and %s lookahead", ctx, l));
 //            return trieSum.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
 //          });
 //          log.code(() -> {
-//            System.out.println(String.format("Product characteristic string apply %s context and %s lookahead", ctx, l));
+//            com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Product characteristic string apply %s context and %s lookahead", ctx, l));
 //            return trieProduct.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
 //          });
 //          log.code(() -> {
-//            System.out.println(String.format("Negative characteristic string apply %s context and %s lookahead", ctx, l));
+//            com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Negative characteristic string apply %s context and %s lookahead", ctx, l));
 //            return negativeVector.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
 //          });
 //          log.code(() -> {
-//            System.out.println(String.format("Positive characteristic string apply %s context and %s lookahead", ctx, l));
+//            com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Positive characteristic string apply %s context and %s lookahead", ctx, l));
 //            return positiveVector.getGenerator().generateDictionary(dictionarySampleSize, ctx, "", l, true);
 //          });
 //        });
@@ -547,19 +547,19 @@
 //        HashMap<CharSequence, List<CharSequence>> map = new HashMap<>();
 //        map.put("pos", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
 //        map.put("neg", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
-//        return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 32);
+//        return new ClassificationTree().setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out).categorizationTree(map, 32);
 //      });
 //      log.code(() -> {
 //        return tweetsPositive.stream().skip(trainingSize).map(x -> x.getText()).mapToDouble(str -> {
 //          Map<CharSequence, Double> prob = rule.apply(str);
-//          System.out.println(String.format("%s -> %s", str, prob));
+//          com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("%s -> %s", str, prob));
 //          return prob.getOrDefault("pos", 0.0) < 0.5 ? 0.0 : 1.0;
 //        }).average().getAsDouble();
 //      });
 //      log.code(() -> {
 //        return tweetsNegative.stream().skip(trainingSize).map(x -> x.getText()).mapToDouble(str -> {
 //          Map<CharSequence, Double> prob = rule.apply(str);
-//          System.out.println(String.format("%s -> %s", str, prob));
+//          com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("%s -> %s", str, prob));
 //          return prob.getOrDefault("neg", 0.0) < 0.5 ? 0.0 : 1.0;
 //        }).average().getAsDouble();
 //      });
@@ -654,9 +654,9 @@
 //  }
 //
 //  private void print(CharTrie trie) {
-//    System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
-//    System.out.println("Total Node Count: " + trie.getNodeCount());
-//    System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Node Count: " + trie.getNodeCount());
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
 //  }
 //
 //  /**
@@ -679,10 +679,10 @@
 //      CharTrieIndex index = log.code(() -> {
 //        CharTrieIndex trie = new CharTrieIndex();
 //        articleList.forEach(article -> {
-//          System.out.println(String.format("Indexing %s", article.getTitle()));
+//          com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Indexing %s", article.getTitle()));
 //          trie.addDocument(article.getText());
 //        });
-//        System.out.println(String.format("Indexing %s bytes of documents",
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Indexing %s bytes of documents",
 //          trie.getIndexedSize()));
 //        trie.index(5, 1);
 //        return trie;
@@ -692,7 +692,7 @@
 //      byte[] serializedTrie = log.code(() -> {
 //        print(trie);
 //        byte[] bytes = new ConvolutionalTrieSerializer().serialize(trie.copy());
-//        System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
 //          trie.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / trie.getMemorySize())));
 //        return bytes;
 //      });
@@ -704,7 +704,7 @@
 //          CharSequence title = article.getTitle();
 //          TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(text, Integer.MAX_VALUE));
 //          TimedResult<CharSequence> decompressed = TimedResult.time(() -> codec.decodePPM(compressed.result.getBytes(), Integer.MAX_VALUE));
-//          System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec; %s",
+//          com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s sec; %s",
 //            title, article.getText().length(), compressed.result.bitLength / 8.0,
 //            compressed.result.bitLength * 100.0 / (8.0 * article.getText().length()),
 //            compressed.timeNanos / 1000000000.0, text.equals(decompressed.result) ? "Verified" : "Failed Validation"));
@@ -721,7 +721,7 @@
 //        NodewalkerCodec codec = new NodewalkerCodec(trie);
 //        compressedArticles.forEach(article -> {
 //          TimedResult<CharSequence> decompressed = TimedResult.time(() -> codec.decodePPM(article, Integer.MAX_VALUE));
-//          System.out.println(String.format("Deserialized %s bytes -> %s chars in %s sec",
+//          com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Deserialized %s bytes -> %s chars in %s sec",
 //            article.length, decompressed.result.length(),
 //            decompressed.timeNanos / 1000000000.0));
 //        });
@@ -730,7 +730,7 @@
 //      log.code(() -> {
 //        CharTrie restored = new ConvolutionalTrieSerializer().deserialize(serializedTrie);
 //        boolean verified = restored.root().equals(trie.root());
-//        System.out.println(String.format("Tree Verified: %s", verified));
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Tree Verified: %s", verified));
 //      });
 //    }
 //  }
@@ -798,12 +798,12 @@
 //        });
 //        log.h3("Keywords");
 //        log.code(() -> {
-//          return articleTrie.getAnalyzer().setVerbose(System.out).keywords(testArticle.getText())
+//          return articleTrie.getAnalyzer().setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out).keywords(testArticle.getText())
 //            .stream().map(s -> '"' + s.toString() + '"').collect(Collectors.joining(", "));
 //        });
 //        log.h3("Tokenization");
 //        log.code(() -> {
-//          return articleTrie.getAnalyzer().setVerbose(System.out).splitChars(testArticle.getText())
+//          return articleTrie.getAnalyzer().setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out).splitChars(testArticle.getText())
 //            .stream().map(s -> '"' + s.toString() + '"').collect(Collectors.joining(", "));
 //        });
 //      });
@@ -848,7 +848,7 @@
 //        log.h2(testArticle.getTitle());
 //        log.h3("Tokenization");
 //        List<CharSequence> tokens = log.code(() -> {
-//          return referenceTrie.getAnalyzer().setVerbose(System.out).splitMatches(testArticle.getText(), 2);
+//          return referenceTrie.getAnalyzer().setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out).splitMatches(testArticle.getText(), 2);
 //        });
 //        log.h3("Keywords");
 //        log.code(() -> {
@@ -886,7 +886,7 @@
 //      trainingList.stream().limit(20).forEach(testArticle -> {
 //        log.p("Spelling check: %s -> %s", testArticle.getText(), testArticle.getTitle());
 //        log.code(() -> {
-//          return referenceTrie.getAnalyzer().setVerbose(System.out).spelling("|" + testArticle.getText() + "|");
+//          return referenceTrie.getAnalyzer().setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out).spelling("|" + testArticle.getText() + "|");
 //        });
 //      });
 //    }
@@ -910,7 +910,7 @@
 //        WikiArticle.ENGLISH.stream().limit(100).forEach(article -> {
 //          charTrieIndex.addDocument(article.getText());
 //        });
-//        System.out.println(String.format("Indexing %s bytes of documents",
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Indexing %s bytes of documents",
 //          charTrieIndex.getIndexedSize()));
 //        charTrieIndex.index(6, 1);
 //        return charTrieIndex;
@@ -920,7 +920,7 @@
 //      log.p("\n\nThen, we compress the tree:");
 //      String serialized = log.code(() -> {
 //        byte[] bytes = CompressionUtil.encodeLZ(new ConvolutionalTrieSerializer().serialize(tree.copy()));
-//        System.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("%s in ram, %s bytes in serialized form, %s%% compression",
 //          tree.getMemorySize(), bytes.length, 100 - (bytes.length * 100.0 / tree.getMemorySize())));
 //        return Base64.getEncoder().encodeToString(bytes);
 //      });
@@ -930,7 +930,7 @@
 //        byte[] bytes = CompressionUtil.decodeLZ(Base64.getDecoder().decode(serialized));
 //        CharTrie restored = new ConvolutionalTrieSerializer().deserialize(bytes);
 //        boolean verified = restored.root().equals(tree.root());
-//        System.out.println(String.format("Tree Verified: %s", verified));
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Tree Verified: %s", verified));
 //        return bytes.length;
 //      });
 //
@@ -939,7 +939,7 @@
 //        NodewalkerCodec codec = tree.getCodec();
 //        int totalSize = WikiArticle.ENGLISH.stream().limit(100).map(article -> {
 //          TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
-//          System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
+//          com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
 //            article.getTitle(), article.getText().length(), compressed.result.bitLength / 8.0,
 //            compressed.result.bitLength * 100.0 / (8.0 * article.getText().length()),
 //            compressed.timeNanos / 1000000.0));
@@ -955,7 +955,7 @@
 //        NodewalkerCodec codec = tree.getCodec();
 //        WikiArticle.ENGLISH.stream().skip(100).limit(10).forEach(article -> {
 //          TimedResult<Bits> compressed = TimedResult.time(() -> codec.encodePPM(article.getText(), 4));
-//          System.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
+//          com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Serialized %s: %s chars -> %s bytes (%s%%) in %s ms",
 //            article.getTitle(), article.getText().length(), compressed.result.bitLength / 8.0,
 //            compressed.result.bitLength * 100.0 / (8.0 * article.getText().length()),
 //            compressed.timeNanos / 1000000.0));

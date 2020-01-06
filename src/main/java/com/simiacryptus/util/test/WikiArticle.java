@@ -76,7 +76,7 @@ class WikiArticle extends TestDocument {
           saxParser.parse(in, new DefaultHandler() {
             Stack<CharSequence> prefix = new Stack<CharSequence>();
             Stack<RefMap<CharSequence, AtomicInteger>> indexes = new Stack<RefMap<CharSequence, AtomicInteger>>();
-            StringBuilder nodeString = new StringBuilder();
+            com.simiacryptus.ref.wrappers.RefStringBuilder nodeString = new com.simiacryptus.ref.wrappers.RefStringBuilder();
             private String title;
 
             @Override
@@ -103,14 +103,14 @@ class WikiArticle extends TestDocument {
 
               final int length = this.nodeString.length();
               String text = this.nodeString.toString().trim();
-              this.nodeString = new StringBuilder();
+              this.nodeString = new com.simiacryptus.ref.wrappers.RefStringBuilder();
 
               if ("page".equals(qName)) {
                 this.title = null;
               } else if ("title".equals(qName)) {
                 this.title = text;
               } else if ("text".equals(qName)) {
-                //System.p.println(String.format("Read #%s - %s", queue.size(), this.title));
+                //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Read #%s - %s", queue.size(), this.title));
                 queue.add(new WikiArticle(this.title, text));
                 if (queue.size() > articleLimit) {
                   throw new RuntimeException(new InterruptedException());
@@ -159,7 +159,7 @@ class WikiArticle extends TestDocument {
       } catch (final Exception e) {
         e.printStackTrace();
       } finally {
-        System.err.println("Read thread exit");
+        com.simiacryptus.ref.wrappers.RefSystem.err.println("Read thread exit");
       }
     }
   }

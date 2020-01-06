@@ -104,7 +104,7 @@ class Misspelling extends TestDocument {
       } catch (final Exception e) {
         e.printStackTrace();
       } finally {
-        System.err.println("Read thread exit");
+        com.simiacryptus.ref.wrappers.RefSystem.err.println("Read thread exit");
       }
     }
 

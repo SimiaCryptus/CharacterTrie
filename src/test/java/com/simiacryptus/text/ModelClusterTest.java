@@ -26,6 +26,7 @@ import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefLinkedHashMap;
 import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.ref.wrappers.RefStream;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.WikiArticle;
@@ -61,7 +62,7 @@ class ModelClusterTest {
         baseTree.addDocument(text.getText());
         CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
         int i = index.incrementAndGet();
-        compressors.put(String.format("LZ_%s", i), new Compressor() {
+        compressors.put(RefString.format("LZ_%s", i), new Compressor() {
           String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "",
               dictionary_lookahead, true);
 
@@ -76,7 +77,7 @@ class ModelClusterTest {
           }
         });
 
-        compressors.put(String.format("LZ_raw_%s", i), new Compressor() {
+        compressors.put(RefString.format("LZ_raw_%s", i), new Compressor() {
           String dictionary = text.getText();
 
           @Override
@@ -95,7 +96,7 @@ class ModelClusterTest {
       log.p(output.toCSV(true));
       log.p(output.calcNumberStats().toCSV(true));
       log.close();
-      String outputDirName = String.format("cluster_%s_LZ/", getClass().getSimpleName());
+      String outputDirName = RefString.format("cluster_%s_LZ/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
   }
@@ -115,7 +116,7 @@ class ModelClusterTest {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
-        CharSequence name = String.format("PPM_%s", index.incrementAndGet());
+        CharSequence name = RefString.format("PPM_%s", index.incrementAndGet());
         Compressor ppmCompressor = Compressor.buildPPMCompressor(tree, encodingContext);
         synchronized (compressors) {
           compressors.put(name, ppmCompressor);
@@ -126,7 +127,7 @@ class ModelClusterTest {
       log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCompressorCluster(source().skip(getModelCount()), compressors, true);
       log.p(output.calcNumberStats().toCSV(true));
-      String outputDirName = String.format("cluster_%s_PPM/", getClass().getSimpleName());
+      String outputDirName = RefString.format("cluster_%s_PPM/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
   }
@@ -147,7 +148,7 @@ class ModelClusterTest {
         CharTrieIndex tree = new CharTrieIndex();
         tree.addDocument(text.getText());
         tree = tree.index(ppmModelDepth, model_minPathWeight);
-        CharSequence name = String.format("ENT_%s", index.incrementAndGet());
+        CharSequence name = RefString.format("ENT_%s", index.incrementAndGet());
         TextAnalysis analysis = tree.getAnalyzer();
         Function<TestDocument, Double> ppmCompressor = t -> analysis.entropy(t.getText());
         synchronized (compressors) {
@@ -159,7 +160,7 @@ class ModelClusterTest {
       log.p("Calculating Metrics Table");
       TableOutput output = Compressor.evalCluster(source().skip(getModelCount()), compressors, true);
       log.p(output.calcNumberStats().toCSV(true));
-      String outputDirName = String.format("cluster_%s_Entropy/", getClass().getSimpleName());
+      String outputDirName = RefString.format("cluster_%s_Entropy/", getClass().getSimpleName());
       output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
     }
   }

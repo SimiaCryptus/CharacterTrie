@@ -85,7 +85,7 @@ class ClassificationTree {
         return categorizationTree(categories, 0, indent);
       }
       if (null != verbose) {
-        verbose.println(String.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%5f", split,
+        verbose.println(RefString.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%5f", split,
             lSet.entrySet().stream()
                 .collect(RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
             rSet.entrySet().stream()
@@ -111,7 +111,7 @@ class ClassificationTree {
     double sumSum = sum.values().stream().mapToDouble(x -> x).sum();
     double leftSum = left.values().stream().mapToDouble(x -> x).sum();
     double rightSum = sumSum - leftSum;
-    //System.err.println(String.format("%s & %s", sum, left));
+    //com.simiacryptus.ref.wrappers.RefSystem.err.println(String.format("%s & %s", sum, left));
     if (rightSum < minLeafWeight)
       return Double.NEGATIVE_INFINITY;
     if (leftSum < minLeafWeight)

@@ -43,9 +43,9 @@
 //  private final int minArticleSize = 4 * 1024;
 //
 //  private static void print(CharTrie trie) {
-//    System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
-//    System.out.println("Total Node Count: " + trie.getNodeCount());
-//    System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Node Count: " + trie.getNodeCount());
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
 //  }
 //
 //  /**
@@ -82,7 +82,7 @@
 //    log.code(() -> {
 //      try (FileOutputStream fos = new FileOutputStream("src/main/resources/" + languageName + ".trie")) {
 //        byte[] serialized = CompressionUtil.encodeLZ(new ConvolutionalTrieSerializer().serialize(trie));
-//        System.out.println(String.format("Serialized tree to %s kb", serialized.length / 1024));
+//        com.simiacryptus.ref.wrappers.RefSystem.out.println(String.format("Serialized tree to %s kb", serialized.length / 1024));
 //        fos.write(serialized);
 //      } catch (IOException e) {
 //        throw new RuntimeException(e);

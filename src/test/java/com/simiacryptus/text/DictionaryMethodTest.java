@@ -128,7 +128,7 @@ class DictionaryMethodTest {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "",
         dictionary_lookahead, true);
-    CharSequence keyDictionary = String.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context,
+    CharSequence keyDictionary = RefString.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context,
         dictionary_lookahead, model_minPathWeight);
     int dictSampleSize = 512;
     log.p("Adding Compressor %s: %s...\n", keyDictionary,
@@ -146,7 +146,7 @@ class DictionaryMethodTest {
       }
     });
     String genMarkov = dictionaryTree.copy().getGenerator().generateMarkov(8 * 1024, dictionary_context, "");
-    CharSequence keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead,
+    CharSequence keyMarkov = RefString.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead,
         model_minPathWeight);
     log.p("Adding Compressor %s: %s...\n", keyMarkov,
         genMarkov.length() > dictSampleSize ? (genMarkov.substring(0, dictSampleSize) + "...") : genMarkov);

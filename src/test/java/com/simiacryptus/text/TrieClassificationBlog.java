@@ -46,9 +46,9 @@
 //public class TrieClassificationBlog {
 //
 //  private static void print(CharTrie trie) {
-//    System.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
-//    System.out.println("Total Node Count: " + trie.getNodeCount());
-//    System.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Indexed Document (KB): " + trie.getIndexedSize() / 1024);
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Node Count: " + trie.getNodeCount());
+//    com.simiacryptus.ref.wrappers.RefSystem.out.println("Total Index Memory Size (KB): " + trie.getMemorySize() / 1024);
 //  }
 //
 //  /**
@@ -241,7 +241,7 @@
 //        HashMap<CharSequence, List<CharSequence>> map = new HashMap<>();
 //        map.put("Positive", tweetsPositive.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
 //        map.put("Negative", tweetsNegative.stream().limit(trainingSize).map(x -> x.getText()).collect(Collectors.toList()));
-//        return new ClassificationTree().setVerbose(System.out).categorizationTree(map, 32);
+//        return new ClassificationTree().setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out).categorizationTree(map, 32);
 //      });
 //      TableOutput table = new TableOutput();
 //      log.code(() -> {

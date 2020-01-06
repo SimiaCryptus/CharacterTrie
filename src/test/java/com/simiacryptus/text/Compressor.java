@@ -26,6 +26,7 @@ import com.simiacryptus.ref.wrappers.RefCollectors;
 import com.simiacryptus.ref.wrappers.RefLinkedHashMap;
 import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.ref.wrappers.RefStream;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.test.TestDocument;
 
 import java.util.Map;
@@ -66,7 +67,7 @@ interface Compressor {
           rowWide.put(name + ".verified", uncompress.result.equals(item.getText()));
           rowTall.put("verified", uncompress.result.equals(item.getText()));
           tallTable.putRow(rowTall);
-          //System.p.println(String.format("Evaluated #%s: %s apply %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
+          //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Evaluated #%s: %s apply %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }
@@ -113,8 +114,8 @@ interface Compressor {
           //          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           //          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
           tallTable.putRow(rowTall);
-          System.out
-              .println(String.format("Evaluated #%s: %s apply %s - %s chars -> %s in %s sec", index.incrementAndGet(),
+          com.simiacryptus.ref.wrappers.RefSystem.out
+              .println(RefString.format("Evaluated #%s: %s apply %s - %s chars -> %s in %s sec", index.incrementAndGet(),
                   name, title, item.getText().length(), compress.result, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
@@ -152,7 +153,7 @@ interface Compressor {
 
   static Compressor buildPPMCompressor(CharTrie baseTree, final int encodingContext) {
     NodewalkerCodec codec = baseTree.getCodec();
-    System.out.println(String.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
     return new Compressor() {
       @Override
       public byte[] compress(String text) {

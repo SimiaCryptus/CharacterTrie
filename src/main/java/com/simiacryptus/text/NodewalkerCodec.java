@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -63,7 +64,7 @@ class NodewalkerCodec {
       Bits bits = encoder.fromNode.bitsTo(encoder.node);
       short count = (short) (encoder.node.getDepth() - encoder.fromNode.getDepth());
       if (verbose != null) {
-        verbose.println(String.format("Writing %s forward from %s to %s = %s", count, encoder.fromNode.getDebugString(),
+        verbose.println(RefString.format("Writing %s forward from %s to %s = %s", count, encoder.fromNode.getDebugString(),
             encoder.node.getDebugString(), bits));
       }
       encoder.out.writeVarShort(count, 3);
@@ -85,7 +86,7 @@ class NodewalkerCodec {
       String str = toNode.getString(decoder.node);
       Bits bits = interval.toBits();
       if (verbose != null) {
-        verbose.println(String.format("Read %s forward from %s to %s = %s", numberOfTokens,
+        verbose.println(RefString.format("Read %s forward from %s to %s = %s", numberOfTokens,
             decoder.node.getDebugString(), toNode.getDebugString(), bits));
       }
       decoder.in.expect(bits);
@@ -122,7 +123,7 @@ class NodewalkerCodec {
     short backupSteps = (short) (encoder.fromNode.getDepth() - (null == encoder.node ? -1 : encoder.node.getDepth()));
     assert (backupSteps >= 0);
     if (verbose != null) {
-      verbose.println(String.format("Backing up %s from from %s to %s", backupSteps, encoder.fromNode.getDebugString(),
+      verbose.println(RefString.format("Backing up %s from from %s to %s", backupSteps, encoder.fromNode.getDebugString(),
           null == encoder.node ? null : encoder.node.getDebugString()));
     }
     encoder.out.writeVarShort(backupSteps, 3);
@@ -138,7 +139,7 @@ class NodewalkerCodec {
       decoder.node = decoder.node.godparent();
     }
     if (verbose != null) {
-      verbose.println(String.format("Backing up %s from from %s to %s", numberOfBackupSteps, fromNode.getDebugString(),
+      verbose.println(RefString.format("Backing up %s from from %s to %s", numberOfBackupSteps, fromNode.getDebugString(),
           (null == decoder.node) ? null : decoder.node.getDebugString()));
     }
     return false;
@@ -146,7 +147,7 @@ class NodewalkerCodec {
 
   protected void writeTerminal(Encoder encoder) throws IOException {
     if (verbose != null) {
-      verbose.println(String.format("Writing forward to end from %s to %s", encoder.fromNode.getDebugString(),
+      verbose.println(RefString.format("Writing forward to end from %s to %s", encoder.fromNode.getDebugString(),
           encoder.node.getDebugString()));
     }
     encoder.out.writeVarShort((short) (encoder.node.getDepth() - encoder.fromNode.getDepth()), 3);
@@ -159,7 +160,7 @@ class NodewalkerCodec {
     protected byte[] data;
     protected int context;
     protected BitInputStream in;
-    protected StringBuilder out = new StringBuilder();
+    protected com.simiacryptus.ref.wrappers.RefStringBuilder out = new com.simiacryptus.ref.wrappers.RefStringBuilder();
     protected TrieNode node = inner.root();
 
     protected Decoder(byte[] data, int context) {
@@ -175,7 +176,7 @@ class NodewalkerCodec {
             char c = in.readChar();
             out.append(c);
             if (verbose != null)
-              verbose.println(String.format("Literal token %s", c));
+              verbose.println(RefString.format("Literal token %s", c));
             node = inner.root();
           }
           readForward(this);
@@ -215,7 +216,7 @@ class NodewalkerCodec {
             child = writeBackup(this, token);
             if (null == node) {
               if (verbose != null)
-                verbose.println(String.format("Literal token %s", token));
+                verbose.println(RefString.format("Literal token %s", token));
               out.write(token);
               fromNode = inner.root();
               node = fromNode;

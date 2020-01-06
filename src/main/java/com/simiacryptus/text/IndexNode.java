@@ -68,7 +68,7 @@ class IndexNode extends TrieNode {
                       cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
                       (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
-      //System.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
+      //com.simiacryptus.ref.wrappers.RefSystem.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
       RefArrayList<NodeData> childNodes = new RefArrayList<>(
           sortedChildren.size());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
