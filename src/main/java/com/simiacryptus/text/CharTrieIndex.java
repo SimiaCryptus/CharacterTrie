@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefCollectors;
 import com.simiacryptus.ref.wrappers.RefIntStream;
 import com.simiacryptus.util.data.SerialArrayList;
@@ -29,22 +30,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @RefAware
-class CharTrieIndex extends CharTrie {
+public class CharTrieIndex extends CharTrie {
 
   protected final SerialArrayList<CursorData> cursors;
   protected final ArrayList<CharSequence> documents;
 
   private CharTrieIndex(SerialArrayList<NodeData> nodes, SerialArrayList<CursorData> cursors,
-                        ArrayList<CharSequence> documents) {
+      ArrayList<CharSequence> documents) {
     super(nodes);
     this.cursors = cursors;
     this.documents = documents;
   }
 
   public CharTrieIndex(CharTrieIndex copyFrom) {
-    this(copyFrom.nodes.copy(), copyFrom.cursors.copy(),
-        new ArrayList<>(copyFrom.documents));
+    this(copyFrom.nodes.copy(), copyFrom.cursors.copy(), new ArrayList<>(copyFrom.documents));
 
   }
 
@@ -63,18 +62,15 @@ class CharTrieIndex extends CharTrie {
     return cursors.getMemorySize() + nodes.getMemorySize();
   }
 
-  public static CharTrie indexWords(Collection<CharSequence> documents, int maxLevels,
-                                    int minWeight) {
+  public static CharTrie indexWords(Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, true);
   }
 
-  public static CharTrie indexFulltext(Collection<CharSequence> documents,
-                                       int maxLevels, int minWeight) {
+  public static CharTrie indexFulltext(Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, false);
   }
 
-  private static CharTrie create(Collection<CharSequence> documents, int maxLevels,
-                                 int minWeight, boolean words) {
+  private static CharTrie create(Collection<CharSequence> documents, int maxLevels, int minWeight, boolean words) {
     List<List<CharSequence>> a = new ArrayList<>();
     List<CharSequence> b = new ArrayList<>();
     int blockSize = 1024 * 1024;
@@ -86,7 +82,7 @@ class CharTrieIndex extends CharTrie {
       }
     }
     a.add(b);
-    return a.parallelStream().map(list -> {
+    return RefUtil.get(a.parallelStream().map(list -> {
       CharTrieIndex trie = new CharTrieIndex();
       list.forEach(s -> {
         if (words) {
@@ -97,7 +93,7 @@ class CharTrieIndex extends CharTrie {
       });
       trie.index(maxLevels, minWeight);
       return (CharTrie) trie;
-    }).reduce((l, r) -> l.add(r)).get();
+    }).reduce((l, r) -> l.add(r)));
   }
 
   public CharTrie truncate() {
@@ -147,8 +143,7 @@ class CharTrieIndex extends CharTrie {
       index = documents.size();
       documents.add(document);
     }
-    cursors.addAll(RefIntStream.range(0, 1).mapToObj(i -> new CursorData(index, i))
-        .collect(RefCollectors.toList()));
+    cursors.addAll(RefIntStream.range(0, 1).mapToObj(i -> new CursorData(index, i)).collect(RefCollectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }
@@ -162,8 +157,8 @@ class CharTrieIndex extends CharTrie {
       index = documents.size();
       documents.add(document);
     }
-    cursors.addAll(RefIntStream.range(0, document.length() + 1)
-        .mapToObj(i -> new CursorData(index, i)).collect(RefCollectors.toList()));
+    cursors.addAll(RefIntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i))
+        .collect(RefCollectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }

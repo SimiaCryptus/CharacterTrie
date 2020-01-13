@@ -24,8 +24,7 @@ import com.simiacryptus.ref.wrappers.RefStream;
 import com.simiacryptus.util.test.EnglishWords;
 import com.simiacryptus.util.test.TestDocument;
 
-public @RefAware
-class TermMetaTest {
+public class TermMetaTest {
   int testCount = 1000;
   int modelCount = 15000;
 

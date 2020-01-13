@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefComparator;
 import org.apache.commons.compress.utils.IOUtils;
@@ -53,10 +54,9 @@ public enum LanguageModel {
   }
 
   public static LanguageModel match(String text) {
-    return RefArrays.stream(LanguageModel.values())
+    return RefUtil.get(RefArrays.stream(LanguageModel.values())
         .min(RefComparator
-            .comparing(model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength))
-        .get();
+            .comparing(model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength)));
   }
 
 }

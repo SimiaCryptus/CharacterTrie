@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
@@ -31,8 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Optional;
 
-public @RefAware
-class PPMCodec {
+public class PPMCodec {
   public static final Character ESCAPE = '\uFFFE';
   public static final char FALLBACK = Character.MAX_VALUE;
   public static final char END_OF_STRING = Character.MIN_VALUE;
@@ -104,10 +104,10 @@ class PPMCodec {
         } else if (toNode.getChar() == ESCAPE) {
           Bits charBits = in.read(16);
           char exotic = (char) charBits.toLong();
-          out.append(new String(new char[]{exotic}));
+          out.append(new String(new char[] { exotic }));
           if (verbose) {
-            com.simiacryptus.ref.wrappers.RefSystem.out
-                .println(RefString.format("Read exotic byte %s -> %s, input buffer = %s", exotic, charBits, in.peek(24)));
+            com.simiacryptus.ref.wrappers.RefSystem.out.println(
+                RefString.format("Read exotic byte %s -> %s, input buffer = %s", exotic, charBits, in.peek(24)));
           }
         } else {
           if (verbose)
@@ -142,17 +142,18 @@ class PPMCodec {
           if (prefix.isEmpty() && 0 == segmentChars) {
             Optional<? extends TrieNode> child = toNode.getChild(ESCAPE);
             assert child.isPresent();
-            toNode = child.get();
+            toNode = RefUtil.get(child);
           } else {
-            toNode = toNode.getChild(FALLBACK).get();
+            toNode = RefUtil.get(toNode.getChild(FALLBACK));
           }
         }
 
         Interval interval = fromNode.intervalTo(toNode);
         Bits segmentData = interval.toBits();
         if (verbose) {
-          com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
-              fromNode.getDebugString(), toNode.getDebugString(fromNode), segmentChars, interval, segmentData));
+          com.simiacryptus.ref.wrappers.RefSystem.out
+              .println(RefString.format("Using context \"%s\", encoded \"%s\" (%s chars) as %s -> %s",
+                  fromNode.getDebugString(), toNode.getDebugString(fromNode), segmentChars, interval, segmentData));
         }
         out.write(segmentData);
 
@@ -162,7 +163,8 @@ class PPMCodec {
             char exotic = text.charAt(0);
             out.write(exotic);
             if (verbose) {
-              com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Writing exotic character %s -> %s", exotic, new Bits(exotic, 16)));
+              com.simiacryptus.ref.wrappers.RefSystem.out
+                  .println(RefString.format("Writing exotic character %s -> %s", exotic, new Bits(exotic, 16)));
             }
             text = text.substring(1);
           } else if (toNode.getChar() == FALLBACK) {

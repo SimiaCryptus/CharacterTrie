@@ -32,8 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public @RefAware
-class CharTrieSerializer {
+public class CharTrieSerializer {
 
   public byte[] serialize(CharTrie charTrie) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -82,8 +81,7 @@ class CharTrieSerializer {
       root.streamDecendents(level).forEach(node -> {
         TrieNode godparent = node.godparent();
         Stream<TrieNode> stream = godparent.getChildren().map(x -> x);
-        TreeMap<Character, ? extends TrieNode> godchildren = godparent
-            .getChildrenMap();
+        TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         Stream<TrieNode> stream1 = node.getChildren().map(x -> x);
         TreeMap<Character, ? extends TrieNode> children = node.getChildrenMap();
         godchildren.forEach((token, godchild) -> {
@@ -124,10 +122,8 @@ class CharTrieSerializer {
     } else {
       root.streamDecendents(level).forEach(node -> {
         TrieNode godparent = node.godparent();
-        List<NodeData> list = godparent.getChildren().map(x -> x.getData())
-            .collect(Collectors.toList());
-        TreeMap<Character, ? extends TrieNode> godchildren = godparent
-            .getChildrenMap();
+        List<NodeData> list = godparent.getChildren().map(x -> x.getData()).collect(Collectors.toList());
+        TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         TreeMap<Character, Long> children = new TreeMap<>();
         godchildren.forEach((token, godchild) -> {
           try {

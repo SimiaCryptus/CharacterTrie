@@ -34,8 +34,7 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public @RefAware
-class ConvolutionalTrieSerializer {
+public class ConvolutionalTrieSerializer {
   private PrintStream verbose = null;
 
   public PrintStream getVerbose() {
@@ -72,7 +71,7 @@ class ConvolutionalTrieSerializer {
   }
 
   protected long getUpperBound(TrieNode currentParent, AtomicLong currentChildren, TrieNode godchildNode,
-                               int godchildAdjustment) {
+      int godchildAdjustment) {
     return Math.min(currentParent.getCursorCount() - currentChildren.get(),
         godchildNode.getCursorCount() - godchildAdjustment);
   }
@@ -103,8 +102,7 @@ class ConvolutionalTrieSerializer {
       root.streamDecendents(level).forEach(node -> {
         AtomicLong nodeCounter = new AtomicLong();
         TrieNode godparent = node.getDepth() == 0 ? root : node.godparent();
-        TreeMap<Character, ? extends TrieNode> godchildren = godparent
-            .getChildrenMap();
+        TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         TreeMap<Character, ? extends TrieNode> children = node.getChildrenMap();
         try {
           out.writeBoundedLong(children.size(), godchildren.size());
@@ -112,9 +110,9 @@ class ConvolutionalTrieSerializer {
           throw new RuntimeException(e);
         }
         if (null != verbose) {
-          verbose.println(
-              RefString.format("Recursing %s apply godparent %s and %s of %s potential children %s", node.getDebugString(),
-                  godparent.getDebugString(), children.size(), godchildren.size(), godchildren.keySet()));
+          verbose.println(RefString.format("Recursing %s apply godparent %s and %s of %s potential children %s",
+              node.getDebugString(), godparent.getDebugString(), children.size(), godchildren.size(),
+              godchildren.keySet()));
         }
         godchildren.forEach((token, godchild) -> {
           int godchildAdj = godchildCounters.getOrDefault(godchild.getDebugString(), 0);
@@ -124,8 +122,8 @@ class ConvolutionalTrieSerializer {
             if (upperBound > 0) {
               if (null == child) {
                 if (null != verbose) {
-                  verbose
-                      .println(RefString.format("Write ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
+                  verbose.println(
+                      RefString.format("Write ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
                 }
                 out.write(Bits.ZERO);
               } else {
@@ -145,8 +143,8 @@ class ConvolutionalTrieSerializer {
               }
             } else {
               if (null != verbose) {
-                verbose
-                    .println(RefString.format("Implicit ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
+                verbose.println(
+                    RefString.format("Implicit ZERO token %s", node.getDebugString() + godchild.getDebugToken()));
               }
             }
           } catch (IOException e) {
@@ -183,8 +181,7 @@ class ConvolutionalTrieSerializer {
         AtomicLong nodeCounter = new AtomicLong();
         TrieNode godparent = node.getDepth() == 0 ? root : node.godparent();
         assert (1 >= node.getDepth() || node.getString().substring(1).equals(godparent.getString()));
-        TreeMap<Character, ? extends TrieNode> godchildren = godparent
-            .getChildrenMap();
+        TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         TreeMap<Character, Long> children = new TreeMap<>();
         final long numberOfChildren;
         try {
@@ -193,9 +190,9 @@ class ConvolutionalTrieSerializer {
           throw new RuntimeException(e);
         }
         if (null != verbose) {
-          verbose.println(
-              RefString.format("Recursing %s apply godparent %s and %s of %s potential children %s", node.getDebugString(),
-                  godparent.getDebugString(), numberOfChildren, godchildren.size(), godchildren.keySet()));
+          verbose.println(RefString.format("Recursing %s apply godparent %s and %s of %s potential children %s",
+              node.getDebugString(), godparent.getDebugString(), numberOfChildren, godchildren.size(),
+              godchildren.keySet()));
         }
         godchildren.forEach((token, godchild) -> {
           try {

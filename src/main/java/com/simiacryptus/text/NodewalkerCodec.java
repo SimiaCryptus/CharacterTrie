@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
@@ -32,8 +33,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Optional;
 
-public @RefAware
-class NodewalkerCodec {
+public class NodewalkerCodec {
   public static final Character ESCAPE = '\uFFFE';
   public static final char FALLBACK = Character.MAX_VALUE;
   public static final char END_OF_STRING = Character.MIN_VALUE;
@@ -64,8 +64,8 @@ class NodewalkerCodec {
       Bits bits = encoder.fromNode.bitsTo(encoder.node);
       short count = (short) (encoder.node.getDepth() - encoder.fromNode.getDepth());
       if (verbose != null) {
-        verbose.println(RefString.format("Writing %s forward from %s to %s = %s", count, encoder.fromNode.getDebugString(),
-            encoder.node.getDebugString(), bits));
+        verbose.println(RefString.format("Writing %s forward from %s to %s = %s", count,
+            encoder.fromNode.getDebugString(), encoder.node.getDebugString(), bits));
       }
       encoder.out.writeVarShort(count, 3);
       encoder.out.write(bits);
@@ -123,8 +123,8 @@ class NodewalkerCodec {
     short backupSteps = (short) (encoder.fromNode.getDepth() - (null == encoder.node ? -1 : encoder.node.getDepth()));
     assert (backupSteps >= 0);
     if (verbose != null) {
-      verbose.println(RefString.format("Backing up %s from from %s to %s", backupSteps, encoder.fromNode.getDebugString(),
-          null == encoder.node ? null : encoder.node.getDebugString()));
+      verbose.println(RefString.format("Backing up %s from from %s to %s", backupSteps,
+          encoder.fromNode.getDebugString(), null == encoder.node ? null : encoder.node.getDebugString()));
     }
     encoder.out.writeVarShort(backupSteps, 3);
     return child;
@@ -139,8 +139,8 @@ class NodewalkerCodec {
       decoder.node = decoder.node.godparent();
     }
     if (verbose != null) {
-      verbose.println(RefString.format("Backing up %s from from %s to %s", numberOfBackupSteps, fromNode.getDebugString(),
-          (null == decoder.node) ? null : decoder.node.getDebugString()));
+      verbose.println(RefString.format("Backing up %s from from %s to %s", numberOfBackupSteps,
+          fromNode.getDebugString(), (null == decoder.node) ? null : decoder.node.getDebugString()));
     }
     return false;
   }
@@ -155,8 +155,7 @@ class NodewalkerCodec {
     encoder.out.writeVarShort((short) 0, 3);
   }
 
-  protected @RefAware
-  class Decoder {
+  protected class Decoder {
     protected byte[] data;
     protected int context;
     protected BitInputStream in;
@@ -190,8 +189,7 @@ class NodewalkerCodec {
     }
   }
 
-  protected @RefAware
-  class Encoder {
+  protected class Encoder {
     protected String text;
     protected int context;
     protected ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -222,10 +220,10 @@ class NodewalkerCodec {
               node = fromNode;
             } else {
               fromNode = node;
-              node = child.get();
+              node = RefUtil.get(child);
             }
           } else {
-            node = child.get();
+            node = RefUtil.get(child);
           }
         }
         writeTerminal(this);

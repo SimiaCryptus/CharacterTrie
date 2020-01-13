@@ -28,8 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public @RefAware
-class TextGenerator {
+public class TextGenerator {
 
   private final CharTrie inner;
 
@@ -46,8 +45,7 @@ class TextGenerator {
       long fate = CompressionUtil.random.nextLong() % cursorCount;
       String next = null;
       Stream<TrieNode> stream = node.getChildren().map(x -> x);
-      List<TrieNode> children = stream
-          .collect(Collectors.toList());
+      List<TrieNode> children = stream.collect(Collectors.toList());
       for (TrieNode child : children) {
         fate -= child.getCursorCount();
         if (fate <= 0) {
@@ -71,7 +69,7 @@ class TextGenerator {
   }
 
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive,
-                                   boolean terminateAtNull) {
+      boolean terminateAtNull) {
     String str = seed;
     String prefix = "";
     while (str.length() < length) {
@@ -111,8 +109,7 @@ class TextGenerator {
     return map;
   }
 
-  private void lookahead(TrieNode node, HashMap<Character, Double> map, double factor,
-                         double smoothness) {
+  private void lookahead(TrieNode node, HashMap<Character, Double> map, double factor, double smoothness) {
     if (0 < factor) {
       node.getChildren().forEach(child -> {
         map.put(child.getChar(), factor * child.getCursorCount() + map.getOrDefault(child.getToken(), 0.0));
@@ -127,11 +124,9 @@ class TextGenerator {
   private TrieNode maxNextNode(TrieNode node, int lookahead) {
     Stream<TrieNode> childStream = node.getChildren().map(x -> x);
     for (int level = 0; level < lookahead; level++) {
-      childStream = childStream.flatMap(
-          child -> child.hasChildren() ? child.getChildren() : Stream.of(child));
+      childStream = childStream.flatMap(child -> child.hasChildren() ? child.getChildren() : Stream.of(child));
     }
-    TrieNode result = childStream
-        .max(Comparator.comparingLong(x -> x.getCursorCount())).orElse(null);
+    TrieNode result = childStream.max(Comparator.comparingLong(x -> x.getCursorCount())).orElse(null);
     if (null == result) {
       if (lookahead > 0) {
         return maxNextNode(node, lookahead - 1);

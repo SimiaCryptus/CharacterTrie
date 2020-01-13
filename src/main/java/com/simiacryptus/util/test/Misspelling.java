@@ -29,8 +29,7 @@ import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public @RefAware
-class Misspelling extends TestDocument {
+public class Misspelling extends TestDocument {
 
   public static Loader BIRKBECK = new Loader(URI.create("http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
 
@@ -38,8 +37,7 @@ class Misspelling extends TestDocument {
     super(correct, misspelling);
   }
 
-  public static @RefAware
-  class Loader {
+  public static class Loader {
     private final String url;
     private final String file;
     private final int articleLimit;
@@ -77,9 +75,7 @@ class Misspelling extends TestDocument {
           }
         }
       }
-      return StreamSupport
-          .stream(Spliterators.spliteratorUnknownSize(queue.iterator(), Spliterator.DISTINCT),
-              false)
+      return StreamSupport.stream(Spliterators.spliteratorUnknownSize(queue.iterator(), Spliterator.DISTINCT), false)
           .filter(x -> x != null);
     }
 

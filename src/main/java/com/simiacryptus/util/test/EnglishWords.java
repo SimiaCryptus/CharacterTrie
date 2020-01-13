@@ -30,8 +30,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Spliterator;
 
-public @RefAware
-class EnglishWords extends TestDocument {
+public class EnglishWords extends TestDocument {
   private static final RefArrayList<EnglishWords> queue = new RefArrayList<>();
   public static String url = "https://raw.githubusercontent.com/first20hours/google-10000-english/master/20k.txt";
   public static String file = "20k.txt";
@@ -65,9 +64,7 @@ class EnglishWords extends TestDocument {
       }
     }
     RefIteratorBase<EnglishWords> iterator = new AsyncListIterator<>(queue, thread);
-    return RefStreamSupport
-        .stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
-            false)
+    return RefStreamSupport.stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
         .filter(x -> x != null);
   }
 
@@ -75,8 +72,7 @@ class EnglishWords extends TestDocument {
     try {
       InputStream in = Util.cacheLocal(file, new URI(url));
       String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
-      RefList<CharSequence> list = RefArrays
-          .stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", ""))
+      RefList<CharSequence> list = RefArrays.stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", ""))
           .collect(RefCollectors.toList());
       RefCollections.shuffle(list);
       for (CharSequence paragraph : list) {

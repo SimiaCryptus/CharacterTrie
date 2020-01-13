@@ -39,8 +39,7 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-public abstract @RefAware
-class ModelClusterTest {
+public abstract class ModelClusterTest {
 
   public static final File outPath = new File("src/site/resources/");
   public static final URL outBaseUrl = TrieTest.getUrl("https://simiacryptus.github.io/utilities/java-util/");
@@ -167,8 +166,7 @@ class ModelClusterTest {
 
   protected abstract RefStream<? extends TestDocument> source();
 
-  public static @RefAware
-  class Wikipedia extends ModelClusterTest {
+  public static class Wikipedia extends ModelClusterTest {
     int testCount = 1000;
 
     @Override

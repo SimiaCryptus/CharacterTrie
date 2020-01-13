@@ -33,8 +33,7 @@ import java.util.Spliterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public @RefAware
-class TweetSentiment extends TestDocument {
+public class TweetSentiment extends TestDocument {
   private static final RefArrayList<TweetSentiment> queue = new RefArrayList<>();
   public static String url = "http://thinknook.com/wp-content/uploads/2012/09/Sentiment-Analysis-Dataset.zip";
   public static String file = "Sentiment-Analysis-Dataset.zip";
@@ -70,9 +69,7 @@ class TweetSentiment extends TestDocument {
       }
     }
     RefIteratorBase<TweetSentiment> iterator = new AsyncListIterator<>(queue, thread);
-    return RefStreamSupport
-        .stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
-            false)
+    return RefStreamSupport.stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
         .filter(x -> x != null);
   }
 

@@ -21,7 +21,6 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-@RefAware
 class CursorData {
   int documentId;
   int position;

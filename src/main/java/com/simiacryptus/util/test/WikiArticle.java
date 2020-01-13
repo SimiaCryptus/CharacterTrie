@@ -37,8 +37,7 @@ import java.net.URI;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @RefAware
-class WikiArticle extends TestDocument {
+public class WikiArticle extends TestDocument {
 
   public static WikiDataLoader ENGLISH = new WikiDataLoader(
       URI.create("https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
@@ -51,8 +50,7 @@ class WikiArticle extends TestDocument {
     super(title, text);
   }
 
-  public static @RefAware
-  class WikiDataLoader extends DataLoader<WikiArticle> {
+  public static class WikiDataLoader extends DataLoader<WikiArticle> {
     protected final String url;
     protected final String file;
     protected final int articleLimit;
@@ -126,7 +124,7 @@ class WikiArticle extends TestDocument {
 
             @Override
             public void startElement(final String uri, final String localName, final String qName,
-                                     final Attributes attributes) throws SAXException {
+                final Attributes attributes) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }

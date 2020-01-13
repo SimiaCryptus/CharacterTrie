@@ -26,8 +26,7 @@ import com.simiacryptus.util.data.SerialArrayList;
 import java.util.Map;
 import java.util.Optional;
 
-public @RefAware
-class IndexNode extends TrieNode {
+public class IndexNode extends TrieNode {
 
   public IndexNode(CharTrie trie, short depth, int index, TrieNode parent) {
     super(trie, index, parent);
@@ -55,22 +54,19 @@ class IndexNode extends TrieNode {
   }
 
   public RefMap<CharSequence, RefList<Cursor>> getCursorsByDocument() {
-    return this.getCursors()
-        .collect(RefCollectors.groupingBy((Cursor x) -> x.getDocument()));
+    return this.getCursors().collect(RefCollectors.groupingBy((Cursor x) -> x.getDocument()));
   }
 
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
-      RefTreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new RefTreeMap<>(
-          getCursors().parallel()
-              .collect(RefCollectors.groupingBy(y -> y.next().getToken(),
-                  RefCollectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
-                      cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
-                      (left, right) -> left.add(right)))));
+      RefTreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new RefTreeMap<>(getCursors().parallel()
+          .collect(RefCollectors.groupingBy(y -> y.next().getToken(),
+              RefCollectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
+                  cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
+                  (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
       //com.simiacryptus.ref.wrappers.RefSystem.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
-      RefArrayList<NodeData> childNodes = new RefArrayList<>(
-          sortedChildren.size());
+      RefArrayList<NodeData> childNodes = new RefArrayList<>(sortedChildren.size());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
         int length = e.getValue().length();
         ((CharTrieIndex) this.trie).cursors.putAll(e.getValue(), (int) cursorWriteIndex);

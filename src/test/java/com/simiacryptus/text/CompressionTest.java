@@ -23,11 +23,7 @@ import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.wrappers.RefAssert;
-import com.simiacryptus.ref.wrappers.RefLinkedHashMap;
-import com.simiacryptus.ref.wrappers.RefMap;
-import com.simiacryptus.ref.wrappers.RefStream;
-import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
@@ -35,12 +31,10 @@ import org.junit.experimental.categories.Category;
 
 import java.util.function.Supplier;
 
-public @RefAware
-class CompressionTest {
+public class CompressionTest {
 
-  static void addSharedDictionaryCompressors(RefMap<CharSequence, Compressor> compressors,
-                                             final CharTrieIndex baseTree, final int dictionary_lookahead, final int dictionary_context,
-                                             int model_minPathWeight) {
+  static void addSharedDictionaryCompressors(RefMap<CharSequence, Compressor> compressors, final CharTrieIndex baseTree,
+      final int dictionary_lookahead, final int dictionary_context, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     compressors.put("LZ8k", new Compressor() {
       String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "",
@@ -109,14 +103,15 @@ class CompressionTest {
             .println(RefString.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
       } catch (Throwable e) {
         synchronized (modelTree) {
-          com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
+          com.simiacryptus.ref.wrappers.RefSystem.out
+              .println(RefString.format("Error encoding \"%s\" - %s", txt, e.getMessage()));
           try {
             NodewalkerCodec codec2 = codec.setVerbose(com.simiacryptus.ref.wrappers.RefSystem.out);
             Bits encoded = codec2.encodePPM(txt, encodingContext);
             CharSequence decoded = codec2.decodePPM(encoded.getBytes(), encodingContext);
             RefAssert.assertEquals(txt, decoded);
-            com.simiacryptus.ref.wrappers.RefSystem.out
-                .println(RefString.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
+            com.simiacryptus.ref.wrappers.RefSystem.out.println(
+                RefString.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
             throw e;
           } catch (Throwable e2) {
             throw e2;
@@ -138,12 +133,11 @@ class CompressionTest {
     int encodingContext = 2;
     int modelCount = 10000;
     int testCount = 100;
-    Supplier<RefStream<? extends TestDocument>> source = () -> TweetSentiment.load()
-        .limit(modelCount + testCount);
+    Supplier<RefStream<? extends TestDocument>> source = () -> TweetSentiment.load().limit(modelCount + testCount);
 
     try (NotebookOutput log = MarkdownNotebookOutput.get("calcTweetCompression")) {
-      RefMap<CharSequence, Compressor> compressors = buildCompressors(source,
-          ppmModelDepth, model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+      RefMap<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight,
+          dictionary_lookahead, dictionary_context, encodingContext, modelCount);
       TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
       //log.p(output.toTextTable());
       log.p(output.calcNumberStats().toCSV(true));
@@ -160,11 +154,10 @@ class CompressionTest {
     int encodingContext = 3;
     int modelCount = 15000;
     int testCount = 100;
-    Supplier<RefStream<? extends TestDocument>> source = () -> EnglishWords.load()
-        .limit(modelCount + testCount);
+    Supplier<RefStream<? extends TestDocument>> source = () -> EnglishWords.load().limit(modelCount + testCount);
     NotebookOutput log = MarkdownNotebookOutput.get("calcTermCompression");
-    RefMap<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth,
-        model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+    RefMap<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight,
+        dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toCSV(true));
@@ -181,22 +174,21 @@ class CompressionTest {
     int encodingContext = 2;
     int modelCount = 100;
     int testCount = 100;
-    Supplier<RefStream<? extends TestDocument>> source = () -> WikiArticle.ENGLISH
-        .stream().filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
+    Supplier<RefStream<? extends TestDocument>> source = () -> WikiArticle.ENGLISH.stream()
+        .filter(x -> x.getText().length() > 8 * 1024).limit(modelCount + testCount);
 
     NotebookOutput log = MarkdownNotebookOutput.get("calcWikiCompression");
-    RefMap<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth,
-        model_minPathWeight, dictionary_lookahead, dictionary_context, encodingContext, modelCount);
+    RefMap<CharSequence, Compressor> compressors = buildCompressors(source, ppmModelDepth, model_minPathWeight,
+        dictionary_lookahead, dictionary_context, encodingContext, modelCount);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toCSV(true));
     log.close();
   }
 
-  protected RefMap<CharSequence, Compressor> buildCompressors(
-      Supplier<RefStream<? extends TestDocument>> source, int ppmModelDepth,
-      int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context, final int encodingContext,
-      int modelCount) {
+  protected RefMap<CharSequence, Compressor> buildCompressors(Supplier<RefStream<? extends TestDocument>> source,
+      int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context,
+      final int encodingContext, int modelCount) {
     RefMap<CharSequence, Compressor> compressors = new RefLinkedHashMap<>();
     Compressor.addGenericCompressors(compressors);
     com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Preparing %s documents", modelCount));
@@ -205,7 +197,8 @@ class CompressionTest {
       //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Adding %s", txt.title));
       baseTree.addDocument(txt.getText());
     });
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
+    com.simiacryptus.ref.wrappers.RefSystem.out
+        .println(RefString.format("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024));
     baseTree.index(ppmModelDepth, model_minPathWeight);
     com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Generating dictionaries"));
     addSharedDictionaryCompressors(compressors, baseTree, dictionary_lookahead, dictionary_context,

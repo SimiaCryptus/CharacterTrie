@@ -30,8 +30,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Spliterator;
 
-public @RefAware
-class Shakespeare extends TestDocument {
+public class Shakespeare extends TestDocument {
   private static final RefArrayList<Shakespeare> queue = new RefArrayList<>();
   public static String url = "http://www.gutenberg.org/cacheLocal/epub/100/pg100.txt";
   public static String file = "Shakespeare.txt";
@@ -65,9 +64,7 @@ class Shakespeare extends TestDocument {
       }
     }
     RefIteratorBase<Shakespeare> iterator = new AsyncListIterator<>(queue, thread);
-    return RefStreamSupport
-        .stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
-            false)
+    return RefStreamSupport.stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
         .filter(x -> x != null);
   }
 

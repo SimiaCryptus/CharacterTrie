@@ -34,8 +34,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
-public @RefAware
-class CompressionUtil {
+public class CompressionUtil {
   public static final Random random = new Random();
 
   public static byte[] encodeLZ(CharSequence data, String dictionary) {

@@ -21,8 +21,7 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-public @RefAware
-class Cursor {
+public class Cursor {
   final CursorData data;
   private final CharTrieIndex charTrieIndex;
   private final short depth;

@@ -32,8 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public @RefAware
-class TrieNode {
+public class TrieNode {
   protected final CharTrie trie;
   protected final int index;
   private transient short depth = -1;
@@ -109,7 +108,7 @@ class TrieNode {
       return "\\\\";
     if (asChar == '\n')
       return "\\n";
-    return new String(new char[]{asChar});
+    return new String(new char[] { asChar });
   }
 
   public short getDepth() {
@@ -155,7 +154,7 @@ class TrieNode {
   }
 
   public String getRawString() {
-    return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
+    return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[] { getChar() })));
   }
 
   public String getString() {
@@ -170,7 +169,7 @@ class TrieNode {
       return "";
     if (asChar == NodewalkerCodec.ESCAPE)
       return "";
-    return new String(new char[]{asChar});
+    return new String(new char[] { asChar });
   }
 
   public CharTrie getTrie() {

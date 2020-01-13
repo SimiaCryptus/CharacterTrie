@@ -20,6 +20,7 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefString;
 
 import java.io.PrintStream;
@@ -29,8 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public @RefAware
-class TextAnalysis {
+public class TextAnalysis {
 
   public static final double DEFAULT_THRESHOLD = Math.log(15);
   private final CharTrie inner;
@@ -89,12 +89,10 @@ class TextAnalysis {
 
   public List<CharSequence> keywords(final String source) {
     Map<CharSequence, Long> wordCounts = splitChars(source, DEFAULT_THRESHOLD).stream()
-        .collect(Collectors.groupingBy(x -> x,
-            Collectors.counting()));
+        .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     wordCounts = aggregateKeywords(wordCounts);
-    return wordCounts.entrySet().stream().filter(x -> x.getValue() > 1).sorted(
-        Comparator.comparing(x -> -entropy(x.getKey()) * Math.pow(x.getValue(), 0.3)))
-        .map(e -> {
+    return wordCounts.entrySet().stream().filter(x -> x.getValue() > 1)
+        .sorted(Comparator.comparing(x -> -entropy(x.getKey()) * Math.pow(x.getValue(), 0.3))).map(e -> {
           if (isVerbose()) {
             verbose.println(RefString.format("KEYWORD: \"%s\" - %s * %.3f / %s", e.getKey(), e.getValue(),
                 entropy(e.getKey()), e.getKey().length()));
@@ -107,9 +105,8 @@ class TextAnalysis {
     assert (source.startsWith("|"));
     assert (source.endsWith("|"));
     WordSpelling original = new WordSpelling(source);
-    WordSpelling corrected = IntStream.range(0, 1)
-        .mapToObj(i -> buildCorrection(original))
-        .min(Comparator.comparingDouble(x -> x.sum)).get();
+    WordSpelling corrected = RefUtil.get(IntStream.range(0, 1).mapToObj(i -> buildCorrection(original))
+        .min(Comparator.comparingDouble(x -> x.sum)));
     return corrected.sum;
   }
 
@@ -170,8 +167,7 @@ class TextAnalysis {
       if (isVerbose()) {
         verbose.println(RefString.format("%10s\t%10s\t%s", '"' + priorNode.getString().replaceAll("\n", "\\n") + '"',
             '"' + followingNode.getString().replaceAll("\n", "\\n") + '"',
-            Arrays.asList(aprioriNats, aposterioriNats, linkNats).stream()
-                .map(x -> RefString.format("%.4f", x))
+            Arrays.asList(aprioriNats, aposterioriNats, linkNats).stream().map(x -> RefString.format("%.4f", x))
                 .collect(Collectors.joining("\t"))));
       }
       CharSequence word = i < 2 ? "" : source.substring(wordStart, i - 2);
@@ -203,7 +199,7 @@ class TextAnalysis {
         node = node.godparent();
         child = node.getChild(source.charAt(i));
       }
-      output += Math.log(child.get().getCursorCount() * 1.0 / node.getCursorCount());
+      output += Math.log(RefUtil.get(child).getCursorCount() * 1.0 / node.getCursorCount());
     }
     return -output / Math.log(2);
   }
@@ -212,8 +208,7 @@ class TextAnalysis {
     return splitChars(text, DEFAULT_THRESHOLD);
   }
 
-  private Map<CharSequence, Long> aggregateKeywords(
-      Map<CharSequence, Long> wordCounts) {
+  private Map<CharSequence, Long> aggregateKeywords(Map<CharSequence, Long> wordCounts) {
     Map<CharSequence, Long> accumulator = new HashMap<>();
     wordCounts.forEach((key, count) -> {
       boolean added = false;
@@ -246,11 +241,11 @@ class TextAnalysis {
     while (timesWithoutImprovement++ < 100) {
       WordSpelling _wordSpelling = wordSpelling;
       ToDoubleFunction<WordSpelling> fitness = mutant -> mutant.sum * 1.0 / mutant.text.length();
-      WordSpelling mutant = wordSpelling.mutate().filter(x -> {
+      WordSpelling mutant = RefUtil.get(wordSpelling.mutate().filter(x -> {
         if (!x.text.startsWith("|"))
           return false;
         return x.text.endsWith("|");
-      }).min(Comparator.comparingDouble(fitness::applyAsDouble)).get();
+      }).min(Comparator.comparingDouble(fitness::applyAsDouble)));
       if (fitness.applyAsDouble(mutant) < fitness.applyAsDouble(wordSpelling)) {
         if (null != verbose)
           verbose.println(RefString.format("IMPROVEMENT: \"%s\"\t%.5f", mutant.text, mutant.sum));
@@ -315,11 +310,9 @@ class TextAnalysis {
     return -Math.log(product / sumOfProduct);
   }
 
-  private Map<Character, Long> getJointExpectation(TrieNode priorNode,
-                                                   TrieNode followingNode) {
+  private Map<Character, Long> getJointExpectation(TrieNode priorNode, TrieNode followingNode) {
     TrieNode priorParent = priorNode.getParent();
-    TreeMap<Character, ? extends TrieNode> childrenMap = null == priorParent
-        ? inner.root().getChildrenMap()
+    TreeMap<Character, ? extends TrieNode> childrenMap = null == priorParent ? inner.root().getChildrenMap()
         : priorParent.getChildrenMap();
     String followingString = followingNode.getString();
     CharSequence postContext = followingString.isEmpty() ? "" : followingString.substring(1);
@@ -332,8 +325,7 @@ class TextAnalysis {
     }));
   }
 
-  public @RefAware
-  class WordSpelling {
+  public class WordSpelling {
     private final double[] linkNatsArray;
     private final List<TrieNode> leftNodes;
     private final List<TrieNode> rightNodes;
@@ -376,8 +368,7 @@ class TextAnalysis {
 
     public Stream<WordSpelling> mutate() {
       return IntStream.range(0, linkNatsArray.length).mapToObj(x -> x)
-          .sorted(Comparator.comparingDouble(i1 -> linkNatsArray[i1]))
-          .flatMap(i -> mutateAt(i));
+          .sorted(Comparator.comparingDouble(i1 -> linkNatsArray[i1])).flatMap(i -> mutateAt(i));
       //      double fate = Math.random();
       //      for (int i=0;i<linkNatsArray.length;i++) {
       //        fate -= linkNatsArray[i];
@@ -448,8 +439,7 @@ class TextAnalysis {
     }
 
     private Stream<WordSpelling> mutateSubstitution(int pos) {
-      Stream<Character> newCharStream = pick(
-          getJointExpectation(leftNodes.get(pos), rightNodes.get(pos)));
+      Stream<Character> newCharStream = pick(getJointExpectation(leftNodes.get(pos), rightNodes.get(pos)));
       return newCharStream.map(newChar -> {
         char[] charArray = text.toCharArray();
         charArray[pos] = newChar;
@@ -458,16 +448,13 @@ class TextAnalysis {
       });
     }
 
-    private Stream<Character> pick(
-        Map<Character, Long> weights) {
-      return weights.entrySet().stream()
-          .sorted(Comparator.comparingLong(e -> e.getValue())).map(e -> e.getKey());
+    private Stream<Character> pick(Map<Character, Long> weights) {
+      return weights.entrySet().stream().sorted(Comparator.comparingLong(e -> e.getValue())).map(e -> e.getKey());
     }
 
     private Stream<WordSpelling> mutateDeletion(int pos) {
       //if(null!=verbose) verbose.println("  deletion");
-      return Stream
-          .of(new WordSpelling(text.substring(0, pos) + text.substring(pos + 1)));
+      return Stream.of(new WordSpelling(text.substring(0, pos) + text.substring(pos + 1)));
     }
 
   }

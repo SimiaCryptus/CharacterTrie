@@ -22,8 +22,7 @@ package com.simiacryptus.util.test;
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.text.CompressionUtil;
 
-public @RefAware
-class TestDocument {
+public class TestDocument {
 
   private final CharSequence title;
   private final byte[] text;
@@ -43,7 +42,8 @@ class TestDocument {
 
   @Override
   public String toString() {
-    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder(getClass().getSimpleName() + "{");
+    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder(
+        getClass().getSimpleName() + "{");
     sb.append("title='").append(getTitle()).append('\'');
     sb.append('}');
     return sb.toString();

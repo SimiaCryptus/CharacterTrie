@@ -21,7 +21,6 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-@RefAware
 class NodeData {
   // Primary data defining the tree
   char token;

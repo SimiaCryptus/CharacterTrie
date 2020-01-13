@@ -22,21 +22,16 @@ package com.simiacryptus.text;
 import com.simiacryptus.lang.TimedResult;
 import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.wrappers.RefCollectors;
-import com.simiacryptus.ref.wrappers.RefLinkedHashMap;
-import com.simiacryptus.ref.wrappers.RefMap;
-import com.simiacryptus.ref.wrappers.RefStream;
-import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.test.TestDocument;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-public @RefAware
-interface Compressor {
+public interface Compressor {
   static <T> TableOutput evalCompressor(RefStream<? extends TestDocument> data,
-                                        RefMap<CharSequence, Compressor> compressors, boolean wide) {
+      RefMap<CharSequence, Compressor> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
@@ -78,9 +73,8 @@ interface Compressor {
   }
 
   static <T> TableOutput evalCompressorCluster(RefStream<? extends TestDocument> data,
-                                               RefMap<CharSequence, Compressor> compressors, boolean wide) {
-    RefStream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet()
-        .stream();
+      RefMap<CharSequence, Compressor> compressors, boolean wide) {
+    RefStream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet().stream();
     RefCollectors.RefCollector<Map.Entry<CharSequence, Compressor>, ?, RefMap<CharSequence, Function<TestDocument, Double>>> collector = RefCollectors
         .toMap(e -> e.getKey(), e -> {
           Compressor value = e.getValue();
@@ -90,7 +84,7 @@ interface Compressor {
   }
 
   static <T> TableOutput evalCluster(RefStream<? extends TestDocument> data,
-                                     RefMap<CharSequence, Function<TestDocument, Double>> compressors, boolean wide) {
+      RefMap<CharSequence, Function<TestDocument, Double>> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
@@ -114,9 +108,9 @@ interface Compressor {
           //          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           //          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
           tallTable.putRow(rowTall);
-          com.simiacryptus.ref.wrappers.RefSystem.out
-              .println(RefString.format("Evaluated #%s: %s apply %s - %s chars -> %s in %s sec", index.incrementAndGet(),
-                  name, title, item.getText().length(), compress.result, compress.timeNanos / 1000000000.0));
+          com.simiacryptus.ref.wrappers.RefSystem.out.println(
+              RefString.format("Evaluated #%s: %s apply %s - %s chars -> %s in %s sec", index.incrementAndGet(), name,
+                  title, item.getText().length(), compress.result, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }
@@ -153,7 +147,8 @@ interface Compressor {
 
   static Compressor buildPPMCompressor(CharTrie baseTree, final int encodingContext) {
     NodewalkerCodec codec = baseTree.getCodec();
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
+    com.simiacryptus.ref.wrappers.RefSystem.out
+        .println(RefString.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
     return new Compressor() {
       @Override
       public byte[] compress(String text) {
