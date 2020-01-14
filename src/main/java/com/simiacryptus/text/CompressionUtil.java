@@ -22,12 +22,13 @@ package com.simiacryptus.text;
 import com.davidehrmann.vcdiff.VCDiffDecoderBuilder;
 import com.davidehrmann.vcdiff.VCDiffEncoder;
 import com.davidehrmann.vcdiff.VCDiffEncoderBuilder;
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.*;
 import java.util.Random;
 import java.util.zip.DataFormatException;
@@ -37,6 +38,7 @@ import java.util.zip.Inflater;
 public class CompressionUtil {
   public static final Random random = new Random();
 
+  @Nonnull
   public static byte[] encodeLZ(CharSequence data, String dictionary) {
     byte[] asBytes = new byte[0];
     try {
@@ -47,11 +49,13 @@ public class CompressionUtil {
     return encodeLZ(asBytes, dictionary);
   }
 
-  public static byte[] encodeLZ(byte[] bytes) {
+  @Nonnull
+  public static byte[] encodeLZ(@Nonnull byte[] bytes) {
     return encodeLZ(bytes, "");
   }
 
-  public static byte[] encodeLZ(byte[] bytes, String dictionary) {
+  @Nonnull
+  public static byte[] encodeLZ(@Nonnull byte[] bytes, @Nullable String dictionary) {
     byte[] output = new byte[(int) (bytes.length * 1.05 + 32)];
     Deflater compresser = new Deflater();
     try {
@@ -69,7 +73,8 @@ public class CompressionUtil {
     return RefArrays.copyOf(output, compressedDataLength);
   }
 
-  public static byte[] decodeLZ(byte[] data, String dictionary) {
+  @Nonnull
+  public static byte[] decodeLZ(@Nonnull byte[] data, @Nonnull String dictionary) {
     try {
       Inflater decompresser = new Inflater();
       decompresser.setInput(data, 0, data.length);
@@ -86,16 +91,18 @@ public class CompressionUtil {
       resultLength = decompresser.inflate(result);
       decompresser.end();
       return RefArrays.copyOfRange(result, 0, resultLength);
-    } catch (DataFormatException | UnsupportedEncodingException e) {
+    } catch (@Nonnull DataFormatException | UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
   }
 
+  @Nonnull
   public static byte[] encodeLZ(CharSequence data) {
     return encodeLZ(data, "");
   }
 
-  public static CharSequence decodeLZToString(byte[] data, CharSequence dictionary) {
+  @Nonnull
+  public static CharSequence decodeLZToString(@Nonnull byte[] data, CharSequence dictionary) {
     try {
       return new String(decodeLZ(data), "UTF-8");
     } catch (UnsupportedEncodingException e) {
@@ -103,7 +110,8 @@ public class CompressionUtil {
     }
   }
 
-  public static String decodeLZToString(byte[] data) {
+  @Nonnull
+  public static String decodeLZToString(@Nonnull byte[] data) {
     try {
       return new String(decodeLZ(data), "UTF-8");
     } catch (UnsupportedEncodingException e) {
@@ -111,11 +119,13 @@ public class CompressionUtil {
     }
   }
 
-  public static byte[] decodeLZ(byte[] data) {
+  @Nonnull
+  public static byte[] decodeLZ(@Nonnull byte[] data) {
     return decodeLZ(data, "");
   }
 
-  public static CharSequence decodeBZ(byte[] data) {
+  @Nonnull
+  public static CharSequence decodeBZ(@Nonnull byte[] data) {
     try {
       return new String(decodeBZRaw(data), "UTF-8");
     } catch (IOException e) {
@@ -123,7 +133,7 @@ public class CompressionUtil {
     }
   }
 
-  public static byte[] decodeBZRaw(byte[] data) {
+  public static byte[] decodeBZRaw(@Nonnull byte[] data) {
     try {
       ByteArrayInputStream output = new ByteArrayInputStream(data);
       BZip2CompressorInputStream compresser = new BZip2CompressorInputStream(output);
@@ -133,7 +143,8 @@ public class CompressionUtil {
     }
   }
 
-  public static byte[] encodeBZ(String data) {
+  @Nonnull
+  public static byte[] encodeBZ(@Nonnull String data) {
     try {
       byte[] bytes = encodeBZ(data.getBytes("UTF-8"));
       //assert(data.equals(decodeBZ(bytes)));
@@ -143,7 +154,8 @@ public class CompressionUtil {
     }
   }
 
-  public static byte[] encodeBZ(byte[] data) {
+  @Nonnull
+  public static byte[] encodeBZ(@Nonnull byte[] data) {
     try {
       int blockSize = 4;
       ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -157,7 +169,8 @@ public class CompressionUtil {
     }
   }
 
-  public static CharSequence decodeBZ(byte[] data, String dictionary) {
+  @Nonnull
+  public static CharSequence decodeBZ(@Nonnull byte[] data, @Nonnull String dictionary) {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -168,7 +181,8 @@ public class CompressionUtil {
     }
   }
 
-  public static byte[] encodeBZ(String data, String dictionary) {
+  @Nonnull
+  public static byte[] encodeBZ(@Nonnull String data, @Nonnull String dictionary) {
     try {
       byte[] bytes = encodeBZ(data.getBytes("UTF-8"), dictionary);
       //assert(data.equals(decodeBZ(bytes, dictionary)));
@@ -178,7 +192,8 @@ public class CompressionUtil {
     }
   }
 
-  public static byte[] encodeBZ(byte[] asBytes, String dictionary) {
+  @Nonnull
+  public static byte[] encodeBZ(@Nonnull byte[] asBytes, @Nonnull String dictionary) {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
       VCDiffEncoder<OutputStream> encoder = VCDiffEncoderBuilder.builder().withDictionary(dictBytes).buildSimple();
@@ -190,7 +205,8 @@ public class CompressionUtil {
     }
   }
 
-  public static CharSequence displayStr(String str) {
+  @Nonnull
+  public static CharSequence displayStr(@Nonnull String str) {
     return str.replaceAll("\\\\", "\\\\").replaceAll("\n", "\\n").replaceAll("\0", "\\\\0");
   }
 }

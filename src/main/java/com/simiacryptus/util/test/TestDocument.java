@@ -19,12 +19,15 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefStringBuilder;
 import com.simiacryptus.text.CompressionUtil;
+
+import javax.annotation.Nonnull;
 
 public class TestDocument {
 
   private final CharSequence title;
+  @Nonnull
   private final byte[] text;
 
   public TestDocument(CharSequence title, CharSequence text) {
@@ -32,6 +35,7 @@ public class TestDocument {
     this.text = CompressionUtil.encodeLZ(text);
   }
 
+  @Nonnull
   public String getText() {
     return CompressionUtil.decodeLZToString(text);
   }
@@ -42,7 +46,7 @@ public class TestDocument {
 
   @Override
   public String toString() {
-    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder(
+    final RefStringBuilder sb = new RefStringBuilder(
         getClass().getSimpleName() + "{");
     sb.append("title='").append(getTitle()).append('\'');
     sb.append('}');

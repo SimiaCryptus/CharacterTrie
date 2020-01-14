@@ -19,12 +19,13 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefCollectors;
 import com.simiacryptus.ref.wrappers.RefIntStream;
 import com.simiacryptus.util.data.SerialArrayList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,13 +37,13 @@ public class CharTrieIndex extends CharTrie {
   protected final ArrayList<CharSequence> documents;
 
   private CharTrieIndex(SerialArrayList<NodeData> nodes, SerialArrayList<CursorData> cursors,
-      ArrayList<CharSequence> documents) {
+                        ArrayList<CharSequence> documents) {
     super(nodes);
     this.cursors = cursors;
     this.documents = documents;
   }
 
-  public CharTrieIndex(CharTrieIndex copyFrom) {
+  public CharTrieIndex(@Nonnull CharTrieIndex copyFrom) {
     this(copyFrom.nodes.copy(), copyFrom.cursors.copy(), new ArrayList<>(copyFrom.documents));
 
   }
@@ -62,15 +63,18 @@ public class CharTrieIndex extends CharTrie {
     return cursors.getMemorySize() + nodes.getMemorySize();
   }
 
-  public static CharTrie indexWords(Collection<CharSequence> documents, int maxLevels, int minWeight) {
+  @Nonnull
+  public static CharTrie indexWords(@Nonnull Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, true);
   }
 
-  public static CharTrie indexFulltext(Collection<CharSequence> documents, int maxLevels, int minWeight) {
+  @Nonnull
+  public static CharTrie indexFulltext(@Nonnull Collection<CharSequence> documents, int maxLevels, int minWeight) {
     return create(documents, maxLevels, minWeight, false);
   }
 
-  private static CharTrie create(Collection<CharSequence> documents, int maxLevels, int minWeight, boolean words) {
+  @Nonnull
+  private static CharTrie create(@Nonnull Collection<CharSequence> documents, int maxLevels, int minWeight, boolean words) {
     List<List<CharSequence>> a = new ArrayList<>();
     List<CharSequence> b = new ArrayList<>();
     int blockSize = 1024 * 1024;
@@ -96,18 +100,22 @@ public class CharTrieIndex extends CharTrie {
     }).reduce((l, r) -> l.add(r)));
   }
 
+  @Nonnull
   public CharTrie truncate() {
     return new CharTrie(this);
   }
 
+  @Nonnull
   public CharTrieIndex index() {
     return index(Integer.MAX_VALUE);
   }
 
+  @Nonnull
   public CharTrieIndex index(int maxLevels) {
     return index(maxLevels, 0);
   }
 
+  @Nonnull
   public CharTrieIndex index(int maxLevels, int minWeight) {
 
     AtomicInteger numberSplit = new AtomicInteger(0);
@@ -148,7 +156,7 @@ public class CharTrieIndex extends CharTrie {
     return index;
   }
 
-  public int addDocument(CharSequence document) {
+  public int addDocument(@Nonnull CharSequence document) {
     if (root().getNumberOfChildren() >= 0) {
       throw new IllegalStateException("Tree sorting has begun");
     }
@@ -163,25 +171,30 @@ public class CharTrieIndex extends CharTrie {
     return index;
   }
 
-  public CharTrie addAlphabet(CharSequence document) {
+  @Nonnull
+  public CharTrie addAlphabet(@Nonnull CharSequence document) {
     document.chars().mapToObj(i -> new String(Character.toChars(i))).forEach(s -> addDocument(s));
     return this;
   }
 
+  @Nonnull
   public CharTrieIndex copy() {
     return new CharTrieIndex(this);
   }
 
+  @Nullable
   @Override
   public IndexNode root() {
     return new IndexNode(this, (short) 0, 0, null);
   }
 
+  @Nonnull
   @Override
-  public IndexNode traverse(String search) {
+  public IndexNode traverse(@Nonnull String search) {
     return root().traverse(search);
   }
 
+  @Nonnull
   @Override
   CharTrieIndex recomputeCursorDetails() {
     return (CharTrieIndex) super.recomputeCursorDetails();

@@ -19,10 +19,12 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.Util;
 import org.apache.commons.compress.utils.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.*;
@@ -31,6 +33,7 @@ import java.util.stream.StreamSupport;
 
 public class Misspelling extends TestDocument {
 
+  @Nonnull
   public static Loader BIRKBECK = new Loader(URI.create("http://www.dcs.bbk.ac.uk/~ROGER/missp.dat"), 10000);
 
   public Misspelling(String correct, CharSequence misspelling) {
@@ -42,9 +45,10 @@ public class Misspelling extends TestDocument {
     private final String file;
     private final int articleLimit;
     private final List<Misspelling> queue = Collections.synchronizedList(new ArrayList<>());
+    @Nullable
     private volatile Thread thread;
 
-    public Loader(URI uri, int articleLimit) {
+    public Loader(@Nonnull URI uri, int articleLimit) {
       url = uri.toString();
       this.articleLimit = articleLimit;
       String path = uri.getPath();
@@ -94,13 +98,13 @@ public class Misspelling extends TestDocument {
           }
 
         }
-      } catch (final RuntimeException e) {
+      } catch (@Nonnull final RuntimeException e) {
         if (!(e.getCause() instanceof InterruptedException))
           e.printStackTrace();
-      } catch (final Exception e) {
+      } catch (@Nonnull final Exception e) {
         e.printStackTrace();
       } finally {
-        com.simiacryptus.ref.wrappers.RefSystem.err.println("Read thread exit");
+        RefSystem.err.println("Read thread exit");
       }
     }
 

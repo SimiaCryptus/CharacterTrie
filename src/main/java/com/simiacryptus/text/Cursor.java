@@ -19,7 +19,7 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
+import javax.annotation.Nonnull;
 
 public class Cursor {
   final CursorData data;
@@ -54,6 +54,7 @@ public class Cursor {
     return (getPosition() + 1) < getDocument().length();
   }
 
+  @Nonnull
   public Cursor next() {
     return new Cursor(this.charTrieIndex, data, (short) (depth + 1));
   }

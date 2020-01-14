@@ -19,14 +19,16 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.ref.wrappers.RefStringBuilder;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.Interval;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,6 +41,7 @@ public class NodewalkerCodec {
   public static final char END_OF_STRING = Character.MIN_VALUE;
 
   protected final CharTrie inner;
+  @Nullable
   protected PrintStream verbose = null;
 
   NodewalkerCodec(CharTrie inner) {
@@ -46,6 +49,7 @@ public class NodewalkerCodec {
     this.inner = inner;
   }
 
+  @Nonnull
   public NodewalkerCodec setVerbose(PrintStream verbose) {
     this.verbose = verbose;
     return this;
@@ -55,11 +59,14 @@ public class NodewalkerCodec {
     return new Decoder(data, context).encodePPM();
   }
 
-  public Bits encodePPM(String text, int context) {
+  @Nonnull
+  public Bits encodePPM(@Nonnull String text, int context) {
     return new Encoder(text, context).encodePPM();
   }
 
-  protected void writeForward(Encoder encoder) throws IOException {
+  protected void writeForward(@Nonnull Encoder encoder) throws IOException {
+    assert encoder.fromNode != null;
+    assert encoder.node != null;
     if (encoder.node.index != encoder.fromNode.index) {
       Bits bits = encoder.fromNode.bitsTo(encoder.node);
       short count = (short) (encoder.node.getDepth() - encoder.fromNode.getDepth());
@@ -75,11 +82,14 @@ public class NodewalkerCodec {
     }
   }
 
-  protected void readForward(Decoder decoder) throws IOException {
+  protected void readForward(@Nonnull Decoder decoder) throws IOException {
     short numberOfTokens = decoder.in.readVarShort(3);
     if (0 < numberOfTokens) {
+      assert decoder.node != null;
       long seek = decoder.in.peekLongCoord(decoder.node.getCursorCount());
       TrieNode toNode = decoder.node.traverse(seek + decoder.node.getCursorIndex());
+      assert toNode != null;
+      assert toNode != null;
       while (toNode.getDepth() > decoder.node.getDepth() + numberOfTokens)
         toNode = toNode.getParent();
       Interval interval = decoder.node.intervalTo(toNode);
@@ -93,24 +103,27 @@ public class NodewalkerCodec {
       decoder.out.append(str);
       decoder.node = toNode;
     } else {
+      assert decoder.node != null;
       assert (0 == decoder.node.index);
     }
   }
 
-  protected Optional<TrieNode> writeBackup(Encoder encoder, char token) throws IOException {
+  protected Optional<TrieNode> writeBackup(@Nonnull Encoder encoder, char token) throws IOException {
     Optional<TrieNode> child = Optional.empty();
     while (!child.isPresent()) {
+      assert encoder.node != null;
       encoder.node = encoder.node.godparent();
       if (encoder.node == null)
         break;
       child = (Optional<TrieNode>) encoder.node.getChild(token);
     }
-    assert (null == encoder.node || child.isPresent());
     if (null != encoder.node) {
       for (int i = 0; i < 2; i++) {
+        assert encoder.node != null;
         if (0 != encoder.node.index)
           encoder.node = encoder.node.godparent();
       }
+      assert encoder.node != null;
       child = (Optional<TrieNode>) encoder.node.getChild(token);
       while (!child.isPresent()) {
         encoder.node = encoder.node.godparent();
@@ -118,8 +131,8 @@ public class NodewalkerCodec {
           break;
         child = (Optional<TrieNode>) encoder.node.getChild(token);
       }
-      assert (null == encoder.node || child.isPresent());
     }
+    assert encoder.fromNode != null;
     short backupSteps = (short) (encoder.fromNode.getDepth() - (null == encoder.node ? -1 : encoder.node.getDepth()));
     assert (backupSteps >= 0);
     if (verbose != null) {
@@ -130,26 +143,32 @@ public class NodewalkerCodec {
     return child;
   }
 
-  protected boolean readBackup(Decoder decoder) throws IOException {
+  protected boolean readBackup(@Nonnull Decoder decoder) throws IOException {
     short numberOfBackupSteps = decoder.in.readVarShort(3);
     TrieNode fromNode = decoder.node;
     if (0 == numberOfBackupSteps)
       return true;
     for (int i = 0; i < numberOfBackupSteps; i++) {
+      assert decoder.node != null;
       decoder.node = decoder.node.godparent();
     }
     if (verbose != null) {
+      assert fromNode != null;
       verbose.println(RefString.format("Backing up %s from from %s to %s", numberOfBackupSteps,
           fromNode.getDebugString(), (null == decoder.node) ? null : decoder.node.getDebugString()));
     }
     return false;
   }
 
-  protected void writeTerminal(Encoder encoder) throws IOException {
+  protected void writeTerminal(@Nonnull Encoder encoder) throws IOException {
     if (verbose != null) {
+      assert encoder.node != null;
+      assert encoder.fromNode != null;
       verbose.println(RefString.format("Writing forward to end from %s to %s", encoder.fromNode.getDebugString(),
           encoder.node.getDebugString()));
     }
+    assert encoder.fromNode != null;
+    assert encoder.node != null;
     encoder.out.writeVarShort((short) (encoder.node.getDepth() - encoder.fromNode.getDepth()), 3);
     encoder.out.write(encoder.fromNode.bitsTo(encoder.node));
     encoder.out.writeVarShort((short) 0, 3);
@@ -159,7 +178,9 @@ public class NodewalkerCodec {
     protected byte[] data;
     protected int context;
     protected BitInputStream in;
-    protected com.simiacryptus.ref.wrappers.RefStringBuilder out = new com.simiacryptus.ref.wrappers.RefStringBuilder();
+    @Nonnull
+    protected RefStringBuilder out = new RefStringBuilder();
+    @Nullable
     protected TrieNode node = inner.root();
 
     protected Decoder(byte[] data, int context) {
@@ -192,21 +213,27 @@ public class NodewalkerCodec {
   protected class Encoder {
     protected String text;
     protected int context;
+    @Nonnull
     protected ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    @Nonnull
     protected BitOutputStream out = new BitOutputStream(buffer);
+    @Nullable
     protected TrieNode node = inner.root();
+    @Nullable
     protected TrieNode fromNode = inner.root();
 
-    protected Encoder(String text, int context) {
+    protected Encoder(@Nonnull String text, int context) {
       if (!text.endsWith("\u0000"))
         text += END_OF_STRING;
       this.text = text;
       this.context = context;
     }
 
+    @Nonnull
     protected Bits encodePPM() {
       try {
         for (char token : text.toCharArray()) {
+          assert node != null;
           Optional<TrieNode> child = (Optional<TrieNode>) node.getChild(token);
           if (!child.isPresent()) {
             writeForward(this);

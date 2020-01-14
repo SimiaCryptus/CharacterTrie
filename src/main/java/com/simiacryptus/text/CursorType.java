@@ -19,13 +19,14 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.data.SerialType;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
 class CursorType implements SerialType<CursorData> {
 
+  @Nonnull
   static CursorType INSTANCE = new CursorType();
 
   @Override
@@ -33,13 +34,14 @@ class CursorType implements SerialType<CursorData> {
     return 8;
   }
 
+  @Nonnull
   @Override
-  public CursorData read(ByteBuffer input) {
+  public CursorData read(@Nonnull ByteBuffer input) {
     return new CursorData(input.getInt(), input.getInt());
   }
 
   @Override
-  public void write(ByteBuffer output, CursorData value) {
+  public void write(@Nonnull ByteBuffer output, @Nonnull CursorData value) {
     output.putInt(value.documentId);
     output.putInt(value.position);
   }

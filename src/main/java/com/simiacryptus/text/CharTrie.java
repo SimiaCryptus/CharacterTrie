@@ -20,10 +20,13 @@
 package com.simiacryptus.text;
 
 import com.google.common.collect.Iterators;
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefStringBuilder;
+import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.data.SerialArrayList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -35,7 +38,9 @@ import static com.simiacryptus.text.NodewalkerCodec.*;
 
 public class CharTrie {
   protected final SerialArrayList<NodeData> nodes;
+  @Nullable
   protected int[] parentIndex = null;
+  @Nullable
   protected int[] godparentIndex = null;
 
   public CharTrie(SerialArrayList<NodeData> nodes) {
@@ -47,7 +52,7 @@ public class CharTrie {
     this(new SerialArrayList<>(NodeType.INSTANCE, new NodeData(END_OF_STRING, (short) -1, -1, -1, 0)));
   }
 
-  public CharTrie(CharTrie charTrie) {
+  public CharTrie(@Nonnull CharTrie charTrie) {
     this(charTrie.nodes.copy());
     this.parentIndex = null == charTrie.parentIndex ? null
         : RefArrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
@@ -55,14 +60,17 @@ public class CharTrie {
         : RefArrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
   }
 
+  @Nonnull
   public TextAnalysis getAnalyzer() {
     return new TextAnalysis(this.truncate().copy());
   }
 
+  @Nonnull
   public NodewalkerCodec getCodec() {
     return new NodewalkerCodec(this);
   }
 
+  @Nonnull
   public TextGenerator getGenerator() {
     return new TextGenerator(this.truncate().copy());
   }
@@ -79,15 +87,18 @@ public class CharTrie {
     return nodes.length();
   }
 
+  @Nonnull
   public static BiFunction<CharTrie, CharTrie, CharTrie> reducer(
-      BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
+      @Nonnull BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     return (left, right) -> left.reduce(right, fn);
   }
 
+  @Nullable
   public TrieNode root() {
     return new TrieNode(this, 0, null);
   }
 
+  @Nonnull
   public CharTrie reverse() {
     CharTrie result = new CharTrieIndex();
     TreeMap<Character, ? extends TrieNode> childrenMap = root().getChildrenMap();
@@ -95,32 +106,35 @@ public class CharTrie {
     return result.recomputeCursorDetails();
   }
 
-  public CharTrie rewrite(BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
+  @Nonnull
+  public CharTrie rewrite(@Nonnull BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
     CharTrie result = new CharTrieIndex();
     rewriteSubtree(root(), result.root(), fn);
     return result.recomputeCursorDetails();
   }
 
-  public CharTrie add(CharTrie z) {
+  @Nonnull
+  public CharTrie add(@Nonnull CharTrie z) {
     return reduceSimple(z, (left, right) -> (null == left ? 0 : left) + (null == right ? 0 : right));
   }
 
-  public CharTrie product(CharTrie z) {
+  @Nonnull
+  public CharTrie product(@Nonnull CharTrie z) {
     return reduceSimple(z, (left, right) -> (null == left ? 0 : left) * (null == right ? 0 : right));
   }
 
-  public CharTrie divide(CharTrie z, int factor) {
+  @Nonnull
+  public CharTrie divide(@Nonnull CharTrie z, int factor) {
     return reduceSimple(z, (left, right) -> (null == right ? 0 : ((null == left ? 0 : left) * factor / right)));
   }
 
-  public CharTrie reduceSimple(CharTrie z, BiFunction<Long, Long, Long> fn) {
+  @Nonnull
+  public CharTrie reduceSimple(@Nonnull CharTrie z, @Nonnull BiFunction<Long, Long, Long> fn) {
     return reduce(z, (left, right) -> {
       TreeMap<Character, ? extends TrieNode> leftChildren = null == left ? new TreeMap<>() : left.getChildrenMap();
       TreeMap<Character, ? extends TrieNode> rightChildren = null == right ? new TreeMap<>() : right.getChildrenMap();
       Map<Character, Long> map = Stream.of(rightChildren.keySet(), leftChildren.keySet()).flatMap(x -> x.stream())
           .distinct().collect(Collectors.toMap(c -> c, (Character c) -> {
-            assert (null != leftChildren);
-            assert (null != rightChildren);
             assert (null != c);
             TrieNode leftChild = leftChildren.get(c);
             Long l = null == leftChild ? null : leftChild.getCursorCount();
@@ -132,17 +146,19 @@ public class CharTrie {
     });
   }
 
-  public CharTrie reduce(CharTrie right, BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
+  @Nonnull
+  public CharTrie reduce(@Nonnull CharTrie right, @Nonnull BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     CharTrie result = new CharTrieIndex();
     reduceSubtree(root(), right.root(), result.root(), fn);
     return result.recomputeCursorDetails();
   }
 
-  public TrieNode traverse(String search) {
+  public TrieNode traverse(@Nonnull String search) {
     return root().traverse(search);
   }
 
-  public TrieNode matchEnd(String search) {
+  @Nullable
+  public TrieNode matchEnd(@Nonnull String search) {
     if (search.isEmpty())
       return root();
     int min = 0;
@@ -166,8 +182,10 @@ public class CharTrie {
     return traverse(matched);
   }
 
-  public TrieNode matchPredictor(String search) {
+  @Nullable
+  public TrieNode matchPredictor(@Nonnull String search) {
     TrieNode cursor = matchEnd(search);
+    assert cursor != null;
     if (cursor.getNumberOfChildren() > 0) {
       return cursor;
     }
@@ -177,12 +195,13 @@ public class CharTrie {
     return matchPredictor(string.substring(1));
   }
 
+  @Nonnull
   public CharTrie copy() {
     return new CharTrie(this);
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o)
       return true;
     if (o == null || getClass() != o.getClass())
@@ -203,11 +222,11 @@ public class CharTrie {
         .collect(Collectors.toSet());
   }
 
-  public boolean contains(String text) {
+  public boolean contains(@Nonnull String text) {
     return traverse(text).getString().endsWith(text);
   }
 
-  public <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn, int maxResults) {
+  public <T extends Comparable<T>> Stream<TrieNode> max(@Nonnull Function<TrieNode, T> fn, int maxResults) {
     return max(fn, maxResults, root());
   }
 
@@ -241,25 +260,27 @@ public class CharTrie {
     }
   }
 
+  @Nonnull
   CharTrie recomputeCursorDetails() {
     godparentIndex = new int[getNodeCount()];
     parentIndex = new int[getNodeCount()];
     Arrays.fill(godparentIndex, 0, godparentIndex.length, -1);
     Arrays.fill(parentIndex, 0, parentIndex.length, -1);
-    com.simiacryptus.ref.wrappers.RefSystem.gc();
+    RefSystem.gc();
     recomputeCursorTotals(root());
-    com.simiacryptus.ref.wrappers.RefSystem.gc();
+    RefSystem.gc();
     recomputeCursorPositions(root(), 0);
-    com.simiacryptus.ref.wrappers.RefSystem.gc();
+    RefSystem.gc();
     return this;
   }
 
+  @Nonnull
   protected CharTrie truncate() {
     return this;
   }
 
-  private void reverseSubtree(TreeMap<Character, ? extends TrieNode> childrenMap, TrieNode destination) {
-    String suffix = new com.simiacryptus.ref.wrappers.RefStringBuilder(destination.getRawString()).reverse().toString();
+  private void reverseSubtree(@Nonnull TreeMap<Character, ? extends TrieNode> childrenMap, @Nonnull TrieNode destination) {
+    String suffix = new RefStringBuilder(destination.getRawString()).reverse().toString();
     TreeMap<Character, Long> children = new TreeMap<>();
     childrenMap.forEach((token, node) -> {
       TrieNode analog = node.traverse(suffix);
@@ -272,8 +293,8 @@ public class CharTrie {
     destination.getChildren().forEach(child -> reverseSubtree(childrenMap, child));
   }
 
-  private void rewriteSubtree(TrieNode sourceNode, TrieNode destNode,
-      BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
+  private void rewriteSubtree(@Nonnull TrieNode sourceNode, @Nonnull TrieNode destNode,
+                              @Nonnull BiFunction<TrieNode, Map<Character, TrieNode>, TreeMap<Character, Long>> fn) {
     CharTrie result = destNode.getTrie();
     TreeMap<Character, ? extends TrieNode> sourceChildren = sourceNode.getChildrenMap();
     TreeMap<Character, Long> newCounts = fn.apply(sourceNode, (Map<Character, TrieNode>) sourceChildren);
@@ -286,7 +307,9 @@ public class CharTrie {
     });
   }
 
-  private NodeData recomputeCursorTotals(TrieNode node) {
+  @javax.annotation.Nullable
+  private NodeData recomputeCursorTotals(@Nonnull TrieNode node) {
+    assert parentIndex != null;
     parentIndex[node.index] = null == node.getParent() ? -1 : node.getParent().index;
     List<NodeData> newChildren = node.getChildren().map(child -> recomputeCursorTotals(child))
         .collect(Collectors.toList());
@@ -297,7 +320,7 @@ public class CharTrie {
     return node.update(d -> d.setCursorCount(cursorCount));
   }
 
-  private void recomputeCursorPositions(TrieNode node, final int position) {
+  private void recomputeCursorPositions(@Nonnull TrieNode node, final int position) {
     node.update(n -> n.setFirstCursorIndex(position));
     int childPosition = position;
     Stream<TrieNode> stream = node.getChildren().map(x -> x);
@@ -307,8 +330,8 @@ public class CharTrie {
     }
   }
 
-  private void reduceSubtree(TrieNode sourceNodeA, TrieNode sourceNodeB, TrieNode destNode,
-      BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
+  private void reduceSubtree(@Nullable TrieNode sourceNodeA, @Nullable TrieNode sourceNodeB, @Nonnull TrieNode destNode,
+                             @Nonnull BiFunction<TrieNode, TrieNode, TreeMap<Character, Long>> fn) {
     destNode.writeChildren(fn.apply(sourceNodeA, sourceNodeB));
     TreeMap<Character, ? extends TrieNode> sourceChildrenA = null == sourceNodeA ? null : sourceNodeA.getChildrenMap();
     TreeMap<Character, ? extends TrieNode> sourceChildrenB = null == sourceNodeB ? null : sourceNodeB.getChildrenMap();
@@ -325,7 +348,7 @@ public class CharTrie {
     });
   }
 
-  private <T extends Comparable<T>> Stream<TrieNode> max(Function<TrieNode, T> fn, int maxResults, TrieNode node) {
+  private <T extends Comparable<T>> Stream<TrieNode> max(@Nonnull Function<TrieNode, T> fn, int maxResults, @Nonnull TrieNode node) {
     return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
         Iterators
             .mergeSorted(Stream.concat(Stream.of(Stream.of(node)), node.getChildren().map(x -> max(fn, maxResults, x)))

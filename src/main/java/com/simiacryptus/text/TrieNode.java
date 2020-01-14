@@ -19,10 +19,11 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.Interval;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -36,11 +37,14 @@ public class TrieNode {
   protected final CharTrie trie;
   protected final int index;
   private transient short depth = -1;
+  @Nullable
   private transient TrieNode parent = null;
+  @Nullable
   private transient NodeData data;
 
-  public TrieNode(CharTrie trie, int index) {
+  public TrieNode(@Nonnull CharTrie trie, int index) {
     assert (0 <= index);
+    assert trie.parentIndex != null;
     assert (0 == index || trie.parentIndex[index] >= 0);
     this.trie = trie;
     this.index = index;
@@ -67,6 +71,7 @@ public class TrieNode {
     }
   }
 
+  @Nonnull
   public TreeMap<Character, ? extends TrieNode> getChildrenMap() {
     TreeMap<Character, TrieNode> map = new TreeMap<>();
     getChildren().forEach(x -> map.put(x.getChar(), x));
@@ -81,6 +86,7 @@ public class TrieNode {
     return getData().firstCursorIndex;
   }
 
+  @Nullable
   NodeData getData() {
     if (null == data) {
       synchronized (this) {
@@ -92,10 +98,12 @@ public class TrieNode {
     return data;
   }
 
+  @Nonnull
   public String getDebugString() {
     return getDebugString(getTrie().root());
   }
 
+  @Nonnull
   public CharSequence getDebugToken() {
     char asChar = getChar();
     if (asChar == NodewalkerCodec.FALLBACK)
@@ -108,7 +116,7 @@ public class TrieNode {
       return "\\\\";
     if (asChar == '\n')
       return "\\n";
-    return new String(new char[] { asChar });
+    return new String(new char[]{asChar});
   }
 
   public short getDepth() {
@@ -139,12 +147,14 @@ public class TrieNode {
     return getData().numberOfChildren;
   }
 
+  @Nullable
   public TrieNode getParent() {
     if (0 == index)
       return null;
     if (null == parent && -1 == depth) {
       synchronized (this) {
         if (null == parent) {
+          assert trie.parentIndex != null;
           parent = newNode(trie.parentIndex[index]);
           assert (parent.index < index);
         }
@@ -153,14 +163,17 @@ public class TrieNode {
     return parent;
   }
 
+  @Nonnull
   public String getRawString() {
-    return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[] { getChar() })));
+    return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
   }
 
+  @Nonnull
   public String getString() {
     return (null == getParent() ? "" : getParent().getString()) + (0 == getDepth() ? "" : getToken());
   }
 
+  @Nonnull
   public String getToken() {
     char asChar = getChar();
     if (asChar == NodewalkerCodec.FALLBACK)
@@ -169,7 +182,7 @@ public class TrieNode {
       return "";
     if (asChar == NodewalkerCodec.ESCAPE)
       return "";
-    return new String(new char[] { asChar });
+    return new String(new char[]{asChar});
   }
 
   public CharTrie getTrie() {
@@ -184,6 +197,7 @@ public class TrieNode {
     return false;
   }
 
+  @Nullable
   public TrieNode godparent() {
     if (0 == getDepth())
       return null;
@@ -215,11 +229,13 @@ public class TrieNode {
     return godparent;
   }
 
+  @Nonnull
   public TrieNode refresh() {
     this.data = null;
     return this;
   }
 
+  @Nonnull
   public String getString(TrieNode root) {
     if (this == root)
       return "";
@@ -227,6 +243,7 @@ public class TrieNode {
     return parentStr + getToken();
   }
 
+  @Nonnull
   public String getDebugString(TrieNode root) {
     if (this == root)
       return "";
@@ -234,14 +251,16 @@ public class TrieNode {
     return parentStr.toString() + getDebugToken();
   }
 
-  public TrieNode visitFirst(Consumer<? super TrieNode> visitor) {
+  @Nonnull
+  public TrieNode visitFirst(@Nonnull Consumer<? super TrieNode> visitor) {
     visitor.accept(this);
     TrieNode refresh = refresh();
     refresh.getChildren().forEach(n -> n.visitFirst(visitor));
     return refresh;
   }
 
-  public TrieNode visitLast(Consumer<? super TrieNode> visitor) {
+  @Nonnull
+  public TrieNode visitLast(@Nonnull Consumer<? super TrieNode> visitor) {
     getChildren().forEach(n -> n.visitLast(visitor));
     visitor.accept(this);
     return refresh();
@@ -249,6 +268,7 @@ public class TrieNode {
 
   public Optional<? extends TrieNode> getChild(char token) {
     NodeData data = getData();
+    assert data != null;
     int min = data.firstChildIndex;
     int max = data.firstChildIndex + data.numberOfChildren - 1;
     while (min <= max) {
@@ -270,7 +290,7 @@ public class TrieNode {
     return Optional.empty();
   }
 
-  public TrieNode traverse(String str) {
+  public TrieNode traverse(@Nonnull String str) {
     if (str.isEmpty()) {
       return this;
     }
@@ -296,13 +316,15 @@ public class TrieNode {
     decrementCursorCount(getCursorCount());
   }
 
-  public Bits bitsTo(TrieNode toNode) {
+  @Nonnull
+  public Bits bitsTo(@Nonnull TrieNode toNode) {
     if (index == toNode.index)
       return Bits.NULL;
     return intervalTo(toNode).toBits();
   }
 
-  public Interval intervalTo(TrieNode toNode) {
+  @Nonnull
+  public Interval intervalTo(@Nonnull TrieNode toNode) {
     return new Interval(toNode.getCursorIndex() - this.getCursorIndex(), toNode.getCursorCount(),
         this.getCursorCount());
   }
@@ -321,7 +343,7 @@ public class TrieNode {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o)
       return true;
     if (o == null || getClass() != o.getClass())
@@ -347,12 +369,13 @@ public class TrieNode {
     });
   }
 
-  NodeData update(Function<NodeData, NodeData> update) {
+  @Nullable
+  NodeData update(@Nonnull Function<NodeData, NodeData> update) {
     data = trie.nodes.update(index, update);
     return data;
   }
 
-  void writeChildren(TreeMap<Character, Long> counts) {
+  void writeChildren(@Nonnull TreeMap<Character, Long> counts) {
     int firstIndex = trie.nodes.length();
     counts.forEach((k, v) -> {
       if (v > 0)
@@ -364,6 +387,7 @@ public class TrieNode {
     data = null;
   }
 
+  @Nonnull
   protected TrieNode newNode(int index) {
     return new TrieNode(trie, index);
   }

@@ -19,10 +19,11 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.Optional;
@@ -35,24 +36,29 @@ public class ClassificationTree {
   private final int minWeight = 5;
   private final double depthBias = 0.0005;
   private final int smoothing = 3;
+  @Nullable
   private PrintStream verbose = null;
 
+  @Nullable
   public PrintStream getVerbose() {
     return verbose;
   }
 
+  @Nonnull
   public ClassificationTree setVerbose(PrintStream verbose) {
     this.verbose = verbose;
     return this;
   }
 
+  @Nonnull
   public Function<CharSequence, RefMap<CharSequence, Double>> categorizationTree(
-      RefMap<CharSequence, RefList<CharSequence>> categories, int depth) {
+      @Nonnull RefMap<CharSequence, RefList<CharSequence>> categories, int depth) {
     return categorizationTree(categories, depth, "");
   }
 
+  @Nonnull
   private Function<CharSequence, RefMap<CharSequence, Double>> categorizationTree(
-      RefMap<CharSequence, RefList<CharSequence>> categories, int depth, CharSequence indent) {
+      @Nonnull RefMap<CharSequence, RefList<CharSequence>> categories, int depth, CharSequence indent) {
     if (0 == depth) {
       return str -> {
         int sum = categories.values().stream().mapToInt(x -> x.size()).sum();
@@ -96,7 +102,7 @@ public class ClassificationTree {
     }
   }
 
-  private double entropy(RefMap<Integer, Long> sum, RefMap<Integer, Long> left) {
+  private double entropy(@Nonnull RefMap<Integer, Long> sum, @Nonnull RefMap<Integer, Long> left) {
     double sumSum = sum.values().stream().mapToDouble(x -> x).sum();
     double leftSum = left.values().stream().mapToDouble(x -> x).sum();
     double rightSum = sumSum - leftSum;
@@ -114,7 +120,8 @@ public class ClassificationTree {
     }).sum()) / (sumSum * Math.log(2));
   }
 
-  private Optional<NodeInfo> categorizationSubstring(RefCollection<RefList<CharSequence>> categories) {
+  @Nonnull
+  private Optional<NodeInfo> categorizationSubstring(@Nonnull RefCollection<RefList<CharSequence>> categories) {
     CharTrieIndex trie = new CharTrieIndex();
     RefMap<Integer, Integer> categoryMap = new RefTreeMap<>();
     int categoryNumber = 0;
@@ -131,18 +138,20 @@ public class ClassificationTree {
     return categorizationSubstring(trie.root(), categoryMap, sum);
   }
 
-  private NodeInfo info(IndexNode node, RefMap<Integer, Long> sum, RefMap<Integer, Integer> categoryMap) {
+  @Nonnull
+  private NodeInfo info(@Nonnull IndexNode node, @Nonnull RefMap<Integer, Long> sum, @Nonnull RefMap<Integer, Integer> categoryMap) {
     RefMap<Integer, Long> summary = summarize(node, categoryMap);
     return new NodeInfo(node, summary, entropy(sum, summary));
   }
 
-  private RefMap<Integer, Long> summarize(IndexNode node, RefMap<Integer, Integer> categoryMap) {
+  private RefMap<Integer, Long> summarize(@Nonnull IndexNode node, @Nonnull RefMap<Integer, Integer> categoryMap) {
     return node.getCursors().map(x -> x.getDocumentId()).distinct().map(x -> categoryMap.get(x))
         .collect(RefCollectors.toList()).stream().collect(RefCollectors.groupingBy(x -> x, RefCollectors.counting()));
   }
 
-  private Optional<NodeInfo> categorizationSubstring(IndexNode node, RefMap<Integer, Integer> categoryMap,
-      RefMap<Integer, Long> sum) {
+  @Nonnull
+  private Optional<NodeInfo> categorizationSubstring(@Nonnull IndexNode node, @Nonnull RefMap<Integer, Integer> categoryMap,
+                                                     @Nonnull RefMap<Integer, Long> sum) {
     RefList<NodeInfo> childrenInfo = node.getChildren().map(n -> categorizationSubstring(n, categoryMap, sum))
         .filter(x -> x.isPresent()).map(RefUtil::get).collect(RefCollectors.toList());
     NodeInfo info = info(node, sum, categoryMap);
@@ -159,7 +168,7 @@ public class ClassificationTree {
     Map<Integer, Long> categoryWeights;
     double entropy;
 
-    public NodeInfo(IndexNode node, Map<Integer, Long> categoryWeights, double entropy) {
+    public NodeInfo(@Nonnull IndexNode node, Map<Integer, Long> categoryWeights, double entropy) {
       this.node = node;
       this.categoryWeights = categoryWeights;
       this.entropy = entropy + depthBias * node.getDepth();

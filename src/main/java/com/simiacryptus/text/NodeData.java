@@ -19,7 +19,8 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 class NodeData {
   // Primary data defining the tree
@@ -38,33 +39,38 @@ class NodeData {
     this.firstCursorIndex = firstCursorIndex;
   }
 
+  @Nonnull
   public NodeData setCursorCount(long cursorCount) {
     this.cursorCount = cursorCount;
     return this;
   }
 
+  @Nonnull
   public NodeData setFirstChildIndex(int firstChildIndex) {
     this.firstChildIndex = firstChildIndex;
     return this;
   }
 
+  @Nonnull
   public NodeData setFirstCursorIndex(long firstCursorIndex) {
     this.firstCursorIndex = firstCursorIndex;
     return this;
   }
 
+  @Nonnull
   public NodeData setNumberOfChildren(short numberOfChildren) {
     this.numberOfChildren = numberOfChildren;
     return this;
   }
 
+  @Nonnull
   public NodeData setToken(char token) {
     this.token = token;
     return this;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }

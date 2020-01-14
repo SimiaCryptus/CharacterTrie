@@ -19,12 +19,13 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -32,8 +33,11 @@ import java.util.Spliterator;
 
 public class EnglishWords extends TestDocument {
   private static final RefArrayList<EnglishWords> queue = new RefArrayList<>();
+  @Nonnull
   public static String url = "https://raw.githubusercontent.com/first20hours/google-10000-english/master/20k.txt";
+  @Nonnull
   public static String file = "20k.txt";
+  @Nullable
   private static volatile Thread thread;
 
   public EnglishWords(CharSequence text) {
@@ -53,6 +57,7 @@ public class EnglishWords extends TestDocument {
     }
   }
 
+  @Nonnull
   public static RefStream<EnglishWords> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
@@ -78,12 +83,12 @@ public class EnglishWords extends TestDocument {
       for (CharSequence paragraph : list) {
         queue.add(new EnglishWords(paragraph));
       }
-    } catch (final IOException e) {
+    } catch (@Nonnull final IOException e) {
       // Ignore... end of stream
-    } catch (final RuntimeException e) {
+    } catch (@Nonnull final RuntimeException e) {
       if (!(e.getCause() instanceof InterruptedException))
         throw e;
-    } catch (final Exception e) {
+    } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
   }

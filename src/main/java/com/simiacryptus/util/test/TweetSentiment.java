@@ -19,11 +19,12 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +36,11 @@ import java.util.zip.ZipInputStream;
 
 public class TweetSentiment extends TestDocument {
   private static final RefArrayList<TweetSentiment> queue = new RefArrayList<>();
+  @Nonnull
   public static String url = "http://thinknook.com/wp-content/uploads/2012/09/Sentiment-Analysis-Dataset.zip";
+  @Nonnull
   public static String file = "Sentiment-Analysis-Dataset.zip";
+  @Nullable
   private static volatile Thread thread;
   public final int category;
 
@@ -58,6 +62,7 @@ public class TweetSentiment extends TestDocument {
     }
   }
 
+  @Nonnull
   public static RefStream<TweetSentiment> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
@@ -87,12 +92,12 @@ public class TweetSentiment extends TestDocument {
           }
         }
       }
-    } catch (final IOException e) {
+    } catch (@Nonnull final IOException e) {
       // Ignore... end of stream
-    } catch (final RuntimeException e) {
+    } catch (@Nonnull final RuntimeException e) {
       if (!(e.getCause() instanceof InterruptedException))
         throw e;
-    } catch (final Exception e) {
+    } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
   }

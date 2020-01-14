@@ -19,12 +19,13 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -32,8 +33,11 @@ import java.util.Spliterator;
 
 public class Shakespeare extends TestDocument {
   private static final RefArrayList<Shakespeare> queue = new RefArrayList<>();
+  @Nonnull
   public static String url = "http://www.gutenberg.org/cacheLocal/epub/100/pg100.txt";
+  @Nonnull
   public static String file = "Shakespeare.txt";
+  @Nullable
   private static volatile Thread thread;
 
   public Shakespeare(String text) {
@@ -53,6 +57,7 @@ public class Shakespeare extends TestDocument {
     }
   }
 
+  @Nonnull
   public static RefStream<Shakespeare> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
@@ -75,12 +80,12 @@ public class Shakespeare extends TestDocument {
       for (String paragraph : txt.split("\n\\s*\n")) {
         queue.add(new Shakespeare(paragraph));
       }
-    } catch (final IOException e) {
+    } catch (@Nonnull final IOException e) {
       // Ignore... end of stream
-    } catch (final RuntimeException e) {
+    } catch (@Nonnull final RuntimeException e) {
       if (!(e.getCause() instanceof InterruptedException))
         throw e;
-    } catch (final Exception e) {
+    } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
   }

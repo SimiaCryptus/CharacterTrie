@@ -24,6 +24,7 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefComparator;
 import org.apache.commons.compress.utils.IOUtils;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public enum LanguageModel {
@@ -53,7 +54,8 @@ public enum LanguageModel {
     return trie;
   }
 
-  public static LanguageModel match(String text) {
+  @Nonnull
+  public static LanguageModel match(@Nonnull String text) {
     return RefUtil.get(RefArrays.stream(LanguageModel.values())
         .min(RefComparator
             .comparing(model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength)));

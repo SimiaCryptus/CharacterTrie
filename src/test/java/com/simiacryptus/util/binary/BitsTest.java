@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.binary;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefAssert;
 import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.test.TestCategories;
@@ -27,12 +26,14 @@ import org.json.JSONException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
 
 public class BitsTest {
+  @Nonnull
   Random random = new Random();
 
   @Test
@@ -178,7 +179,7 @@ public class BitsTest {
     RefAssert.assertEquals("toString for " + value, asString, bits.toBitString());
   }
 
-  private void testSubrange(final Bits bits) {
+  private void testSubrange(@Nonnull final Bits bits) {
     final String asString = bits.toBitString();
     for (int j = 0; j < 10; j++) {
       final int from = this.random.nextInt(asString.length());
@@ -187,7 +188,7 @@ public class BitsTest {
     }
   }
 
-  private void testSubrange(final Bits bits, final String asString, final int from, final int to) {
+  private void testSubrange(@Nonnull final Bits bits, @Nonnull final String asString, final int from, final int to) {
     final CharSequence subStr = asString.substring(from, to);
     final Bits subBits = bits.range(from, to - from);
     RefAssert.assertEquals(RefString.format("Substring (%s,%s) of %s", from, to, bits), subStr, subBits.toBitString());

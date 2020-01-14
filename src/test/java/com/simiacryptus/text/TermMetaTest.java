@@ -19,15 +19,17 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefStream;
 import com.simiacryptus.util.test.EnglishWords;
 import com.simiacryptus.util.test.TestDocument;
+
+import javax.annotation.Nonnull;
 
 public class TermMetaTest {
   int testCount = 1000;
   int modelCount = 15000;
 
+  @Nonnull
   protected RefStream<? extends TestDocument> source() {
     return EnglishWords.load().limit(modelCount + testCount);
   }

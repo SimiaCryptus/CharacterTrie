@@ -22,7 +22,6 @@ package com.simiacryptus.text;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefLinkedHashMap;
 import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.ref.wrappers.RefStream;
@@ -34,6 +33,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,30 +62,36 @@ public abstract class ModelClusterTest {
         CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
         int i = index.incrementAndGet();
         compressors.put(RefString.format("LZ_%s", i), new Compressor() {
+          @Nonnull
           String dictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "",
               dictionary_lookahead, true);
 
+          @Nonnull
           @Override
           public byte[] compress(String text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
 
+          @Nonnull
           @Override
-          public CharSequence uncompress(byte[] data) {
+          public CharSequence uncompress(@Nonnull byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
           }
         });
 
         compressors.put(RefString.format("LZ_raw_%s", i), new Compressor() {
+          @Nonnull
           String dictionary = text.getText();
 
+          @Nonnull
           @Override
           public byte[] compress(String text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
 
+          @Nonnull
           @Override
-          public CharSequence uncompress(byte[] data) {
+          public CharSequence uncompress(@Nonnull byte[] data) {
             return CompressionUtil.decodeLZToString(data, dictionary);
           }
         });
@@ -164,6 +170,7 @@ public abstract class ModelClusterTest {
     }
   }
 
+  @Nonnull
   protected abstract RefStream<? extends TestDocument> source();
 
   public static class Wikipedia extends ModelClusterTest {
@@ -174,6 +181,7 @@ public abstract class ModelClusterTest {
       return 20;
     }
 
+    @Nonnull
     @Override
     protected RefStream<? extends TestDocument> source() {
       return WikiArticle.ENGLISH.stream().filter(wikiArticle -> {

@@ -19,10 +19,7 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.wrappers.RefHashMap;
-import com.simiacryptus.ref.wrappers.RefList;
-import com.simiacryptus.ref.wrappers.RefMap;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.DataLoader;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
@@ -30,6 +27,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
@@ -39,10 +38,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class WikiArticle extends TestDocument {
 
+  @Nonnull
   public static WikiDataLoader ENGLISH = new WikiDataLoader(
       URI.create("https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2"), 10000);
+  @Nonnull
   public static WikiDataLoader GERMAN = new WikiDataLoader(
       URI.create("https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-pages-articles.xml.bz2"), 10000);
+  @Nonnull
   public static WikiDataLoader FRENCH = new WikiDataLoader(
       URI.create("https://dumps.wikimedia.org/frwiki/latest/frwiki-latest-pages-articles.xml.bz2"), 10000);
 
@@ -55,7 +57,7 @@ public class WikiArticle extends TestDocument {
     protected final String file;
     protected final int articleLimit;
 
-    public WikiDataLoader(URI uri, int articleLimit) {
+    public WikiDataLoader(@Nonnull URI uri, int articleLimit) {
       super();
       this.url = uri.toString();
       this.articleLimit = articleLimit;
@@ -65,16 +67,20 @@ public class WikiArticle extends TestDocument {
     }
 
     @Override
-    protected void read(RefList<WikiArticle> queue) {
+    protected void read(@Nonnull RefList<WikiArticle> queue) {
       try {
         try (final InputStream in = new BZip2CompressorInputStream(Util.cacheLocal(file, new URI(url)), true)) {
           final SAXParserFactory spf = SAXParserFactory.newInstance();
           spf.setNamespaceAware(false);
           final SAXParser saxParser = spf.newSAXParser();
           saxParser.parse(in, new DefaultHandler() {
+            @Nonnull
             Stack<CharSequence> prefix = new Stack<CharSequence>();
+            @Nonnull
             Stack<RefMap<CharSequence, AtomicInteger>> indexes = new Stack<RefMap<CharSequence, AtomicInteger>>();
-            com.simiacryptus.ref.wrappers.RefStringBuilder nodeString = new com.simiacryptus.ref.wrappers.RefStringBuilder();
+            @Nonnull
+            RefStringBuilder nodeString = new RefStringBuilder();
+            @Nullable
             private String title;
 
             @Override
@@ -101,7 +107,7 @@ public class WikiArticle extends TestDocument {
 
               final int length = this.nodeString.length();
               String text = this.nodeString.toString().trim();
-              this.nodeString = new com.simiacryptus.ref.wrappers.RefStringBuilder();
+              this.nodeString = new RefStringBuilder();
 
               if ("page".equals(qName)) {
                 this.title = null;
@@ -124,7 +130,7 @@ public class WikiArticle extends TestDocument {
 
             @Override
             public void startElement(final String uri, final String localName, final String qName,
-                final Attributes attributes) throws SAXException {
+                                     final Attributes attributes) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }
@@ -151,13 +157,13 @@ public class WikiArticle extends TestDocument {
 
           }, null);
         }
-      } catch (final RuntimeException e) {
+      } catch (@Nonnull final RuntimeException e) {
         if (!(e.getCause() instanceof InterruptedException))
           e.printStackTrace();
-      } catch (final Exception e) {
+      } catch (@Nonnull final Exception e) {
         e.printStackTrace();
       } finally {
-        com.simiacryptus.ref.wrappers.RefSystem.err.println("Read thread exit");
+        RefSystem.err.println("Read thread exit");
       }
     }
   }

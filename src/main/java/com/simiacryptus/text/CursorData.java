@@ -19,7 +19,8 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 class CursorData {
   int documentId;
@@ -30,18 +31,20 @@ class CursorData {
     this.position = position;
   }
 
+  @Nonnull
   public CursorData setDocumentId(int documentId) {
     this.documentId = documentId;
     return this;
   }
 
+  @Nonnull
   public CursorData setPosition(int position) {
     this.position = position;
     return this;
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o) {
       return true;
     }

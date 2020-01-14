@@ -20,7 +20,6 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.TableOutput;
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.data.DoubleStatistics;
@@ -31,6 +30,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -43,7 +43,8 @@ public class TrieTest {
   public static final File outPath = new File("src/site/resources/");
   public static final URL outBaseUrl = getUrl("https://simiacryptus.github.io/utilities/java-util/");
 
-  public static URL getUrl(String url) {
+  @Nonnull
+  public static URL getUrl(@Nonnull String url) {
     try {
       return new URL(url);
     } catch (MalformedURLException e) {
@@ -51,19 +52,20 @@ public class TrieTest {
     }
   }
 
-  private static void testRow(int maxLevels, int minWeight, RefStream<CharSequence> documents) {
+  private static void testRow(int maxLevels, int minWeight, @Nonnull RefStream<CharSequence> documents) {
     CharTrieIndex tree = new CharTrieIndex();
-    long startTime = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis();
+    long startTime = RefSystem.currentTimeMillis();
     documents.forEach(i -> tree.addDocument(i));
     tree.index(maxLevels, minWeight);
-    long elapsed = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis() - startTime;
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(
+    long elapsed = RefSystem.currentTimeMillis() - startTime;
+    RefSystem.out.println(
         RefString.format("%s\t%s\t%s KB\t%s sec\t%s KB\t%s KB", maxLevels, minWeight, tree.getIndexedSize() / 1024,
             elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
   }
 
-  private static RefMap<CharSequence, Object> evaluateDictionary(RefList<CharSequence> sentances,
-      CharSequence dictionary, RefMap<CharSequence, Object> map) {
+  @Nonnull
+  private static RefMap<CharSequence, Object> evaluateDictionary(@Nonnull RefList<CharSequence> sentances,
+                                                                 @Nonnull CharSequence dictionary, @Nonnull RefMap<CharSequence, Object> map) {
     RefArrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
         int length0 = CompressionUtil.encodeLZ(line, "").length;
@@ -107,11 +109,11 @@ public class TrieTest {
     CharTrieIndex tree = new CharTrieIndex();
     RefIntStream.range(0, 30000).parallel().forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
     tree.index();
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("tree.getIndexedSize = %s", tree.getIndexedSize()));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("tree.getMemorySize = %s", tree.getMemorySize()));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("tree.truncate.getMemorySize = %s", tree.truncate().getMemorySize()));
   }
 
@@ -160,7 +162,7 @@ public class TrieTest {
       output.putRow(map);
     }
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int encodingPenalty = -4; encodingPenalty < 4; encodingPenalty++) {
@@ -178,7 +180,7 @@ public class TrieTest {
       output.putRow(map);
     }
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     output = new TableOutput();
 
     {
@@ -193,25 +195,25 @@ public class TrieTest {
       output.putRow(map);
     }
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     output = new TableOutput();
 
     CharTrieIndex tree = new CharTrieIndex();
-    long startTime = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis();
+    long startTime = RefSystem.currentTimeMillis();
     // sentances.stream().forEach(i->tree.addDocument(i));
     tree.addDocument(content);
     int maxLevels = 10;
     int minWeight = 0;
     tree.index(maxLevels, minWeight).truncate();
-    long elapsed = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis() - startTime;
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    long elapsed = RefSystem.currentTimeMillis() - startTime;
+    RefSystem.out
         .println(RefString.format("Built index in time = %s sec", elapsed / 1000.));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("tree.getIndexedSize = %s KB", tree.getIndexedSize() / 1024));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int context = 0; context < maxLevels; context++) {
@@ -221,13 +223,14 @@ public class TrieTest {
         RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
         map.put("type", "generateMarkov");
         map.put("context", context);
+        assert dictionary != null;
         evaluateDictionary(sentances, dictionary, map);
         map.put("sampleTxt", dictionary.substring(0, Math.min(sampleLength, dictionary.length())));
         output.putRow(map);
       }
     }
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int lookahead = 0; lookahead < 3; lookahead++) {
@@ -241,12 +244,12 @@ public class TrieTest {
           evaluateDictionary(sentances, dictionary, map);
           map.put("sampleTxt", dictionary.substring(0, Math.min(sampleLength, dictionary.length())));
           output.putRow(map);
-          com.simiacryptus.ref.wrappers.RefSystem.gc();
+          RefSystem.gc();
         }
       }
     }
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int lookahead = 0; lookahead < 3; lookahead++) {
@@ -262,7 +265,7 @@ public class TrieTest {
       }
     }
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     output = new TableOutput();
   }
 
@@ -278,13 +281,13 @@ public class TrieTest {
 
     CharSequence characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
         .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    com.simiacryptus.ref.wrappers.RefSystem.out.println("Character Set:" + characterSet);
+    RefSystem.out.println("Character Set:" + characterSet);
     int maxLevels = 5;
     int minWeight = 1;
     double smoothness = 1.0;
     int sampleSize = 64 * 1024;
 
-    long startTime = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis();
+    long startTime = RefSystem.currentTimeMillis();
     RefMap<CharSequence, CharTrie> trees = new RefHashMap<>();
     RefMap<CharSequence, CharSequence> dictionaries = new RefHashMap<>();
     for (Map.Entry<CharSequence, CharSequence> e : content.entrySet()) {
@@ -294,20 +297,21 @@ public class TrieTest {
       tree.index(maxLevels, minWeight).truncate();
       trees.put(e.getKey(), tree);
       dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
-      com.simiacryptus.ref.wrappers.RefSystem.out.println(
+      RefSystem.out.println(
           RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
-      com.simiacryptus.ref.wrappers.RefSystem.out
+      RefSystem.out
           .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     }
-    long elapsed = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis() - startTime;
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    long elapsed = RefSystem.currentTimeMillis() - startTime;
+    RefSystem.out
         .println(RefString.format("Built index in time = %s sec", elapsed / 1000.));
 
-    com.simiacryptus.ref.wrappers.RefSystem.out.println("\nMCMC Similarity Measures:");
+    RefSystem.out.println("\nMCMC Similarity Measures:");
     TableOutput output1 = new TableOutput();
     for (Map.Entry<CharSequence, CharTrie> ea : trees.entrySet()) {
       for (Map.Entry<CharSequence, CharTrie> eb : trees.entrySet()) {
         String str = ea.getValue().getGenerator().generateMarkov(sampleSize, maxLevels - 1, "");
+        assert str != null;
         Double crossEntropy = eb.getValue().getAnalyzer().entropy(str) / str.length();
         RefHashMap<CharSequence, Object> map = new RefHashMap<>();
         map.put("source", ea.getKey());
@@ -316,7 +320,7 @@ public class TrieTest {
         output1.putRow(map);
       }
     }
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output1.toCSV(true));
+    RefSystem.out.println(output1.toCSV(true));
 
   }
 
@@ -341,7 +345,7 @@ public class TrieTest {
 
     CharSequence characterSet = articles.values().stream().flatMapToInt(s -> s.chars()).distinct()
         .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    com.simiacryptus.ref.wrappers.RefSystem.out.println("Character Set:" + characterSet);
+    RefSystem.out.println("Character Set:" + characterSet);
 
     RefStream<Map.Entry<CharSequence, CharSequence>> stream = articles.entrySet().stream().limit(dictionaryCount);
     RefMap<CharSequence, CharTrie> models = stream.collect(RefCollectors
@@ -352,9 +356,9 @@ public class TrieTest {
           tree.addDocument(characterSet);
           tree.addDocument(article);
           tree.index(maxLevels, minWeight).truncate();
-          com.simiacryptus.ref.wrappers.RefSystem.out.println(
+          RefSystem.out.println(
               RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
-          com.simiacryptus.ref.wrappers.RefSystem.out
+          RefSystem.out
               .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
           return tree;
         }));
@@ -380,7 +384,7 @@ public class TrieTest {
           });
           output.putRow(map);
         });
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
     String outputDirName = "wikiTopics/";
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
@@ -405,7 +409,7 @@ public class TrieTest {
 
     CharSequence characterSet = articles.stream().flatMapToInt(s -> s.chars()).distinct()
         .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    com.simiacryptus.ref.wrappers.RefSystem.out.println("Character Set:" + characterSet);
+    RefSystem.out.println("Character Set:" + characterSet);
 
     RefMap<CharSequence, CharTrie> models = articles.stream().limit(dictionaryCount)
         .collect(RefCollectors.toMap((CharSequence d) -> d, (CharSequence text) -> {
@@ -413,9 +417,9 @@ public class TrieTest {
           tree.addDocument(characterSet);
           tree.addDocument(text);
           tree.index(maxLevels, minWeight).truncate();
-          com.simiacryptus.ref.wrappers.RefSystem.out.println(
+          RefSystem.out.println(
               RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", text, tree.getIndexedSize() / 1024));
-          com.simiacryptus.ref.wrappers.RefSystem.out
+          RefSystem.out
               .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
           return tree;
         }));
@@ -459,19 +463,19 @@ public class TrieTest {
     CharTrieIndex tree_good = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 1).limit(modelCount).map(t -> t.getText())
         .forEach(txt -> tree_good.addDocument(">>>" + txt));
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format(
+    RefSystem.out.println(RefString.format(
         "Indexing %s positive tweets; \ntree.getIndexedSize = %s KB", modelCount, tree_good.getIndexedSize() / 1024));
     tree_good.index(maxLevels, minWeight).truncate();
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("tree.getMemorySize = %s KB", tree_good.getMemorySize() / 1024));
 
     CharTrieIndex tree_bad = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 0).limit(modelCount).map(t -> t.getText())
         .forEach(txt -> tree_bad.addDocument(">>>" + txt));
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(RefString.format(
+    RefSystem.out.println(RefString.format(
         "Indexing %s negative tweets; \ntree.getIndexedSize = %s KB", modelCount, tree_bad.getIndexedSize() / 1024));
     tree_bad.index(maxLevels, minWeight).truncate();
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("tree.getMemorySize = %s KB", tree_bad.getMemorySize() / 1024));
 
     TableOutput output = new TableOutput();
@@ -487,7 +491,7 @@ public class TrieTest {
           .substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(badRow);
     });
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(output.toCSV(true));
+    RefSystem.out.println(output.toCSV(true));
   }
 
   @Test
@@ -505,13 +509,13 @@ public class TrieTest {
 
     CharSequence characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
         .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    com.simiacryptus.ref.wrappers.RefSystem.out.println("Character Set:" + characterSet);
+    RefSystem.out.println("Character Set:" + characterSet);
 
     int maxLevels = 7;
     int minWeight = 1;
     double smoothness = 1.0;
 
-    long startTime = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis();
+    long startTime = RefSystem.currentTimeMillis();
     RefMap<CharSequence, CharTrie> trees = new RefHashMap<>();
     RefMap<CharSequence, CharSequence> dictionaries = new RefHashMap<>();
     for (Map.Entry<CharSequence, CharSequence> e : content.entrySet()) {
@@ -521,13 +525,13 @@ public class TrieTest {
       tree.index(maxLevels, minWeight).truncate();
       trees.put(e.getKey(), tree);
       dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
-      com.simiacryptus.ref.wrappers.RefSystem.out.println(
+      RefSystem.out.println(
           RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
-      com.simiacryptus.ref.wrappers.RefSystem.out
+      RefSystem.out
           .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     }
-    long elapsed = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis() - startTime;
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    long elapsed = RefSystem.currentTimeMillis() - startTime;
+    RefSystem.out
         .println(RefString.format("Built index in time = %s sec", elapsed / 1000.));
 
     TableOutput output1 = new TableOutput();
@@ -543,6 +547,7 @@ public class TrieTest {
         map1.put("key", key);
         map1.put("rawBits", s.length() * 8);
         map1.put("decompressBits0", CompressionUtil.encodeLZ(s, "").length * 8);
+        assert dictionary != null;
         int decompressBits1 = CompressionUtil.encodeLZ(s, dictionary.subSequence(0, 1024).toString()).length * 8;
         map1.put(".decompressBits1", decompressBits1);
         // map2.put(key+".decompressBits1", decompressBits1);
@@ -552,6 +557,7 @@ public class TrieTest {
         int decompressBits16 = CompressionUtil.encodeLZ(s, dictionary.subSequence(0, 16 * 1024).toString()).length * 8;
         map1.put(".decompressBits16", decompressBits16);
         // map2.put(key+".decompressBits16", decompressBits16);
+        assert tree != null;
         double ppmBits = tree.getAnalyzer().entropy(s);
         map1.put(".ppmBits", ppmBits);
         // map2.put(key+".ppmBits", ppmBits);

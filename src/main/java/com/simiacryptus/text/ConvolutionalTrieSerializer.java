@@ -19,12 +19,13 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,18 +36,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ConvolutionalTrieSerializer {
+  @Nullable
   private PrintStream verbose = null;
 
+  @Nullable
   public PrintStream getVerbose() {
     return verbose;
   }
 
+  @Nonnull
   public ConvolutionalTrieSerializer setVerbose(PrintStream verbose) {
     this.verbose = verbose;
     return this;
   }
 
-  public byte[] serialize(CharTrie charTrie) {
+  @Nonnull
+  public byte[] serialize(@Nonnull CharTrie charTrie) {
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     try {
       try (BitOutputStream out = new BitOutputStream(buffer)) {
@@ -60,7 +65,8 @@ public class ConvolutionalTrieSerializer {
     return buffer.toByteArray();
   }
 
-  public CharTrie deserialize(byte[] bytes) {
+  @Nonnull
+  public CharTrie deserialize(@Nonnull byte[] bytes) {
     CharTrie trie = new CharTrie();
     BitInputStream in = new BitInputStream(new ByteArrayInputStream(bytes));
     int level = 0;
@@ -70,13 +76,13 @@ public class ConvolutionalTrieSerializer {
     return trie;
   }
 
-  protected long getUpperBound(TrieNode currentParent, AtomicLong currentChildren, TrieNode godchildNode,
-      int godchildAdjustment) {
+  protected long getUpperBound(@Nonnull TrieNode currentParent, @Nonnull AtomicLong currentChildren, @Nonnull TrieNode godchildNode,
+                               int godchildAdjustment) {
     return Math.min(currentParent.getCursorCount() - currentChildren.get(),
         godchildNode.getCursorCount() - godchildAdjustment);
   }
 
-  private int serialize(TrieNode root, BitOutputStream out, int level) {
+  private int serialize(@Nonnull TrieNode root, @Nonnull BitOutputStream out, int level) {
     AtomicInteger nodesWritten = new AtomicInteger(0);
     if (0 == level) {
       TreeMap<Character, ? extends TrieNode> children = root.getChildrenMap();
@@ -91,7 +97,7 @@ public class ConvolutionalTrieSerializer {
           if (null != verbose)
             verbose.println(RefString.format("Write token %s", child.getChar()));
           out.write(child.getChar());
-          out.writeVarLong(null == child ? 0 : child.getCursorCount());
+          out.writeVarLong(child.getCursorCount());
           nodesWritten.incrementAndGet();
         } catch (IOException e) {
           throw new RuntimeException(e);
@@ -102,6 +108,7 @@ public class ConvolutionalTrieSerializer {
       root.streamDecendents(level).forEach(node -> {
         AtomicLong nodeCounter = new AtomicLong();
         TrieNode godparent = node.getDepth() == 0 ? root : node.godparent();
+        assert godparent != null;
         TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         TreeMap<Character, ? extends TrieNode> children = node.getChildrenMap();
         try {
@@ -157,7 +164,7 @@ public class ConvolutionalTrieSerializer {
 
   }
 
-  private long deserialize(TrieNode root, BitInputStream in, int level) {
+  private long deserialize(@Nonnull TrieNode root, @Nonnull BitInputStream in, int level) {
     AtomicLong nodesRead = new AtomicLong(0);
     if (0 == level) {
       try {
@@ -180,6 +187,7 @@ public class ConvolutionalTrieSerializer {
       root.streamDecendents(level).forEach(node -> {
         AtomicLong nodeCounter = new AtomicLong();
         TrieNode godparent = node.getDepth() == 0 ? root : node.godparent();
+        assert godparent != null;
         assert (1 >= node.getDepth() || node.getString().substring(1).equals(godparent.getString()));
         TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         TreeMap<Character, Long> children = new TreeMap<>();

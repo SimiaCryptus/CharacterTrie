@@ -19,10 +19,11 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.data.SerialArrayList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,10 +33,11 @@ public class IndexNode extends TrieNode {
     super(trie, index, parent);
   }
 
-  public IndexNode(CharTrie trie, int index) {
+  public IndexNode(@Nonnull CharTrie trie, int index) {
     super(trie, index);
   }
 
+  @Nonnull
   @Override
   public RefStream<? extends IndexNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
@@ -46,6 +48,7 @@ public class IndexNode extends TrieNode {
     }
   }
 
+  @Nonnull
   public RefStream<Cursor> getCursors() {
     return RefLongStream.range(0, getData().cursorCount).mapToObj(i -> {
       return new Cursor((CharTrieIndex) this.trie,
@@ -57,6 +60,7 @@ public class IndexNode extends TrieNode {
     return this.getCursors().collect(RefCollectors.groupingBy((Cursor x) -> x.getDocument()));
   }
 
+  @Nullable
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
       RefTreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new RefTreeMap<>(getCursors().parallel()
@@ -85,24 +89,28 @@ public class IndexNode extends TrieNode {
     }
   }
 
+  @Nullable
   @Override
   public IndexNode godparent() {
     return (IndexNode) super.godparent();
   }
 
+  @Nonnull
   @Override
   public IndexNode refresh() {
     return (IndexNode) super.refresh();
   }
 
-  public IndexNode visitFirstIndex(RefConsumer<? super IndexNode> visitor) {
+  @Nonnull
+  public IndexNode visitFirstIndex(@Nonnull RefConsumer<? super IndexNode> visitor) {
     visitor.accept(this);
     IndexNode refresh = refresh();
     refresh.getChildren().forEach(n -> n.visitFirstIndex(visitor));
     return refresh;
   }
 
-  public IndexNode visitLastIndex(RefConsumer<? super IndexNode> visitor) {
+  @Nonnull
+  public IndexNode visitLastIndex(@Nonnull RefConsumer<? super IndexNode> visitor) {
     getChildren().forEach(n -> n.visitLastIndex(visitor));
     visitor.accept(this);
     return refresh();
@@ -111,6 +119,7 @@ public class IndexNode extends TrieNode {
   @Override
   public Optional<? extends IndexNode> getChild(char token) {
     NodeData data = getData();
+    assert data != null;
     int min = data.firstChildIndex;
     int max = data.firstChildIndex + data.numberOfChildren - 1;
     while (min <= max) {
@@ -132,16 +141,19 @@ public class IndexNode extends TrieNode {
     return Optional.empty();
   }
 
+  @Nonnull
   @Override
-  public IndexNode traverse(String str) {
+  public IndexNode traverse(@Nonnull String str) {
     return (IndexNode) super.traverse(str);
   }
 
+  @Nonnull
   @Override
   public IndexNode traverse(long cursorId) {
     return (IndexNode) super.traverse(cursorId);
   }
 
+  @Nonnull
   @Override
   protected TrieNode newNode(int index) {
     return new IndexNode(trie, index);

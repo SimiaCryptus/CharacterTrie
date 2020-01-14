@@ -19,13 +19,14 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.data.SerialType;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 
 class NodeType implements SerialType<NodeData> {
 
+  @Nonnull
   static NodeType INSTANCE = new NodeType();
 
   @Override
@@ -33,13 +34,14 @@ class NodeType implements SerialType<NodeData> {
     return 24;
   }
 
+  @Nonnull
   @Override
-  public NodeData read(ByteBuffer input) {
+  public NodeData read(@Nonnull ByteBuffer input) {
     return new NodeData(input.getChar(), input.getShort(), input.getInt(), input.getLong(), input.getLong());
   }
 
   @Override
-  public void write(ByteBuffer output, NodeData value) {
+  public void write(@Nonnull ByteBuffer output, @Nonnull NodeData value) {
     output.putChar(value.token);
     output.putShort(value.numberOfChildren);
     output.putInt(value.firstChildIndex);

@@ -19,15 +19,16 @@
 
 package com.simiacryptus.util.binary.codes;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefAssert;
 import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.test.TestCategories;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -54,8 +55,7 @@ public class GaussianTest {
   public void testBinomialScan() throws IOException {
     for (double probability = 0.01; probability <= 0.99; probability += .01) {
       for (int max = 1; max < 255; max += 1) {
-        @SuppressWarnings("unused")
-        final double result = this.test(Gaussian.fromBinomial(probability, max), max);
+        @SuppressWarnings("unused") final double result = this.test(Gaussian.fromBinomial(probability, max), max);
         // com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("P=%s,N=%s: %s", probability, max, result));
       }
     }
@@ -64,21 +64,21 @@ public class GaussianTest {
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testHardcodedGaussians() throws IOException {
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 3), 255)));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 10), 255)));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 200), 255)));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 500), 255)));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(new Gaussian(500, 10), 255)));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(new Gaussian(-100, 10), 255)));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.7, 3), 3)));
-    com.simiacryptus.ref.wrappers.RefSystem.out
+    RefSystem.out
         .println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.5, 1), 1)));
 
   }
@@ -95,14 +95,15 @@ public class GaussianTest {
     }
   }
 
-  private long decode(final Gaussian gaussian, final int max, final byte[] serializedData) throws IOException {
+  private long decode(@Nonnull final Gaussian gaussian, final int max, @Nonnull final byte[] serializedData) throws IOException {
     final ByteArrayInputStream inBuffer = new ByteArrayInputStream(serializedData);
     final BitInputStream in = new BitInputStream(inBuffer);
     final long decoded = gaussian.decode(in, max);
     return decoded;
   }
 
-  private byte[] encode(final Gaussian gaussian, final int max, final int i) throws IOException {
+  @Nonnull
+  private byte[] encode(@Nonnull final Gaussian gaussian, final int max, final int i) throws IOException {
     final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
     final BitOutputStream out = new BitOutputStream(outBuffer);
     gaussian.encode(out, i, max);
@@ -111,7 +112,7 @@ public class GaussianTest {
     return serializedData;
   }
 
-  private double test(final Gaussian gaussian, final int max) throws IOException {
+  private double test(@Nonnull final Gaussian gaussian, final int max) throws IOException {
     int total = 0;
     for (int value = 0; value <= max; value++) {
       total += this.test(gaussian, max, value);
@@ -119,7 +120,7 @@ public class GaussianTest {
     return (double) total / max;
   }
 
-  private int test(final Gaussian gaussian, final int max, final int value) throws IOException {
+  private int test(@Nonnull final Gaussian gaussian, final int max, final int value) throws IOException {
     final byte[] serializedData = this.encode(gaussian, max, value);
     final long decoded = this.decode(gaussian, max, serializedData);
     RefAssert.assertEquals(value, decoded);

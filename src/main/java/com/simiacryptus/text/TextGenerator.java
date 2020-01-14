@@ -19,8 +19,8 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefAware;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -36,11 +36,13 @@ public class TextGenerator {
     this.inner = inner;
   }
 
+  @Nullable
   public String generateMarkov(int length, int context, String seed) {
     String str = seed;
     while (str.length() < length) {
       String prefix = str.substring(Math.max(str.length() - context, 0), str.length());
       TrieNode node = inner.matchPredictor(prefix);
+      assert node != null;
       long cursorCount = node.getCursorCount();
       long fate = CompressionUtil.random.nextLong() % cursorCount;
       String next = null;
@@ -64,12 +66,14 @@ public class TextGenerator {
     return str;
   }
 
+  @Nonnull
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive) {
     return generateDictionary(length, context, seed, lookahead, destructive, false);
   }
 
+  @Nonnull
   public String generateDictionary(int length, int context, final String seed, int lookahead, boolean destructive,
-      boolean terminateAtNull) {
+                                   boolean terminateAtNull) {
     String str = seed;
     String prefix = "";
     while (str.length() < length) {
@@ -77,6 +81,7 @@ public class TextGenerator {
       if (null == node) {
         prefix = prefix.substring(1);
       }
+      assert node != null;
       TrieNode nextNode = maxNextNode(node, lookahead);
       if (null == nextNode)
         break;
@@ -103,13 +108,14 @@ public class TextGenerator {
     return str.substring(0, Math.min(length, str.length()));
   }
 
-  private Map<Character, Double> lookahead(TrieNode node, double smoothness) {
+  @Nonnull
+  private Map<Character, Double> lookahead(@Nonnull TrieNode node, double smoothness) {
     HashMap<Character, Double> map = new HashMap<>();
     lookahead(node, map, 1.0, smoothness);
     return map;
   }
 
-  private void lookahead(TrieNode node, HashMap<Character, Double> map, double factor, double smoothness) {
+  private void lookahead(@Nonnull TrieNode node, @Nonnull HashMap<Character, Double> map, double factor, double smoothness) {
     if (0 < factor) {
       node.getChildren().forEach(child -> {
         map.put(child.getChar(), factor * child.getCursorCount() + map.getOrDefault(child.getToken(), 0.0));
@@ -121,7 +127,7 @@ public class TextGenerator {
     }
   }
 
-  private TrieNode maxNextNode(TrieNode node, int lookahead) {
+  private TrieNode maxNextNode(@Nonnull TrieNode node, int lookahead) {
     Stream<TrieNode> childStream = node.getChildren().map(x -> x);
     for (int level = 0; level < lookahead; level++) {
       childStream = childStream.flatMap(child -> child.hasChildren() ? child.getChildren() : Stream.of(child));
