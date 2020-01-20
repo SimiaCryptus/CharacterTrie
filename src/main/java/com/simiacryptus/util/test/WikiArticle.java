@@ -154,7 +154,6 @@ public class WikiArticle extends TestDocument {
               this.indexes.push(new RefHashMap<CharSequence, AtomicInteger>());
               super.startElement(uri, localName, qName, attributes);
             }
-
           }, null);
         }
       } catch (@Nonnull final RuntimeException e) {

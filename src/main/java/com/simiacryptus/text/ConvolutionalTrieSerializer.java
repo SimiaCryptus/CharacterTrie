@@ -161,7 +161,6 @@ public class ConvolutionalTrieSerializer {
       });
     }
     return nodesWritten.get();
-
   }
 
   private long deserialize(@Nonnull TrieNode root, @Nonnull BitInputStream in, int level) {

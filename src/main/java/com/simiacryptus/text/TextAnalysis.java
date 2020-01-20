@@ -486,6 +486,5 @@ public class TextAnalysis {
       //if(null!=verbose) verbose.println("  deletion");
       return Stream.of(new WordSpelling(text.substring(0, pos) + text.substring(pos + 1)));
     }
-
   }
 }

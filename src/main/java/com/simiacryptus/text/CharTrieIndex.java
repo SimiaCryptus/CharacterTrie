@@ -45,7 +45,6 @@ public class CharTrieIndex extends CharTrie {
 
   public CharTrieIndex(@Nonnull CharTrieIndex copyFrom) {
     this(copyFrom.nodes.copy(), copyFrom.cursors.copy(), new ArrayList<>(copyFrom.documents));
-
   }
 
   public CharTrieIndex() {

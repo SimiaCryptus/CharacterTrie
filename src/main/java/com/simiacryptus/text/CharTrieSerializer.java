@@ -103,7 +103,6 @@ public class CharTrieSerializer {
       });
     }
     return nodesWritten.get();
-
   }
 
   private int deserialize(@Nonnull TrieNode root, @Nonnull BitInputStream in, int level) {

@@ -261,7 +261,6 @@ public class NodewalkerCodec {
         throw new RuntimeException(e);
       }
     }
-
   }
 
 }

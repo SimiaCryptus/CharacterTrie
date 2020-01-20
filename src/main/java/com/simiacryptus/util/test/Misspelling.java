@@ -96,7 +96,6 @@ public class Misspelling extends TestDocument {
               queue.add(new Misspelling(activeItem, item));
             }
           }
-
         }
       } catch (@Nonnull final RuntimeException e) {
         if (!(e.getCause() instanceof InterruptedException))
@@ -107,7 +106,6 @@ public class Misspelling extends TestDocument {
         RefSystem.err.println("Read thread exit");
       }
     }
-
   }
 
 }

@@ -128,7 +128,6 @@ public class TrieTest {
         }
       }
     }
-
   }
 
   @Test
@@ -321,7 +320,6 @@ public class TrieTest {
       }
     }
     RefSystem.out.println(output1.toCSV(true));
-
   }
 
   @Test

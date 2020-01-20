@@ -80,7 +80,6 @@ public class GaussianTest {
         .println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.7, 3), 3)));
     RefSystem.out
         .println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.5, 1), 1)));
-
   }
 
   @Test
