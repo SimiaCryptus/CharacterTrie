@@ -82,7 +82,7 @@ public class CompressionUtil {
       int resultLength = 0;
       if (!dictionary.isEmpty()) {
         resultLength = decompresser.inflate(result);
-        assert (0 == resultLength);
+        assert 0 == resultLength;
         if (decompresser.needsDictionary()) {
           byte[] bytes = dictionary.getBytes("UTF-8");
           decompresser.setDictionary(bytes);

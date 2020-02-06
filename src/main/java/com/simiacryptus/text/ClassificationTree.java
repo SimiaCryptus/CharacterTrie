@@ -153,13 +153,13 @@ public class ClassificationTree {
   private Optional<NodeInfo> categorizationSubstring(@Nonnull IndexNode node, @Nonnull RefMap<Integer, Integer> categoryMap,
                                                      @Nonnull RefMap<Integer, Long> sum) {
     RefList<NodeInfo> childrenInfo = node.getChildren().map(n -> categorizationSubstring(n, categoryMap, sum))
-        .filter(x -> x.isPresent()).map(RefUtil::get).collect(RefCollectors.toList());
+        .filter(x -> x.isPresent()).map(optional -> RefUtil.get(optional)).collect(RefCollectors.toList());
     NodeInfo info = info(node, sum, categoryMap);
     if (info.node.getString().isEmpty() || !Double.isFinite(info.entropy))
       info = null;
     Optional<NodeInfo> max = RefStream
         .concat(null == info ? RefStream.empty() : RefStream.of(info), childrenInfo.stream())
-        .max(RefComparator.comparing(x -> x.entropy));
+        .max(RefComparator.comparingDouble(x -> x.entropy));
     return max;
   }
 

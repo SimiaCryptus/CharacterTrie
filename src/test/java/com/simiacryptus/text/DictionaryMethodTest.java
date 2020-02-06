@@ -103,7 +103,7 @@ public class DictionaryMethodTest {
     CharSequence key = "LZ8k_commonWords";
     int dictSampleSize = 512;
     log.p("Common Words Dictionary %s: %s...\n", key,
-        dictionary.length() > dictSampleSize ? (dictionary.subSequence(0, dictSampleSize) + "...") : dictionary);
+        dictionary.length() > dictSampleSize ? dictionary.subSequence(0, dictSampleSize) + "..." : dictionary);
     compressors.put(key, new Compressor() {
       @Nonnull
       @Override
@@ -128,7 +128,7 @@ public class DictionaryMethodTest {
         dictionary_lookahead, model_minPathWeight);
     int dictSampleSize = 512;
     log.p("Adding Compressor %s: %s...\n", keyDictionary,
-        genDictionary.length() > dictSampleSize ? (genDictionary.substring(0, dictSampleSize) + "...") : genDictionary);
+        genDictionary.length() > dictSampleSize ? genDictionary.substring(0, dictSampleSize) + "..." : genDictionary);
     compressors.put(keyDictionary, new Compressor() {
 
       @Nonnull
@@ -148,7 +148,7 @@ public class DictionaryMethodTest {
         model_minPathWeight);
     assert genMarkov != null;
     log.p("Adding Compressor %s: %s...\n", keyMarkov,
-        genMarkov.length() > dictSampleSize ? (genMarkov.substring(0, dictSampleSize) + "...") : genMarkov);
+        genMarkov.length() > dictSampleSize ? genMarkov.substring(0, dictSampleSize) + "..." : genMarkov);
     compressors.put(keyMarkov, new Compressor() {
 
       @Nonnull

@@ -51,7 +51,7 @@ public class Cursor {
   }
 
   public boolean hasNext() {
-    return (getPosition() + 1) < getDocument().length();
+    return getPosition() + 1 < getDocument().length();
   }
 
   @Nonnull

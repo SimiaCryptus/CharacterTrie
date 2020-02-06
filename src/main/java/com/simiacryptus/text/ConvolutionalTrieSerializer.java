@@ -136,8 +136,8 @@ public class ConvolutionalTrieSerializer {
               } else {
                 out.write(Bits.ONE);
                 long childCount = child.getCursorCount();
-                assert (childCount <= upperBound);
-                assert (childCount > 0);
+                assert childCount <= upperBound;
+                assert childCount > 0;
                 Bits bits = out.writeBoundedLong(childCount, upperBound);
                 if (null != verbose) {
                   verbose.println(RefString.format("Write token %s = %s/%s -> %s",
@@ -187,7 +187,7 @@ public class ConvolutionalTrieSerializer {
         AtomicLong nodeCounter = new AtomicLong();
         TrieNode godparent = node.getDepth() == 0 ? root : node.godparent();
         assert godparent != null;
-        assert (1 >= node.getDepth() || node.getString().substring(1).equals(godparent.getString()));
+        assert 1 >= node.getDepth() || node.getString().substring(1).equals(godparent.getString());
         TreeMap<Character, ? extends TrieNode> godchildren = godparent.getChildrenMap();
         TreeMap<Character, Long> children = new TreeMap<>();
         final long numberOfChildren;
@@ -217,7 +217,7 @@ public class ConvolutionalTrieSerializer {
                   verbose.println(RefString.format("Read token %s = %s/%s, input buffer = %s",
                       node.getDebugString() + godchild.getDebugToken(), childCount, upperBound, in.peek(24)));
                 }
-                assert (childCount >= 0);
+                assert childCount >= 0;
                 children.put(token, childCount);
                 nodesRead.incrementAndGet();
                 nodeCounter.addAndGet((int) childCount);

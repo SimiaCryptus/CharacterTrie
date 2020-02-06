@@ -427,7 +427,7 @@ public class TrieTest {
         }));
 
     TableOutput output = new TableOutput();
-    articles.stream().limit(articleCount).collect(RefCollectors.toList()).forEach((text) -> {
+    articles.stream().limit(articleCount).collect(RefCollectors.toList()).forEach(text -> {
       RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
       map.put("text", text);
       dictionaries.forEach((modelTitle, dictionary) -> {

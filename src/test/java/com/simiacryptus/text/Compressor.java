@@ -40,7 +40,7 @@ public interface Compressor {
       RefMap<CharSequence, Object> rowWide = new RefLinkedHashMap<>();
       String title = item.getTitle().toString().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
-      compressors.entrySet().parallelStream().forEach((e) -> {
+      compressors.entrySet().parallelStream().forEach(e -> {
         try {
           CharSequence name = e.getKey();
           Compressor compressor = e.getValue();
@@ -79,7 +79,7 @@ public interface Compressor {
     RefCollectors.RefCollector<Map.Entry<CharSequence, Compressor>, ?, RefMap<CharSequence, Function<TestDocument, Double>>> collector = RefCollectors
         .toMap(e -> e.getKey(), e -> {
           Compressor value = e.getValue();
-          return x -> (value.compress(x.getText()).length * 1.0 / x.getText().length());
+          return x -> value.compress(x.getText()).length * 1.0 / x.getText().length();
         });
     return evalCluster(data, stream.collect(collector), wide);
   }
@@ -94,7 +94,7 @@ public interface Compressor {
       RefMap<CharSequence, Object> rowWide = new RefLinkedHashMap<>();
       String title = item.getTitle().toString().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
-      compressors.entrySet().parallelStream().forEach((e) -> {
+      compressors.entrySet().parallelStream().forEach(e -> {
         try {
           CharSequence name = e.getKey();
           Function<TestDocument, Double> compressor = e.getValue();

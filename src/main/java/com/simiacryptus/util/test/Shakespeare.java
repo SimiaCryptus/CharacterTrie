@@ -62,7 +62,7 @@ public class Shakespeare extends TestDocument {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
-          thread = new Thread(Shakespeare::read);
+          thread = new Thread(() -> read());
           thread.setDaemon(true);
           thread.start();
         }

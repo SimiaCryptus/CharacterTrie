@@ -125,7 +125,7 @@ public class CharTrie {
 
   @Nonnull
   public CharTrie divide(@Nonnull CharTrie z, int factor) {
-    return reduceSimple(z, (left, right) -> (null == right ? 0 : ((null == left ? 0 : left) * factor / right)));
+    return reduceSimple(z, (left, right) -> null == right ? 0 : (null == left ? 0 : left) * factor / right);
   }
 
   @Nonnull
@@ -135,7 +135,7 @@ public class CharTrie {
       TreeMap<Character, ? extends TrieNode> rightChildren = null == right ? new TreeMap<>() : right.getChildrenMap();
       Map<Character, Long> map = Stream.of(rightChildren.keySet(), leftChildren.keySet()).flatMap(x -> x.stream())
           .distinct().collect(Collectors.toMap(c -> c, (Character c) -> {
-            assert (null != c);
+            assert null != c;
             TrieNode leftChild = leftChildren.get(c);
             Long l = null == leftChild ? null : leftChild.getCursorCount();
             TrieNode rightChild = rightChildren.get(c);
@@ -316,7 +316,7 @@ public class CharTrie {
     if (newChildren.isEmpty())
       return node.getData();
     long cursorCount = newChildren.stream().mapToLong(n -> n.cursorCount).sum();
-    assert (0 < cursorCount);
+    assert 0 < cursorCount;
     return node.update(d -> d.setCursorCount(cursorCount));
   }
 

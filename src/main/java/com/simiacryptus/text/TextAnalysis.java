@@ -88,7 +88,7 @@ public class TextAnalysis {
 
   public static double entropy(@Nonnull TrieNode tokenNode, @Nullable TrieNode contextNode) {
     return -0.0 + (null == contextNode ? Double.POSITIVE_INFINITY
-        : (-Math.log(tokenNode.getCursorCount() * 1.0 / contextNode.getCursorCount())));
+        : -Math.log(tokenNode.getCursorCount() * 1.0 / contextNode.getCursorCount()));
   }
 
   public List<CharSequence> keywords(@Nonnull final String source) {
@@ -107,8 +107,8 @@ public class TextAnalysis {
   }
 
   public double spelling(@Nonnull final String source) {
-    assert (source.startsWith("|"));
-    assert (source.endsWith("|"));
+    assert source.startsWith("|");
+    assert source.endsWith("|");
     WordSpelling original = new WordSpelling(source);
     WordSpelling corrected = RefUtil.get(IntStream.range(0, 1).mapToObj(i -> buildCorrection(original))
         .min(Comparator.comparingDouble(x -> x.sum)));
@@ -129,7 +129,7 @@ public class TextAnalysis {
         node = inner.root();
       assert node != null;
       if (!accumulator.isEmpty()
-          && (node.getDepth() < prevDepth || (prevNode.hasChildren() && node.getDepth() == prevDepth))) {
+          && (node.getDepth() < prevDepth || prevNode.hasChildren() && node.getDepth() == prevDepth)) {
         if (accumulator.length() > minSize) {
           matches.add(accumulator);
           node = ((Optional<TrieNode>) inner.root().getChild(text.charAt(i))).orElse(inner.root());
@@ -146,7 +146,7 @@ public class TextAnalysis {
     List<CharSequence> tokenization = new ArrayList<>();
     for (CharSequence match : matches) {
       int index = text.indexOf(match.toString());
-      assert (index >= 0);
+      assert index >= 0;
       if (index > 0)
         tokenization.add(text.substring(0, index));
       tokenization.add(text.substring(index, index + match.length()));
@@ -264,7 +264,7 @@ public class TextAnalysis {
         if (!x.text.startsWith("|"))
           return false;
         return x.text.endsWith("|");
-      }).min(Comparator.comparingDouble(fitness::applyAsDouble)));
+      }).min(Comparator.comparingDouble(value -> fitness.applyAsDouble(value))));
       if (fitness.applyAsDouble(mutant) < fitness.applyAsDouble(wordSpelling)) {
         if (null != verbose)
           verbose.println(RefString.format("IMPROVEMENT: \"%s\"\t%.5f", mutant.text, mutant.sum));
@@ -455,14 +455,14 @@ public class TextAnalysis {
 
     private Stream<WordSpelling> mutateAddRight(int pos) {
       Stream<Character> newCharStream = pick(
-          getJointExpectation((text.length() - 1 <= pos) ? inner.root() : leftNodes.get(pos + 1), rightNodes.get(pos)));
+          getJointExpectation(text.length() - 1 <= pos ? inner.root() : leftNodes.get(pos + 1), rightNodes.get(pos)));
       //if(null!=verbose) verbose.println("  mutate right: " + newChar);
       return newCharStream.map(newChar -> new WordSpelling(text.substring(0, pos) + newChar + text.substring(pos)));
     }
 
     private Stream<WordSpelling> mutateAddLeft(int pos) {
       Stream<Character> newCharStream = pick(
-          getJointExpectation(leftNodes.get(pos), (0 >= pos) ? inner.root() : rightNodes.get(pos - 1)));
+          getJointExpectation(leftNodes.get(pos), 0 >= pos ? inner.root() : rightNodes.get(pos - 1)));
       //if(null!=verbose) verbose.println("  mutate categoryWeights: " + newChar);
       return newCharStream.map(newChar -> new WordSpelling(text.substring(0, pos) + newChar + text.substring(pos)));
     }

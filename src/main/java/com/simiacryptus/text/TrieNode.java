@@ -43,15 +43,15 @@ public class TrieNode {
   private transient NodeData data;
 
   public TrieNode(@Nonnull CharTrie trie, int index) {
-    assert (0 <= index);
+    assert 0 <= index;
     assert trie.parentIndex != null;
-    assert (0 == index || trie.parentIndex[index] >= 0);
+    assert 0 == index || trie.parentIndex[index] >= 0;
     this.trie = trie;
     this.index = index;
   }
 
   public TrieNode(CharTrie trie, int index, TrieNode parent) {
-    assert (0 <= index);
+    assert 0 <= index;
     this.trie = trie;
     this.index = index;
     this.parent = parent;
@@ -126,8 +126,8 @@ public class TrieNode {
       synchronized (this) {
         if (-1 == depth) {
           TrieNode parent = getParent();
-          assert (null == parent || parent.index < index);
-          depth = (short) (null == parent ? 0 : (parent.getDepth() + 1));
+          assert null == parent || parent.index < index;
+          depth = (short) (null == parent ? 0 : parent.getDepth() + 1);
         }
       }
     }
@@ -156,7 +156,7 @@ public class TrieNode {
         if (null == parent) {
           assert trie.parentIndex != null;
           parent = newNode(trie.parentIndex[index]);
-          assert (parent.index < index);
+          assert parent.index < index;
         }
       }
     }
@@ -165,7 +165,7 @@ public class TrieNode {
 
   @Nonnull
   public String getRawString() {
-    return (0 == getDepth() ? "" : (getParent().getRawString() + new String(new char[]{getChar()})));
+    return 0 == getDepth() ? "" : getParent().getRawString() + new String(new char[]{getChar()});
   }
 
   @Nonnull
@@ -301,7 +301,7 @@ public class TrieNode {
     if (cursorId < getData().firstCursorIndex) {
       return false;
     }
-    return cursorId < (getData().firstCursorIndex + getData().cursorCount);
+    return cursorId < getData().firstCursorIndex + getData().cursorCount;
   }
 
   public TrieNode traverse(long cursorId) {
@@ -334,7 +334,7 @@ public class TrieNode {
   }
 
   public Stream<? extends TrieNode> streamDecendents(int level) {
-    assert (level > 0);
+    assert level > 0;
     if (level == 1) {
       return getChildren();
     } else {

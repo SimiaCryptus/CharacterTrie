@@ -77,7 +77,7 @@ public class NodewalkerCodec {
       encoder.out.writeVarShort(count, 3);
       encoder.out.write(bits);
     } else {
-      assert (0 == encoder.node.index);
+      assert 0 == encoder.node.index;
       encoder.out.writeVarShort((short) 0, 3);
     }
   }
@@ -104,7 +104,7 @@ public class NodewalkerCodec {
       decoder.node = toNode;
     } else {
       assert decoder.node != null;
-      assert (0 == decoder.node.index);
+      assert 0 == decoder.node.index;
     }
   }
 
@@ -134,7 +134,7 @@ public class NodewalkerCodec {
     }
     assert encoder.fromNode != null;
     short backupSteps = (short) (encoder.fromNode.getDepth() - (null == encoder.node ? -1 : encoder.node.getDepth()));
-    assert (backupSteps >= 0);
+    assert backupSteps >= 0;
     if (verbose != null) {
       verbose.println(RefString.format("Backing up %s from from %s to %s", backupSteps,
           encoder.fromNode.getDebugString(), null == encoder.node ? null : encoder.node.getDebugString()));
@@ -155,7 +155,7 @@ public class NodewalkerCodec {
     if (verbose != null) {
       assert fromNode != null;
       verbose.println(RefString.format("Backing up %s from from %s to %s", numberOfBackupSteps,
-          fromNode.getDebugString(), (null == decoder.node) ? null : decoder.node.getDebugString()));
+          fromNode.getDebugString(), null == decoder.node ? null : decoder.node.getDebugString()));
     }
     return false;
   }

@@ -73,7 +73,7 @@ public class Misspelling extends TestDocument {
       if (thread == null) {
         synchronized (Misspelling.class) {
           if (thread == null) {
-            thread = new Thread(this::read);
+            thread = new Thread(() -> read());
             thread.setDaemon(true);
             thread.start();
           }
