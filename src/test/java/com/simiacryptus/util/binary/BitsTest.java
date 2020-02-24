@@ -19,10 +19,9 @@
 
 package com.simiacryptus.util.binary;
 
-import com.simiacryptus.ref.wrappers.RefAssert;
-import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.test.TestCategories;
 import org.json.JSONException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -47,13 +46,13 @@ public class BitsTest {
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testDivide() throws JSONException {
-    RefAssert.assertEquals("1", Bits.divide(2, 2, 10).toBitString());
-    RefAssert.assertEquals("0", Bits.divide(0, 2, 10).toBitString());
-    RefAssert.assertEquals("01", Bits.divide(1, 2, 10).toBitString());
-    RefAssert.assertEquals("0011001100", Bits.divide(2, 5, 10).toBitString());
-    RefAssert.assertEquals("01", Bits.divide(2, 4, 10).toBitString());
-    RefAssert.assertEquals("0001", Bits.divide(171, 1368, 15).toBitString());
-    RefAssert.assertEquals("000010001000001", Bits.divide(91, 1368, 15).toBitString());
+    Assert.assertEquals("1", Bits.divide(2, 2, 10).toBitString());
+    Assert.assertEquals("0", Bits.divide(0, 2, 10).toBitString());
+    Assert.assertEquals("01", Bits.divide(1, 2, 10).toBitString());
+    Assert.assertEquals("0011001100", Bits.divide(2, 5, 10).toBitString());
+    Assert.assertEquals("01", Bits.divide(2, 4, 10).toBitString());
+    Assert.assertEquals("0001", Bits.divide(171, 1368, 15).toBitString());
+    Assert.assertEquals("000010001000001", Bits.divide(91, 1368, 15).toBitString());
   }
 
   @Test
@@ -67,29 +66,29 @@ public class BitsTest {
         throw new RuntimeException(e);
       }
     });
-    RefAssert.assertEquals("0101", totalBits.toBitString());
+    Assert.assertEquals("0101", totalBits.toBitString());
   }
 
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testInterval() throws JSONException {
-    RefAssert.assertEquals("1", new Interval(1, 2, 3).toBits().toBitString());
+    Assert.assertEquals("1", new Interval(1, 2, 3).toBits().toBitString());
 
-    RefAssert.assertEquals("01", new Interval(0, 1, 2).toBits().toBitString());
-    RefAssert.assertEquals("11", new Interval(1, 1, 2).toBits().toBitString());
+    Assert.assertEquals("01", new Interval(0, 1, 2).toBits().toBitString());
+    Assert.assertEquals("11", new Interval(1, 1, 2).toBits().toBitString());
 
-    RefAssert.assertEquals("001", new Interval(0, 1, 3).toBits().toBitString());
-    RefAssert.assertEquals("011", new Interval(1, 1, 3).toBits().toBitString());
-    RefAssert.assertEquals("11", new Interval(2, 1, 3).toBits().toBitString());
+    Assert.assertEquals("001", new Interval(0, 1, 3).toBits().toBitString());
+    Assert.assertEquals("011", new Interval(1, 1, 3).toBits().toBitString());
+    Assert.assertEquals("11", new Interval(2, 1, 3).toBits().toBitString());
 
-    RefAssert.assertEquals("0001", new Interval(0, 1, 5).toBits().toBitString());
-    RefAssert.assertEquals("010", new Interval(1, 1, 5).toBits().toBitString());
-    RefAssert.assertEquals("0111", new Interval(2, 1, 5).toBits().toBitString());
-    RefAssert.assertEquals("101", new Interval(3, 1, 5).toBits().toBitString());
-    RefAssert.assertEquals("111", new Interval(4, 1, 5).toBits().toBitString());
+    Assert.assertEquals("0001", new Interval(0, 1, 5).toBits().toBitString());
+    Assert.assertEquals("010", new Interval(1, 1, 5).toBits().toBitString());
+    Assert.assertEquals("0111", new Interval(2, 1, 5).toBits().toBitString());
+    Assert.assertEquals("101", new Interval(3, 1, 5).toBits().toBitString());
+    Assert.assertEquals("111", new Interval(4, 1, 5).toBits().toBitString());
 
-    RefAssert.assertEquals("001", new Interval(0, 2, 5).toBits().toBitString());
-    RefAssert.assertEquals("00011", new Interval(91, 80, 1368).toBits().toBitString());
+    Assert.assertEquals("001", new Interval(0, 2, 5).toBits().toBitString());
+    Assert.assertEquals("00011", new Interval(91, 80, 1368).toBits().toBitString());
   }
 
   @Test
@@ -109,32 +108,32 @@ public class BitsTest {
         out.writeVarLong(i);
       }
       BitInputStream in = new BitInputStream(new ByteArrayInputStream(buffer.toByteArray()));
-      RefAssert.assertEquals(i, in.readVarLong());
+      Assert.assertEquals(i, in.readVarLong());
     }
   }
 
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testHardcoded() throws JSONException {
-    RefAssert.assertEquals(new Bits(0), new Bits(0));
-    RefAssert.assertEquals("", new Bits(0).toBitString());
-    RefAssert.assertEquals("1", new Bits(1).toBitString());
-    RefAssert.assertEquals("100", new Bits(4).toBitString());
-    RefAssert.assertEquals("10001", new Bits(17).toBitString());
-    RefAssert.assertEquals("100", new Bits(17).range(0, 3).toBitString());
-    RefAssert.assertEquals("01", new Bits(17).range(3).toBitString());
-    RefAssert.assertEquals("111", new Bits(7).toBitString());
-    RefAssert.assertEquals("10111", new Bits(2).concatenate(new Bits(7)).toBitString());
-    RefAssert.assertEquals("00110", new Bits(6l, 5).toBitString());
-    RefAssert.assertEquals("111000000", new Bits(7l).leftShift(6).toBitString());
-    RefAssert.assertEquals("1110", new Bits(7l).leftShift(6).range(0, 4).toBitString());
-    RefAssert.assertEquals("00000", new Bits(7l).leftShift(6).range(4).toBitString());
-    RefAssert.assertEquals("110", new Bits(6l).toBitString());
-    RefAssert.assertEquals("11100", new Bits(7l).leftShift(2).toBitString());
-    RefAssert.assertEquals("11000", new Bits(7l).leftShift(2).bitwiseAnd(new Bits(6l)).toBitString());
-    RefAssert.assertEquals("11100", new Bits(7l).leftShift(2).bitwiseOr(new Bits(6l)).toBitString());
-    RefAssert.assertEquals("00100", new Bits(7l).leftShift(2).bitwiseXor(new Bits(6l)).toBitString());
-    RefAssert.assertEquals(2, new Bits(7l, 16).getBytes().length);
+    Assert.assertEquals(new Bits(0), new Bits(0));
+    Assert.assertEquals("", new Bits(0).toBitString());
+    Assert.assertEquals("1", new Bits(1).toBitString());
+    Assert.assertEquals("100", new Bits(4).toBitString());
+    Assert.assertEquals("10001", new Bits(17).toBitString());
+    Assert.assertEquals("100", new Bits(17).range(0, 3).toBitString());
+    Assert.assertEquals("01", new Bits(17).range(3).toBitString());
+    Assert.assertEquals("111", new Bits(7).toBitString());
+    Assert.assertEquals("10111", new Bits(2).concatenate(new Bits(7)).toBitString());
+    Assert.assertEquals("00110", new Bits(6l, 5).toBitString());
+    Assert.assertEquals("111000000", new Bits(7l).leftShift(6).toBitString());
+    Assert.assertEquals("1110", new Bits(7l).leftShift(6).range(0, 4).toBitString());
+    Assert.assertEquals("00000", new Bits(7l).leftShift(6).range(4).toBitString());
+    Assert.assertEquals("110", new Bits(6l).toBitString());
+    Assert.assertEquals("11100", new Bits(7l).leftShift(2).toBitString());
+    Assert.assertEquals("11000", new Bits(7l).leftShift(2).bitwiseAnd(new Bits(6l)).toBitString());
+    Assert.assertEquals("11100", new Bits(7l).leftShift(2).bitwiseOr(new Bits(6l)).toBitString());
+    Assert.assertEquals("00100", new Bits(7l).leftShift(2).bitwiseXor(new Bits(6l)).toBitString());
+    Assert.assertEquals(2, new Bits(7l, 16).getBytes().length);
   }
 
   @Test
@@ -166,7 +165,7 @@ public class BitsTest {
     final Bits bitsA = new Bits(a);
     final Bits bitsB = new Bits(b);
     final Bits bits = bitsA.concatenate(bitsB);
-    RefAssert.assertEquals(RefString.format("Concatenate %s and %s", a, b), asString, bits.toBitString());
+    Assert.assertEquals(String.format("Concatenate %s and %s", a, b), asString, bits.toBitString());
   }
 
   private void testFixedLength(final long value) {
@@ -175,8 +174,8 @@ public class BitsTest {
     while (asString.length() < 64) {
       asString = "0" + asString;
     }
-    RefAssert.assertEquals("toLong for " + value, value, bits.toLong());
-    RefAssert.assertEquals("toString for " + value, asString, bits.toBitString());
+    Assert.assertEquals("toLong for " + value, value, bits.toLong());
+    Assert.assertEquals("toString for " + value, asString, bits.toBitString());
   }
 
   private void testSubrange(@Nonnull final Bits bits) {
@@ -191,14 +190,14 @@ public class BitsTest {
   private void testSubrange(@Nonnull final Bits bits, @Nonnull final String asString, final int from, final int to) {
     final CharSequence subStr = asString.substring(from, to);
     final Bits subBits = bits.range(from, to - from);
-    RefAssert.assertEquals(RefString.format("Substring (%s,%s) of %s", from, to, bits), subStr, subBits.toBitString());
+    Assert.assertEquals(String.format("Substring (%s,%s) of %s", from, to, bits), subStr, subBits.toBitString());
   }
 
   private void testToString(final long value) {
     final CharSequence asString = 0 == value ? "" : Long.toBinaryString(value);
     final Bits bits = new Bits(value);
-    RefAssert.assertEquals("toLong for " + value, value, bits.toLong());
-    RefAssert.assertEquals("toString for " + value, asString, bits.toBitString());
+    Assert.assertEquals("toLong for " + value, value, bits.toLong());
+    Assert.assertEquals("toString for " + value, asString, bits.toBitString());
   }
 
 }

@@ -19,9 +19,6 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.wrappers.RefString;
-import com.simiacryptus.ref.wrappers.RefStringBuilder;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -71,7 +68,7 @@ public class NodewalkerCodec {
       Bits bits = encoder.fromNode.bitsTo(encoder.node);
       short count = (short) (encoder.node.getDepth() - encoder.fromNode.getDepth());
       if (verbose != null) {
-        verbose.println(RefString.format("Writing %s forward from %s to %s = %s", count,
+        verbose.println(String.format("Writing %s forward from %s to %s = %s", count,
             encoder.fromNode.getDebugString(), encoder.node.getDebugString(), bits));
       }
       encoder.out.writeVarShort(count, 3);
@@ -96,7 +93,7 @@ public class NodewalkerCodec {
       String str = toNode.getString(decoder.node);
       Bits bits = interval.toBits();
       if (verbose != null) {
-        verbose.println(RefString.format("Read %s forward from %s to %s = %s", numberOfTokens,
+        verbose.println(String.format("Read %s forward from %s to %s = %s", numberOfTokens,
             decoder.node.getDebugString(), toNode.getDebugString(), bits));
       }
       decoder.in.expect(bits);
@@ -136,7 +133,7 @@ public class NodewalkerCodec {
     short backupSteps = (short) (encoder.fromNode.getDepth() - (null == encoder.node ? -1 : encoder.node.getDepth()));
     assert backupSteps >= 0;
     if (verbose != null) {
-      verbose.println(RefString.format("Backing up %s from from %s to %s", backupSteps,
+      verbose.println(String.format("Backing up %s from from %s to %s", backupSteps,
           encoder.fromNode.getDebugString(), null == encoder.node ? null : encoder.node.getDebugString()));
     }
     encoder.out.writeVarShort(backupSteps, 3);
@@ -154,7 +151,7 @@ public class NodewalkerCodec {
     }
     if (verbose != null) {
       assert fromNode != null;
-      verbose.println(RefString.format("Backing up %s from from %s to %s", numberOfBackupSteps,
+      verbose.println(String.format("Backing up %s from from %s to %s", numberOfBackupSteps,
           fromNode.getDebugString(), null == decoder.node ? null : decoder.node.getDebugString()));
     }
     return false;
@@ -164,7 +161,7 @@ public class NodewalkerCodec {
     if (verbose != null) {
       assert encoder.node != null;
       assert encoder.fromNode != null;
-      verbose.println(RefString.format("Writing forward to end from %s to %s", encoder.fromNode.getDebugString(),
+      verbose.println(String.format("Writing forward to end from %s to %s", encoder.fromNode.getDebugString(),
           encoder.node.getDebugString()));
     }
     assert encoder.fromNode != null;
@@ -179,7 +176,7 @@ public class NodewalkerCodec {
     protected int context;
     protected BitInputStream in;
     @Nonnull
-    protected RefStringBuilder out = new RefStringBuilder();
+    protected StringBuilder out = new StringBuilder();
     @Nullable
     protected TrieNode node = inner.root();
 
@@ -196,7 +193,7 @@ public class NodewalkerCodec {
             char c = in.readChar();
             out.append(c);
             if (verbose != null)
-              verbose.println(RefString.format("Literal token %s", c));
+              verbose.println(String.format("Literal token %s", c));
             node = inner.root();
           }
           readForward(this);
@@ -241,22 +238,21 @@ public class NodewalkerCodec {
             child = writeBackup(this, token);
             if (null == node) {
               if (verbose != null)
-                verbose.println(RefString.format("Literal token %s", token));
+                verbose.println(String.format("Literal token %s", token));
               out.write(token);
               fromNode = inner.root();
               node = fromNode;
             } else {
               fromNode = node;
-              node = RefUtil.get(child);
+              node = child.get();
             }
           } else {
-            node = RefUtil.get(child);
+            node = child.get();
           }
         }
         writeTerminal(this);
         out.flush();
-        Bits bits = new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
-        return bits;
+        return new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
       } catch (IOException e) {
         throw new RuntimeException(e);
       }

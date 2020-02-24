@@ -19,10 +19,8 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.wrappers.RefCollectors;
-import com.simiacryptus.ref.wrappers.RefIntStream;
 import com.simiacryptus.util.data.SerialArrayList;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class CharTrieIndex extends CharTrie {
 
@@ -73,7 +74,12 @@ public class CharTrieIndex extends CharTrie {
   }
 
   @Nonnull
-  private static CharTrie create(@Nonnull Collection<CharSequence> documents, int maxLevels, int minWeight, boolean words) {
+  public static CharTrie create(@Nonnull Collection<CharSequence> documents, int maxLevels, int minWeight, boolean words) {
+    return create(documents, maxLevels, minWeight, getCursorInit(words));
+  }
+
+  @Nonnull
+  public static CharTrie create(@Nonnull Collection<CharSequence> documents, int maxLevels, int minWeight, @NotNull Function<CharSequence, IntStream> cursorSeeds) {
     List<List<CharSequence>> a = new ArrayList<>();
     List<CharSequence> b = new ArrayList<>();
     int blockSize = 1024 * 1024;
@@ -85,18 +91,25 @@ public class CharTrieIndex extends CharTrie {
       }
     }
     a.add(b);
-    return RefUtil.get(a.parallelStream().map(list -> {
+    return a.parallelStream().map(list -> {
       CharTrieIndex trie = new CharTrieIndex();
       list.forEach(s -> {
-        if (words) {
-          trie.addDictionary(s);
-        } else {
-          trie.addDocument(s);
-        }
+        trie.addDocument(s, cursorSeeds.apply(s));
       });
       trie.index(maxLevels, minWeight);
       return (CharTrie) trie;
-    }).reduce((l, r) -> l.add(r)));
+    }).reduce((l, r) -> l.add(r)).get();
+  }
+
+  @NotNull
+  public static Function<CharSequence, IntStream> getCursorInit(boolean words) {
+    Function<CharSequence, IntStream> cursorSeeds;
+    if (words) {
+      cursorSeeds = doc->IntStream.range(0, 1);
+    } else {
+      cursorSeeds = doc->IntStream.range(0, doc.length() + 1);
+    }
+    return cursorSeeds;
   }
 
   @Nonnull
@@ -142,20 +155,14 @@ public class CharTrieIndex extends CharTrie {
   }
 
   public int addDictionary(CharSequence document) {
-    if (root().getNumberOfChildren() >= 0) {
-      throw new IllegalStateException("Tree sorting has begun");
-    }
-    final int index;
-    synchronized (this) {
-      index = documents.size();
-      documents.add(document);
-    }
-    cursors.addAll(RefIntStream.range(0, 1).mapToObj(i -> new CursorData(index, i)).collect(RefCollectors.toList()));
-    nodes.update(0, node -> node.setCursorCount(cursors.length()));
-    return index;
+    return addDocument(document, IntStream.range(0, 1));
   }
 
   public int addDocument(@Nonnull CharSequence document) {
+    return addDocument(document, IntStream.range(0, document.length() + 1));
+  }
+
+  public int addDocument(@Nonnull CharSequence document, IntStream cursorSeeds) {
     if (root().getNumberOfChildren() >= 0) {
       throw new IllegalStateException("Tree sorting has begun");
     }
@@ -164,8 +171,8 @@ public class CharTrieIndex extends CharTrie {
       index = documents.size();
       documents.add(document);
     }
-    cursors.addAll(RefIntStream.range(0, document.length() + 1).mapToObj(i -> new CursorData(index, i))
-        .collect(RefCollectors.toList()));
+    cursors.addAll(cursorSeeds.mapToObj(i -> new CursorData(index, i))
+        .collect(Collectors.toList()));
     nodes.update(0, node -> node.setCursorCount(cursors.length()));
     return index;
   }

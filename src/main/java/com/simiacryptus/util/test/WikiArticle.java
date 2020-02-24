@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.wrappers.*;
+import com.simiacryptus.ref.wrappers.RefList;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.DataLoader;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
@@ -33,6 +33,9 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -77,9 +80,9 @@ public class WikiArticle extends TestDocument {
             @Nonnull
             Stack<CharSequence> prefix = new Stack<CharSequence>();
             @Nonnull
-            Stack<RefMap<CharSequence, AtomicInteger>> indexes = new Stack<RefMap<CharSequence, AtomicInteger>>();
+            Stack<Map<CharSequence, AtomicInteger>> indexes = new Stack<Map<CharSequence, AtomicInteger>>();
             @Nonnull
-            RefStringBuilder nodeString = new RefStringBuilder();
+            StringBuilder nodeString = new StringBuilder();
             @Nullable
             private String title;
 
@@ -107,14 +110,14 @@ public class WikiArticle extends TestDocument {
 
               final int length = this.nodeString.length();
               String text = this.nodeString.toString().trim();
-              this.nodeString = new RefStringBuilder();
+              this.nodeString = new StringBuilder();
 
               if ("page".equals(qName)) {
                 this.title = null;
               } else if ("title".equals(qName)) {
                 this.title = text;
               } else if ("text".equals(qName)) {
-                //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Read #%s - %s", queue.size(), this.title));
+                //com.simiacryptus.ref.wrappers.System.p.println(String.format("Read #%s - %s", queue.size(), this.title));
                 queue.add(new WikiArticle(this.title, text));
                 if (queue.size() > articleLimit) {
                   throw new RuntimeException(new InterruptedException());
@@ -136,7 +139,7 @@ public class WikiArticle extends TestDocument {
               }
               int idx;
               if (0 < this.indexes.size()) {
-                final RefMap<CharSequence, AtomicInteger> index = this.indexes.peek();
+                final Map<CharSequence, AtomicInteger> index = this.indexes.peek();
                 AtomicInteger cnt = index.get(qName);
                 if (null == cnt) {
                   cnt = new AtomicInteger(-1);
@@ -151,7 +154,7 @@ public class WikiArticle extends TestDocument {
                 path += "[" + idx + "]";
               }
               this.prefix.push(path);
-              this.indexes.push(new RefHashMap<CharSequence, AtomicInteger>());
+              this.indexes.push(new HashMap<CharSequence, AtomicInteger>());
               super.startElement(uri, localName, qName, attributes);
             }
           }, null);
@@ -162,7 +165,7 @@ public class WikiArticle extends TestDocument {
       } catch (@Nonnull final Exception e) {
         e.printStackTrace();
       } finally {
-        RefSystem.err.println("Read thread exit");
+        System.err.println("Read thread exit");
       }
     }
   }

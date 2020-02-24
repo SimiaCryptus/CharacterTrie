@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.wrappers.RefStringBuilder;
 import com.simiacryptus.text.CompressionUtil;
 
 import javax.annotation.Nonnull;
@@ -46,7 +45,7 @@ public class TestDocument {
 
   @Override
   public String toString() {
-    final RefStringBuilder sb = new RefStringBuilder(
+    final StringBuilder sb = new StringBuilder(
         getClass().getSimpleName() + "{");
     sb.append("title='").append(getTitle()).append('\'');
     sb.append('}');

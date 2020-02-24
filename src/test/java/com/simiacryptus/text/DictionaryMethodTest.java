@@ -22,16 +22,16 @@ package com.simiacryptus.text;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
-import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.test.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DictionaryMethodTest {
 
@@ -76,30 +76,30 @@ public class DictionaryMethodTest {
     tree.index(8, 0).getGenerator().generateDictionary(16 * 1024, 8, "", 3, true, false);
   }
 
-  private void test(@Nonnull NotebookOutput log, @Nonnull Supplier<RefStream<? extends TestDocument>> source, int modelCount) {
+  private void test(@Nonnull NotebookOutput log, @Nonnull Supplier<Stream<? extends TestDocument>> source, int modelCount) {
     CharTrieIndex baseTree = new CharTrieIndex();
     source.get().limit(modelCount).forEach(txt -> baseTree.addDocument(txt.getText()));
-    RefMap<CharSequence, Compressor> compressors = new RefLinkedHashMap<>();
+    Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
     addCompressors(log, compressors, baseTree, 4, 2, 3);
     addCompressors(log, compressors, baseTree, 5, 2, 3);
     addCompressors(log, compressors, baseTree, 6, 2, 3);
-    RefStream<TestDocument> limit = source.get().limit(modelCount).map(x -> x);
-    addWordCountCompressor(log, compressors, limit.collect(RefCollectors.toList()));
+    Stream<TestDocument> limit = source.get().limit(modelCount).map(x -> x);
+    addWordCountCompressor(log, compressors, limit.collect(Collectors.toList()));
     Compressor.addGenericCompressors(compressors);
     TableOutput output = Compressor.evalCompressor(source.get().skip(modelCount), compressors, true);
     //log.p(output.toTextTable());
     log.p(output.calcNumberStats().toCSV(true));
   }
 
-  private void addWordCountCompressor(@Nonnull NotebookOutput log, @Nonnull RefMap<CharSequence, Compressor> compressors,
-                                      @Nonnull RefList<? extends TestDocument> content) {
-    RefMap<CharSequence, Long> wordCounts = content.stream()
-        .flatMap(c -> RefArrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +"))).map(s -> s.trim())
-        .filter(s -> !s.isEmpty()).collect(RefCollectors.groupingBy(x -> x, RefCollectors.counting()));
-    CharSequence dictionary = RefUtil.get(wordCounts.entrySet().stream()
-        .sorted(RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
-            .thenComparing(RefComparator.comparingLong(e -> -e.getKey().length())))
-        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b)).subSequence(0, 8 * 1024);
+  private void addWordCountCompressor(@Nonnull NotebookOutput log, @Nonnull Map<CharSequence, Compressor> compressors,
+                                      @Nonnull List<? extends TestDocument> content) {
+    Map<CharSequence, Long> wordCounts = content.stream()
+        .flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +"))).map(s -> s.trim())
+        .filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+    CharSequence dictionary = wordCounts.entrySet().stream()
+        .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
+            .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
+        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, 8 * 1024);
     CharSequence key = "LZ8k_commonWords";
     int dictSampleSize = 512;
     log.p("Common Words Dictionary %s: %s...\n", key,
@@ -119,12 +119,12 @@ public class DictionaryMethodTest {
     });
   }
 
-  private void addCompressors(@Nonnull NotebookOutput log, @Nonnull RefMap<CharSequence, Compressor> compressors, @Nonnull CharTrieIndex baseTree,
+  private void addCompressors(@Nonnull NotebookOutput log, @Nonnull Map<CharSequence, Compressor> compressors, @Nonnull CharTrieIndex baseTree,
                               final int dictionary_context, final int dictionary_lookahead, int model_minPathWeight) {
     CharTrie dictionaryTree = baseTree.copy().index(dictionary_context + dictionary_lookahead, model_minPathWeight);
     String genDictionary = dictionaryTree.copy().getGenerator().generateDictionary(8 * 1024, dictionary_context, "",
         dictionary_lookahead, true);
-    CharSequence keyDictionary = RefString.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context,
+    CharSequence keyDictionary = String.format("LZ8k_%s_%s_%s_generateDictionary", dictionary_context,
         dictionary_lookahead, model_minPathWeight);
     int dictSampleSize = 512;
     log.p("Adding Compressor %s: %s...\n", keyDictionary,
@@ -144,7 +144,7 @@ public class DictionaryMethodTest {
       }
     });
     String genMarkov = dictionaryTree.copy().getGenerator().generateMarkov(8 * 1024, dictionary_context, "");
-    CharSequence keyMarkov = RefString.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead,
+    CharSequence keyMarkov = String.format("LZ8k_%s_%s_%s_generateMarkov", dictionary_context, dictionary_lookahead,
         model_minPathWeight);
     assert genMarkov != null;
     log.p("Adding Compressor %s: %s...\n", keyMarkov,

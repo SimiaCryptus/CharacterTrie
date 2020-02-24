@@ -20,9 +20,6 @@
 package com.simiacryptus.text;
 
 import com.google.common.collect.Iterators;
-import com.simiacryptus.ref.wrappers.RefArrays;
-import com.simiacryptus.ref.wrappers.RefStringBuilder;
-import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.data.SerialArrayList;
 
 import javax.annotation.Nonnull;
@@ -55,9 +52,9 @@ public class CharTrie {
   public CharTrie(@Nonnull CharTrie charTrie) {
     this(charTrie.nodes.copy());
     this.parentIndex = null == charTrie.parentIndex ? null
-        : RefArrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
+        : Arrays.copyOf(charTrie.parentIndex, charTrie.parentIndex.length);
     this.godparentIndex = null == charTrie.godparentIndex ? null
-        : RefArrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
+        : Arrays.copyOf(charTrie.godparentIndex, charTrie.godparentIndex.length);
   }
 
   @Nonnull
@@ -266,11 +263,11 @@ public class CharTrie {
     parentIndex = new int[getNodeCount()];
     Arrays.fill(godparentIndex, 0, godparentIndex.length, -1);
     Arrays.fill(parentIndex, 0, parentIndex.length, -1);
-    RefSystem.gc();
+    System.gc();
     recomputeCursorTotals(root());
-    RefSystem.gc();
+    System.gc();
     recomputeCursorPositions(root(), 0);
-    RefSystem.gc();
+    System.gc();
     return this;
   }
 
@@ -280,7 +277,7 @@ public class CharTrie {
   }
 
   private void reverseSubtree(@Nonnull TreeMap<Character, ? extends TrieNode> childrenMap, @Nonnull TrieNode destination) {
-    String suffix = new RefStringBuilder(destination.getRawString()).reverse().toString();
+    String suffix = new StringBuilder(destination.getRawString()).reverse().toString();
     TreeMap<Character, Long> children = new TreeMap<>();
     childrenMap.forEach((token, node) -> {
       TrieNode analog = node.traverse(suffix);

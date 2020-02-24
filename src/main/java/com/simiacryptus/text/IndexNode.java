@@ -19,13 +19,16 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.data.SerialArrayList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 public class IndexNode extends TrieNode {
 
@@ -39,38 +42,38 @@ public class IndexNode extends TrieNode {
 
   @Nonnull
   @Override
-  public RefStream<? extends IndexNode> getChildren() {
+  public Stream<? extends IndexNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
-      return RefIntStream.range(0, getData().numberOfChildren)
+      return IntStream.range(0, getData().numberOfChildren)
           .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
     } else {
-      return RefStream.empty();
+      return Stream.empty();
     }
   }
 
   @Nonnull
-  public RefStream<Cursor> getCursors() {
-    return RefLongStream.range(0, getData().cursorCount).mapToObj(i -> {
+  public Stream<Cursor> getCursors() {
+    return LongStream.range(0, getData().cursorCount).mapToObj(i -> {
       return new Cursor((CharTrieIndex) this.trie,
           ((CharTrieIndex) this.trie).cursors.get((int) (i + getData().firstCursorIndex)), getDepth());
     });
   }
 
-  public RefMap<CharSequence, RefList<Cursor>> getCursorsByDocument() {
-    return this.getCursors().collect(RefCollectors.groupingBy((Cursor x) -> x.getDocument()));
+  public Map<CharSequence, List<Cursor>> getCursorsByDocument() {
+    return this.getCursors().collect(Collectors.groupingBy((Cursor x) -> x.getDocument()));
   }
 
   @Nullable
   public TrieNode split() {
     if (getData().firstChildIndex < 0) {
-      RefTreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new RefTreeMap<>(getCursors().parallel()
-          .collect(RefCollectors.groupingBy(y -> y.next().getToken(),
-              RefCollectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
+      TreeMap<Character, SerialArrayList<CursorData>> sortedChildren = new TreeMap<>(getCursors().parallel()
+          .collect(Collectors.groupingBy(y -> y.next().getToken(),
+              Collectors.reducing(new SerialArrayList<>(CursorType.INSTANCE, 0),
                   cursor -> new SerialArrayList<>(CursorType.INSTANCE, cursor.data),
                   (left, right) -> left.add(right)))));
       long cursorWriteIndex = getData().firstCursorIndex;
-      //com.simiacryptus.ref.wrappers.RefSystem.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
-      RefArrayList<NodeData> childNodes = new RefArrayList<>(sortedChildren.size());
+      //com.simiacryptus.ref.wrappers.System.err.println(String.format("Splitting %s into children: %s", getDebugString(), sortedChildren.keySet()));
+      ArrayList<NodeData> childNodes = new ArrayList<>(sortedChildren.size());
       for (Map.Entry<Character, SerialArrayList<CursorData>> e : sortedChildren.entrySet()) {
         int length = e.getValue().length();
         ((CharTrieIndex) this.trie).cursors.putAll(e.getValue(), (int) cursorWriteIndex);
@@ -102,7 +105,7 @@ public class IndexNode extends TrieNode {
   }
 
   @Nonnull
-  public IndexNode visitFirstIndex(@Nonnull RefConsumer<? super IndexNode> visitor) {
+  public IndexNode visitFirstIndex(@Nonnull Consumer<? super IndexNode> visitor) {
     visitor.accept(this);
     IndexNode refresh = refresh();
     refresh.getChildren().forEach(n -> n.visitFirstIndex(visitor));
@@ -110,7 +113,7 @@ public class IndexNode extends TrieNode {
   }
 
   @Nonnull
-  public IndexNode visitLastIndex(@Nonnull RefConsumer<? super IndexNode> visitor) {
+  public IndexNode visitLastIndex(@Nonnull Consumer<? super IndexNode> visitor) {
     getChildren().forEach(n -> n.visitLastIndex(visitor));
     visitor.accept(this);
     return refresh();

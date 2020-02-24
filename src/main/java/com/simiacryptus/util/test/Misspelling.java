@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.Util;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -103,7 +102,7 @@ public class Misspelling extends TestDocument {
       } catch (@Nonnull final Exception e) {
         e.printStackTrace();
       } finally {
-        RefSystem.err.println("Read thread exit");
+        System.err.println("Read thread exit");
       }
     }
   }

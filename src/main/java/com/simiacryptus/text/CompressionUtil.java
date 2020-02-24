@@ -22,7 +22,6 @@ package com.simiacryptus.text;
 import com.davidehrmann.vcdiff.VCDiffDecoderBuilder;
 import com.davidehrmann.vcdiff.VCDiffEncoder;
 import com.davidehrmann.vcdiff.VCDiffEncoderBuilder;
-import com.simiacryptus.ref.wrappers.RefArrays;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
@@ -30,6 +29,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -70,7 +70,7 @@ public class CompressionUtil {
     compresser.finish();
     int compressedDataLength = compresser.deflate(output);
     compresser.end();
-    return RefArrays.copyOf(output, compressedDataLength);
+    return Arrays.copyOf(output, compressedDataLength);
   }
 
   @Nonnull
@@ -90,7 +90,7 @@ public class CompressionUtil {
       }
       resultLength = decompresser.inflate(result);
       decompresser.end();
-      return RefArrays.copyOfRange(result, 0, resultLength);
+      return Arrays.copyOfRange(result, 0, resultLength);
     } catch (@Nonnull DataFormatException | UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
@@ -146,9 +146,8 @@ public class CompressionUtil {
   @Nonnull
   public static byte[] encodeBZ(@Nonnull String data) {
     try {
-      byte[] bytes = encodeBZ(data.getBytes("UTF-8"));
       //assert(data.equals(decodeBZ(bytes)));
-      return bytes;
+      return encodeBZ(data.getBytes("UTF-8"));
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
@@ -162,8 +161,7 @@ public class CompressionUtil {
       BZip2CompressorOutputStream compresser = new BZip2CompressorOutputStream(output, blockSize);
       compresser.write(data);
       compresser.close();
-      byte[] bytes = output.toByteArray();
-      return bytes;
+      return output.toByteArray();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -184,9 +182,8 @@ public class CompressionUtil {
   @Nonnull
   public static byte[] encodeBZ(@Nonnull String data, @Nonnull String dictionary) {
     try {
-      byte[] bytes = encodeBZ(data.getBytes("UTF-8"), dictionary);
       //assert(data.equals(decodeBZ(bytes, dictionary)));
-      return bytes;
+      return encodeBZ(data.getBytes("UTF-8"), dictionary);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

@@ -19,13 +19,12 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.wrappers.RefArrays;
-import com.simiacryptus.ref.wrappers.RefComparator;
 import org.apache.commons.compress.utils.IOUtils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public enum LanguageModel {
   English("English.trie"), French("French.trie"), German("German.trie");
@@ -56,9 +55,9 @@ public enum LanguageModel {
 
   @Nonnull
   public static LanguageModel match(@Nonnull String text) {
-    return RefUtil.get(RefArrays.stream(LanguageModel.values())
-        .min(RefComparator
-            .comparing(model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength)));
+    return Arrays.stream(LanguageModel.values())
+        .min(Comparator
+            .comparing(model -> model.getTrie().getCodec().encodePPM(text, 2).bitLength)).get();
   }
 
 }

@@ -21,30 +21,33 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.lang.TimedResult;
 import com.simiacryptus.notebook.TableOutput;
-import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.test.TestDocument;
 
 import javax.annotation.Nonnull;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface Compressor {
   @Nonnull
-  static <T> TableOutput evalCompressor(@Nonnull RefStream<? extends TestDocument> data,
-                                        @Nonnull RefMap<CharSequence, Compressor> compressors, boolean wide) {
+  static <T> TableOutput evalCompressor(@Nonnull Stream<? extends TestDocument> data,
+                                        @Nonnull Map<CharSequence, Compressor> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
     data.parallel().forEach(item -> {
-      RefMap<CharSequence, Object> rowWide = new RefLinkedHashMap<>();
+      Map<CharSequence, Object> rowWide = new LinkedHashMap<>();
       String title = item.getTitle().toString().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach(e -> {
         try {
           CharSequence name = e.getKey();
           Compressor compressor = e.getValue();
-          RefMap<CharSequence, Object> rowTall = new RefLinkedHashMap<>();
+          Map<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
 
@@ -62,7 +65,7 @@ public interface Compressor {
           rowWide.put(name + ".verified", uncompress.getResult().equals(item.getText()));
           rowTall.put("verified", uncompress.getResult().equals(item.getText()));
           tallTable.putRow(rowTall);
-          //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Evaluated #%s: %s apply %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
+          //com.simiacryptus.ref.wrappers.System.p.println(String.format("Evaluated #%s: %s apply %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }
@@ -73,10 +76,10 @@ public interface Compressor {
   }
 
   @Nonnull
-  static <T> TableOutput evalCompressorCluster(@Nonnull RefStream<? extends TestDocument> data,
-                                               @Nonnull RefMap<CharSequence, Compressor> compressors, boolean wide) {
-    RefStream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet().stream();
-    RefCollectors.RefCollector<Map.Entry<CharSequence, Compressor>, ?, RefMap<CharSequence, Function<TestDocument, Double>>> collector = RefCollectors
+  static <T> TableOutput evalCompressorCluster(@Nonnull Stream<? extends TestDocument> data,
+                                               @Nonnull Map<CharSequence, Compressor> compressors, boolean wide) {
+    Stream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet().stream();
+    Collector<Map.Entry<CharSequence, Compressor>, ?, Map<CharSequence, Function<TestDocument, Double>>> collector = Collectors
         .toMap(e -> e.getKey(), e -> {
           Compressor value = e.getValue();
           return x -> value.compress(x.getText()).length * 1.0 / x.getText().length();
@@ -85,20 +88,20 @@ public interface Compressor {
   }
 
   @Nonnull
-  static <T> TableOutput evalCluster(@Nonnull RefStream<? extends TestDocument> data,
-                                     @Nonnull RefMap<CharSequence, Function<TestDocument, Double>> compressors, boolean wide) {
+  static <T> TableOutput evalCluster(@Nonnull Stream<? extends TestDocument> data,
+                                     @Nonnull Map<CharSequence, Function<TestDocument, Double>> compressors, boolean wide) {
     TableOutput wideTable = new TableOutput();
     TableOutput tallTable = new TableOutput();
     AtomicInteger index = new AtomicInteger(0);
     data.parallel().forEach(item -> {
-      RefMap<CharSequence, Object> rowWide = new RefLinkedHashMap<>();
+      Map<CharSequence, Object> rowWide = new LinkedHashMap<>();
       String title = item.getTitle().toString().replaceAll("\0", "").replaceAll("\n", "\\n");
       rowWide.put("title", title);
       compressors.entrySet().parallelStream().forEach(e -> {
         try {
           CharSequence name = e.getKey();
           Function<TestDocument, Double> compressor = e.getValue();
-          RefMap<CharSequence, Object> rowTall = new RefLinkedHashMap<>();
+          Map<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
 
@@ -109,8 +112,8 @@ public interface Compressor {
           //          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           //          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
           tallTable.putRow(rowTall);
-          RefSystem.out.println(
-              RefString.format("Evaluated #%s: %s apply %s - %s chars -> %s in %s sec", index.incrementAndGet(), name,
+          System.out.println(
+              String.format("Evaluated #%s: %s apply %s - %s chars -> %s in %s sec", index.incrementAndGet(), name,
                   title, item.getText().length(), compress.getResult(), compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
@@ -121,7 +124,7 @@ public interface Compressor {
     return wide ? wideTable : tallTable;
   }
 
-  static void addGenericCompressors(@Nonnull RefMap<CharSequence, Compressor> compressors) {
+  static void addGenericCompressors(@Nonnull Map<CharSequence, Compressor> compressors) {
     compressors.put("BZ0", new Compressor() {
       @Nonnull
       @Override
@@ -153,8 +156,8 @@ public interface Compressor {
   @Nonnull
   static Compressor buildPPMCompressor(@Nonnull CharTrie baseTree, final int encodingContext) {
     NodewalkerCodec codec = baseTree.getCodec();
-    RefSystem.out
-        .println(RefString.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
+    System.out
+        .println(String.format("Encoding Tree Memory Size = %s KB", codec.inner.getMemorySize() / 1024));
     return new Compressor() {
       @Nonnull
       @Override

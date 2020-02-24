@@ -19,18 +19,18 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.wrappers.RefStream;
 import com.simiacryptus.util.test.EnglishWords;
 import com.simiacryptus.util.test.TestDocument;
 
 import javax.annotation.Nonnull;
+import java.util.stream.Stream;
 
 public class TermMetaTest {
   int testCount = 1000;
   int modelCount = 15000;
 
   @Nonnull
-  protected RefStream<? extends TestDocument> source() {
+  protected Stream<? extends TestDocument> source() {
     return EnglishWords.load().limit(modelCount + testCount);
   }
 
@@ -46,7 +46,7 @@ public class TermMetaTest {
   //    CharTrieIndex baseTree = new CharTrieIndex();
   //    log.p("Preparing %s documents", modelCount);
   //    source().limit(modelCount).forEach(txt -> {
-  //      //com.simiacryptus.ref.wrappers.RefSystem.p.println(String.format("Adding %s", txt.title));
+  //      //com.simiacryptus.ref.wrappers.System.p.println(String.format("Adding %s", txt.title));
   //      baseTree.addDocument(txt.getText());
   //    });
   //    log.p("Indexing %s KB of documents", baseTree.getIndexedSize() / 1024);

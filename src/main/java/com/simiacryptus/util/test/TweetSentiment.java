@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.wrappers.*;
+import com.simiacryptus.ref.wrappers.RefArrayList;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 
@@ -30,12 +30,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class TweetSentiment extends TestDocument {
-  private static final RefArrayList<TweetSentiment> queue = new RefArrayList<>();
+  private static final ArrayList<TweetSentiment> queue = new ArrayList<>();
   @Nonnull
   public static String url = "http://thinknook.com/wp-content/uploads/2012/09/Sentiment-Analysis-Dataset.zip";
   @Nonnull
@@ -63,7 +68,7 @@ public class TweetSentiment extends TestDocument {
   }
 
   @Nonnull
-  public static RefStream<TweetSentiment> load() {
+  public static Stream<TweetSentiment> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
@@ -73,8 +78,8 @@ public class TweetSentiment extends TestDocument {
         }
       }
     }
-    RefIteratorBase<TweetSentiment> iterator = new AsyncListIterator<>(queue, thread);
-    return RefStreamSupport.stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
+    Iterator<TweetSentiment> iterator = new AsyncListIterator<TweetSentiment>(new RefArrayList<>(queue), thread);
+    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
         .filter(x -> x != null);
   }
 

@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.wrappers.*;
+import com.simiacryptus.ref.wrappers.RefArrayList;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
@@ -29,10 +29,13 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Spliterator;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class EnglishWords extends TestDocument {
-  private static final RefArrayList<EnglishWords> queue = new RefArrayList<>();
+  private static final ArrayList<EnglishWords> queue = new ArrayList<>();
   @Nonnull
   public static String url = "https://raw.githubusercontent.com/first20hours/google-10000-english/master/20k.txt";
   @Nonnull
@@ -58,7 +61,7 @@ public class EnglishWords extends TestDocument {
   }
 
   @Nonnull
-  public static RefStream<EnglishWords> load() {
+  public static Stream<EnglishWords> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
@@ -68,8 +71,8 @@ public class EnglishWords extends TestDocument {
         }
       }
     }
-    RefIteratorBase<EnglishWords> iterator = new AsyncListIterator<>(queue, thread);
-    return RefStreamSupport.stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
+    Iterator<EnglishWords> iterator = new AsyncListIterator<>(new RefArrayList<>(queue), thread);
+    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
         .filter(x -> x != null);
   }
 
@@ -77,9 +80,9 @@ public class EnglishWords extends TestDocument {
     try {
       InputStream in = Util.cacheLocal(file, new URI(url));
       String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
-      RefList<CharSequence> list = RefArrays.stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", ""))
-          .collect(RefCollectors.toList());
-      RefCollections.shuffle(list);
+      List<CharSequence> list = Arrays.stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", ""))
+          .collect(Collectors.toList());
+      Collections.shuffle(list);
       for (CharSequence paragraph : list) {
         queue.add(new EnglishWords(paragraph));
       }

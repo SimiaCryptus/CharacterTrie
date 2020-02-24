@@ -20,12 +20,11 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.TableOutput;
-import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.data.DoubleStatistics;
 import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -35,9 +34,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class TrieTest {
   public static final File outPath = new File("src/site/resources/");
@@ -52,30 +52,30 @@ public class TrieTest {
     }
   }
 
-  private static void testRow(int maxLevels, int minWeight, @Nonnull RefStream<CharSequence> documents) {
+  private static void testRow(int maxLevels, int minWeight, @Nonnull Stream<CharSequence> documents) {
     CharTrieIndex tree = new CharTrieIndex();
-    long startTime = RefSystem.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
     documents.forEach(i -> tree.addDocument(i));
     tree.index(maxLevels, minWeight);
-    long elapsed = RefSystem.currentTimeMillis() - startTime;
-    RefSystem.out.println(
-        RefString.format("%s\t%s\t%s KB\t%s sec\t%s KB\t%s KB", maxLevels, minWeight, tree.getIndexedSize() / 1024,
+    long elapsed = System.currentTimeMillis() - startTime;
+    System.out.println(
+        String.format("%s\t%s\t%s KB\t%s sec\t%s KB\t%s KB", maxLevels, minWeight, tree.getIndexedSize() / 1024,
             elapsed / 1000., tree.getMemorySize() / 1024, tree.truncate().getMemorySize() / 1024));
   }
 
   @Nonnull
-  private static RefMap<CharSequence, Object> evaluateDictionary(@Nonnull RefList<CharSequence> sentances,
-                                                                 @Nonnull CharSequence dictionary, @Nonnull RefMap<CharSequence, Object> map) {
-    RefArrays.asList(1, 4, 16, 32).stream().forEach(k -> {
+  private static Map<CharSequence, Object> evaluateDictionary(@Nonnull List<CharSequence> sentances,
+                                                                 @Nonnull CharSequence dictionary, @Nonnull Map<CharSequence, Object> map) {
+    Arrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
         int length0 = CompressionUtil.encodeLZ(line, "").length;
         int lengthK = CompressionUtil.encodeLZ(line,
             dictionary.subSequence(0, Math.min(k * 1024, dictionary.length())).toString()).length;
         return (length0 - lengthK) * 1.0;
       }).collect(DoubleStatistics.COLLECTOR);
-      map.put(RefString.format("%sk.sum", k), (int) statistics.getSum() / 1024);
-      map.put(RefString.format("%sk.avg", k), (int) statistics.getAverage());
-      map.put(RefString.format("%sk.stddev", k), (int) statistics.getStandardDeviation());
+      map.put(String.format("%sk.sum", k), (int) statistics.getSum() / 1024);
+      map.put(String.format("%sk.avg", k), (int) statistics.getAverage());
+      map.put(String.format("%sk.stddev", k), (int) statistics.getStandardDeviation());
     });
     return map;
   }
@@ -87,34 +87,34 @@ public class TrieTest {
     tree.addDocument("a quick brown fox jumped over the lazy dog");
     tree.addDocument("this is a test. this is only a test. - nikola tesla");
     tree.index(3);
-    RefAssert.assertEquals(8, tree.traverse("t").getCursorCount());
-    RefAssert.assertEquals("t", tree.traverse("t").getString());
-    RefAssert.assertEquals("te", tree.traverse("te").getString());
-    RefAssert.assertEquals(3, tree.traverse("te").getCursorCount());
-    RefAssert.assertEquals(1, tree.traverse("dog").getCursorCount());
-    RefAssert.assertEquals("dog", tree.traverse("dog").getString());
-    RefAssert.assertEquals(1, tree.traverse("do").getCursorCount());
-    RefAssert.assertEquals(6, tree.traverse("o").getCursorCount());
-    RefAssert.assertEquals(3, tree.traverse("test").getCursorCount());
-    RefAssert.assertEquals("tes", tree.traverse("test").getString());
-    RefAssert.assertEquals(2, tree.traverse("this ").getCursorCount());
-    RefAssert.assertEquals(1, tree.traverse(" dog").getCursorCount());
-    RefAssert.assertEquals(1, tree.traverse("dog").getCursorCount());
-    RefAssert.assertEquals(1, tree.traverse("a quick").getCursorCount());
+    Assert.assertEquals(8, tree.traverse("t").getCursorCount());
+    Assert.assertEquals("t", tree.traverse("t").getString());
+    Assert.assertEquals("te", tree.traverse("te").getString());
+    Assert.assertEquals(3, tree.traverse("te").getCursorCount());
+    Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
+    Assert.assertEquals("dog", tree.traverse("dog").getString());
+    Assert.assertEquals(1, tree.traverse("do").getCursorCount());
+    Assert.assertEquals(6, tree.traverse("o").getCursorCount());
+    Assert.assertEquals(3, tree.traverse("test").getCursorCount());
+    Assert.assertEquals("tes", tree.traverse("test").getString());
+    Assert.assertEquals(2, tree.traverse("this ").getCursorCount());
+    Assert.assertEquals(1, tree.traverse(" dog").getCursorCount());
+    Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
+    Assert.assertEquals(1, tree.traverse("a quick").getCursorCount());
   }
 
   @Test
   @Category(TestCategories.UnitTest.class)
   public void testPerformance() {
     CharTrieIndex tree = new CharTrieIndex();
-    RefIntStream.range(0, 30000).parallel().forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
+    IntStream.range(0, 30000).parallel().forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
     tree.index();
-    RefSystem.out
-        .println(RefString.format("tree.getIndexedSize = %s", tree.getIndexedSize()));
-    RefSystem.out
-        .println(RefString.format("tree.getMemorySize = %s", tree.getMemorySize()));
-    RefSystem.out
-        .println(RefString.format("tree.truncate.getMemorySize = %s", tree.truncate().getMemorySize()));
+    System.out
+        .println(String.format("tree.getIndexedSize = %s", tree.getIndexedSize()));
+    System.out
+        .println(String.format("tree.getMemorySize = %s", tree.getMemorySize()));
+    System.out
+        .println(String.format("tree.truncate.getMemorySize = %s", tree.truncate().getMemorySize()));
   }
 
   @Test
@@ -124,7 +124,7 @@ public class TrieTest {
       for (int maxLevels = 1; maxLevels < 64; maxLevels = Math.max(maxLevels * 4, maxLevels + 1)) {
         for (int minWeight = 1; minWeight < 64; minWeight *= 4) {
           testRow(maxLevels, minWeight,
-              RefIntStream.range(0, count).parallel().mapToObj(i -> UUID.randomUUID().toString()));
+              IntStream.range(0, count).parallel().mapToObj(i -> UUID.randomUUID().toString()));
         }
       }
     }
@@ -139,39 +139,39 @@ public class TrieTest {
     try (Scanner scanner = new Scanner(getClass().getClassLoader().getResourceAsStream("earthtomoon.txt"))) {
       content = scanner.useDelimiter("\\Z").next().replaceAll("[ \n\r\t]+", " ");
     }
-    RefList<CharSequence> sentances = RefArrays.stream(content.split("\\.+")).map(line -> line.trim() + ".")
-        .filter(line -> line.length() > 12).collect(RefCollectors.toList());
+    List<CharSequence> sentances = Arrays.stream(content.split("\\.+")).map(line -> line.trim() + ".")
+        .filter(line -> line.length() > 12).collect(Collectors.toList());
 
     int size = 32 * 1024;
     int sampleLength = 80;
 
-    RefMap<CharSequence, Long> wordCounts = RefArrays.stream(content.replaceAll("[^\\w\\s]", "").split(" +"))
+    Map<CharSequence, Long> wordCounts = Arrays.stream(content.replaceAll("[^\\w\\s]", "").split(" +"))
         .map(s -> s.trim()).filter(s -> !s.isEmpty())
-        .collect(RefCollectors.groupingBy(x -> x, RefCollectors.counting()));
+        .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
 
     {
-      CharSequence commonTerms = RefUtil.get(wordCounts.entrySet().stream()
-          .sorted(RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
-              .thenComparing(RefComparator.comparingLong(e -> -e.getKey().length())))
-          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b)).subSequence(0, size);
-      RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+      CharSequence commonTerms = wordCounts.entrySet().stream()
+          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
+              .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
+          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
+      Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "CommonTerm");
       evaluateDictionary(sentances, commonTerms, map);
       map.put("sampleTxt", commonTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
 
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int encodingPenalty = -4; encodingPenalty < 4; encodingPenalty++) {
       int _encodingPenalty = encodingPenalty;
-      CharSequence meritTerms = RefUtil.get(wordCounts.entrySet().stream()
-          .sorted(RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(
+      CharSequence meritTerms = wordCounts.entrySet().stream()
+          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(
               e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
-              .thenComparing(RefComparator.comparingLong(e -> -e.getKey().length())))
-          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b)).subSequence(0, size);
-      RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+              .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
+          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
+      Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "MeritTerm");
       map.put("encodingPenalty", encodingPenalty);
       evaluateDictionary(sentances, meritTerms, map);
@@ -179,47 +179,47 @@ public class TrieTest {
       output.putRow(map);
     }
 
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
 
     {
-      CharSequence uncommonTerms = RefUtil.get(wordCounts.entrySet().stream()
-          .sorted(RefComparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> e.getValue())
-              .thenComparing(RefComparator.comparingLong(e -> e.getKey().length())))
-          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b)).subSequence(0, size);
-      RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+      CharSequence uncommonTerms = wordCounts.entrySet().stream()
+          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> e.getValue())
+              .thenComparing(Comparator.comparingLong(e -> e.getKey().length())))
+          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
+      Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "UncommonTerm,");
       evaluateDictionary(sentances, uncommonTerms, map);
       map.put("sampleTxt", uncommonTerms.subSequence(0, sampleLength));
       output.putRow(map);
     }
 
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
 
     CharTrieIndex tree = new CharTrieIndex();
-    long startTime = RefSystem.currentTimeMillis();
+    long startTime = System.currentTimeMillis();
     // sentances.stream().forEach(i->tree.addDocument(i));
     tree.addDocument(content);
     int maxLevels = 10;
     int minWeight = 0;
     tree.index(maxLevels, minWeight).truncate();
-    long elapsed = RefSystem.currentTimeMillis() - startTime;
-    RefSystem.out
-        .println(RefString.format("Built index in time = %s sec", elapsed / 1000.));
-    RefSystem.out
-        .println(RefString.format("tree.getIndexedSize = %s KB", tree.getIndexedSize() / 1024));
-    RefSystem.out
-        .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+    long elapsed = System.currentTimeMillis() - startTime;
+    System.out
+        .println(String.format("Built index in time = %s sec", elapsed / 1000.));
+    System.out
+        .println(String.format("tree.getIndexedSize = %s KB", tree.getIndexedSize() / 1024));
+    System.out
+        .println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
 
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int context = 0; context < maxLevels; context++) {
       CharTrie copy = tree.copy();
       for (int attempt = 0; attempt < 1; attempt++) {
         String dictionary = copy.getGenerator().generateMarkov(size, context, ".");
-        RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+        Map<CharSequence, Object> map = new LinkedHashMap<>();
         map.put("type", "generateMarkov");
         map.put("context", context);
         assert dictionary != null;
@@ -229,32 +229,32 @@ public class TrieTest {
       }
     }
 
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int lookahead = 0; lookahead < 3; lookahead++) {
       for (int context = 0; context < maxLevels - lookahead; context++) {
         for (int attempt = 0; attempt < 1; attempt++) {
           String dictionary = tree.copy().getGenerator().generateDictionary(size, context, ".", lookahead, true);
-          RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+          Map<CharSequence, Object> map = new LinkedHashMap<>();
           map.put("type", "generateDictionary1");
           map.put("context", context);
           map.put("lookahead", lookahead);
           evaluateDictionary(sentances, dictionary, map);
           map.put("sampleTxt", dictionary.substring(0, Math.min(sampleLength, dictionary.length())));
           output.putRow(map);
-          RefSystem.gc();
+          System.gc();
         }
       }
     }
 
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
 
     for (int lookahead = 0; lookahead < 3; lookahead++) {
       for (int context = 0; context < maxLevels - lookahead; context++) {
         String dictionary = tree.getGenerator().generateDictionary(size, context, ".", lookahead, false);
-        RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+        Map<CharSequence, Object> map = new LinkedHashMap<>();
         map.put("type", "generateDictionary2");
         map.put("context", context);
         map.put("lookahead", lookahead);
@@ -264,7 +264,7 @@ public class TrieTest {
       }
     }
 
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     output = new TableOutput();
   }
 
@@ -272,23 +272,23 @@ public class TrieTest {
   @Ignore
   @Category(TestCategories.ResearchCode.class)
   public void testModelMetric() {
-    RefMap<CharSequence, CharSequence> content = new RefHashMap<>();
-    for (String name : RefArrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
+    Map<CharSequence, CharSequence> content = new HashMap<>();
+    for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
       content.put(name, new Scanner(getClass().getClassLoader().getResourceAsStream(name)).useDelimiter("\\Z").next()
           .replaceAll("[ \n\r\t]+", " "));
     }
 
     CharSequence characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    RefSystem.out.println("Character Set:" + characterSet);
+        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+    System.out.println("Character Set:" + characterSet);
     int maxLevels = 5;
     int minWeight = 1;
     double smoothness = 1.0;
     int sampleSize = 64 * 1024;
 
-    long startTime = RefSystem.currentTimeMillis();
-    RefMap<CharSequence, CharTrie> trees = new RefHashMap<>();
-    RefMap<CharSequence, CharSequence> dictionaries = new RefHashMap<>();
+    long startTime = System.currentTimeMillis();
+    Map<CharSequence, CharTrie> trees = new HashMap<>();
+    Map<CharSequence, CharSequence> dictionaries = new HashMap<>();
     for (Map.Entry<CharSequence, CharSequence> e : content.entrySet()) {
       CharTrieIndex tree = new CharTrieIndex();
       tree.addDocument(characterSet);
@@ -296,30 +296,30 @@ public class TrieTest {
       tree.index(maxLevels, minWeight).truncate();
       trees.put(e.getKey(), tree);
       dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
-      RefSystem.out.println(
-          RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
-      RefSystem.out
-          .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+      System.out.println(
+          String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
+      System.out
+          .println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     }
-    long elapsed = RefSystem.currentTimeMillis() - startTime;
-    RefSystem.out
-        .println(RefString.format("Built index in time = %s sec", elapsed / 1000.));
+    long elapsed = System.currentTimeMillis() - startTime;
+    System.out
+        .println(String.format("Built index in time = %s sec", elapsed / 1000.));
 
-    RefSystem.out.println("\nMCMC Similarity Measures:");
+    System.out.println("\nMCMC Similarity Measures:");
     TableOutput output1 = new TableOutput();
     for (Map.Entry<CharSequence, CharTrie> ea : trees.entrySet()) {
       for (Map.Entry<CharSequence, CharTrie> eb : trees.entrySet()) {
         String str = ea.getValue().getGenerator().generateMarkov(sampleSize, maxLevels - 1, "");
         assert str != null;
         Double crossEntropy = eb.getValue().getAnalyzer().entropy(str) / str.length();
-        RefHashMap<CharSequence, Object> map = new RefHashMap<>();
+        HashMap<CharSequence, Object> map = new HashMap<>();
         map.put("source", ea.getKey());
         map.put("model", eb.getKey());
         map.put("crossEntropy", crossEntropy);
         output1.putRow(map);
       }
     }
-    RefSystem.out.println(output1.toCSV(true));
+    System.out.println(output1.toCSV(true));
   }
 
   @Test
@@ -336,17 +336,17 @@ public class TrieTest {
     int articleCount = 1000;
     double selectivity = 0.1;
 
-    RefMap<CharSequence, CharSequence> articles = WikiArticle.ENGLISH.stream()
+    Map<CharSequence, CharSequence> articles = WikiArticle.ENGLISH.stream()
         .filter(x -> x.getText().length() > minArticleLength).filter(x -> selectivity > Math.random())
         .limit(Math.max(articleCount, dictionaryCount))
-        .collect(RefCollectors.toMap(d -> d.getTitle(), d -> d.getText()));
+        .collect(Collectors.toMap(d -> d.getTitle(), d -> d.getText()));
 
     CharSequence characterSet = articles.values().stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    RefSystem.out.println("Character Set:" + characterSet);
+        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+    System.out.println("Character Set:" + characterSet);
 
-    RefStream<Map.Entry<CharSequence, CharSequence>> stream = articles.entrySet().stream().limit(dictionaryCount);
-    RefMap<CharSequence, CharTrie> models = stream.collect(RefCollectors
+    Stream<Map.Entry<CharSequence, CharSequence>> stream = articles.entrySet().stream().limit(dictionaryCount);
+    Map<CharSequence, CharTrie> models = stream.collect(Collectors
         .toMap((Map.Entry<CharSequence, CharSequence> d) -> d.getKey(), (Map.Entry<CharSequence, CharSequence> d) -> {
           CharSequence article = d.getValue();
           CharSequence title = d.getKey();
@@ -354,27 +354,27 @@ public class TrieTest {
           tree.addDocument(characterSet);
           tree.addDocument(article);
           tree.index(maxLevels, minWeight).truncate();
-          RefSystem.out.println(
-              RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
-          RefSystem.out
-              .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+          System.out.println(
+              String.format("Indexing %s; \ntree.getIndexedSize = %s KB", title, tree.getIndexedSize() / 1024));
+          System.out
+              .println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
           return tree;
         }));
-    RefMap<CharSequence, CharSequence> dictionaries = models.entrySet().stream().collect(RefCollectors
+    Map<CharSequence, CharSequence> dictionaries = models.entrySet().stream().collect(Collectors
         .toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(), (Map.Entry<CharSequence, CharTrie> d) -> {
           return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
         }));
 
     TableOutput output = new TableOutput();
-    articles.entrySet().stream().limit(articleCount).collect(RefCollectors.toMap(e -> e.getKey(), e -> e.getValue()))
+    articles.entrySet().stream().limit(articleCount).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
         .forEach((dataTitle, article) -> {
-          RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+          Map<CharSequence, Object> map = new LinkedHashMap<>();
           map.put("dataTitle", dataTitle);
           dictionaries.forEach((modelTitle, dictionary) -> {
-            int sumA = RefIntStream.range(0, article.length() / chunkSize)
+            int sumA = IntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.subSequence(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
                 .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
-            int sumB = RefIntStream.range(0, article.length() / chunkSize)
+            int sumB = IntStream.range(0, article.length() / chunkSize)
                 .mapToObj(i -> article.subSequence(i * chunkSize, Math.min(article.length(), (i + 1) * chunkSize)))
                 .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary.toString()).length).sum();
             double bytes = (sumA - sumB) * 1.0 / sumA;
@@ -382,7 +382,7 @@ public class TrieTest {
           });
           output.putRow(map);
         });
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
     String outputDirName = "wikiTopics/";
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
@@ -401,40 +401,40 @@ public class TrieTest {
     int articleCount = 1000;
     double selectivity = 0.1;
 
-    RefList<CharSequence> articles = TweetSentiment.load().filter(x -> x.getText().length() > minArticleLength)
+    List<CharSequence> articles = TweetSentiment.load().filter(x -> x.getText().length() > minArticleLength)
         .filter(x -> selectivity > Math.random()).limit(Math.max(articleCount, dictionaryCount)).map(t -> t.getText())
-        .collect(RefCollectors.toList());
+        .collect(Collectors.toList());
 
     CharSequence characterSet = articles.stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    RefSystem.out.println("Character Set:" + characterSet);
+        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+    System.out.println("Character Set:" + characterSet);
 
-    RefMap<CharSequence, CharTrie> models = articles.stream().limit(dictionaryCount)
-        .collect(RefCollectors.toMap((CharSequence d) -> d, (CharSequence text) -> {
+    Map<CharSequence, CharTrie> models = articles.stream().limit(dictionaryCount)
+        .collect(Collectors.toMap((CharSequence d) -> d, (CharSequence text) -> {
           CharTrieIndex tree = new CharTrieIndex();
           tree.addDocument(characterSet);
           tree.addDocument(text);
           tree.index(maxLevels, minWeight).truncate();
-          RefSystem.out.println(
-              RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", text, tree.getIndexedSize() / 1024));
-          RefSystem.out
-              .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+          System.out.println(
+              String.format("Indexing %s; \ntree.getIndexedSize = %s KB", text, tree.getIndexedSize() / 1024));
+          System.out
+              .println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
           return tree;
         }));
-    RefMap<CharSequence, CharSequence> dictionaries = models.entrySet().stream().collect(RefCollectors
+    Map<CharSequence, CharSequence> dictionaries = models.entrySet().stream().collect(Collectors
         .toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(), (Map.Entry<CharSequence, CharTrie> d) -> {
           return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
         }));
 
     TableOutput output = new TableOutput();
-    articles.stream().limit(articleCount).collect(RefCollectors.toList()).forEach(text -> {
-      RefMap<CharSequence, Object> map = new RefLinkedHashMap<>();
+    articles.stream().limit(articleCount).collect(Collectors.toList()).forEach(text -> {
+      Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("text", text);
       dictionaries.forEach((modelTitle, dictionary) -> {
-        int sumA = RefIntStream.range(0, text.length() / chunkSize)
+        int sumA = IntStream.range(0, text.length() / chunkSize)
             .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
             .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, "").length).sum();
-        int sumB = RefIntStream.range(0, text.length() / chunkSize)
+        int sumB = IntStream.range(0, text.length() / chunkSize)
             .mapToObj(i -> text.subSequence(i * chunkSize, Math.min(text.length(), (i + 1) * chunkSize)))
             .mapToInt(chunk -> CompressionUtil.encodeLZ(chunk, dictionary.toString()).length).sum();
         double bytes = (sumA - sumB) * 1.0 / sumA;
@@ -442,7 +442,7 @@ public class TrieTest {
       });
       output.putRow(map);
     });
-    // com.simiacryptus.ref.wrappers.RefSystem.p.println(output.toTextTable());
+    // com.simiacryptus.ref.wrappers.System.p.println(output.toTextTable());
     String outputDirName = "tweets/";
     output.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }
@@ -461,61 +461,61 @@ public class TrieTest {
     CharTrieIndex tree_good = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 1).limit(modelCount).map(t -> t.getText())
         .forEach(txt -> tree_good.addDocument(">>>" + txt));
-    RefSystem.out.println(RefString.format(
+    System.out.println(String.format(
         "Indexing %s positive tweets; \ntree.getIndexedSize = %s KB", modelCount, tree_good.getIndexedSize() / 1024));
     tree_good.index(maxLevels, minWeight).truncate();
-    RefSystem.out
-        .println(RefString.format("tree.getMemorySize = %s KB", tree_good.getMemorySize() / 1024));
+    System.out
+        .println(String.format("tree.getMemorySize = %s KB", tree_good.getMemorySize() / 1024));
 
     CharTrieIndex tree_bad = new CharTrieIndex();
     TweetSentiment.load().filter(x -> x.category == 0).limit(modelCount).map(t -> t.getText())
         .forEach(txt -> tree_bad.addDocument(">>>" + txt));
-    RefSystem.out.println(RefString.format(
+    System.out.println(String.format(
         "Indexing %s negative tweets; \ntree.getIndexedSize = %s KB", modelCount, tree_bad.getIndexedSize() / 1024));
     tree_bad.index(maxLevels, minWeight).truncate();
-    RefSystem.out
-        .println(RefString.format("tree.getMemorySize = %s KB", tree_bad.getMemorySize() / 1024));
+    System.out
+        .println(String.format("tree.getMemorySize = %s KB", tree_bad.getMemorySize() / 1024));
 
     TableOutput output = new TableOutput();
-    RefIntStream.range(0, articleCount).forEach(i -> {
-      RefMap<CharSequence, Object> goodRow = new RefLinkedHashMap<>();
+    IntStream.range(0, articleCount).forEach(i -> {
+      Map<CharSequence, Object> goodRow = new LinkedHashMap<>();
       goodRow.put("type", "good");
       goodRow.put("text", tree_good.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true)
           .substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(goodRow);
-      RefMap<CharSequence, Object> badRow = new RefLinkedHashMap<>();
+      Map<CharSequence, Object> badRow = new LinkedHashMap<>();
       badRow.put("type", "bad");
       badRow.put("text", tree_bad.getGenerator().generateDictionary(256, maxLevels - 1, ">>>", lookahead, true, true)
           .substring(3).replaceAll("\u0000", "\n\t"));
       output.putRow(badRow);
     });
-    RefSystem.out.println(output.toCSV(true));
+    System.out.println(output.toCSV(true));
   }
 
   @Test
   @Ignore
   public void calcSentenceCoords() throws IOException {
-    RefMap<CharSequence, CharSequence> content = new RefHashMap<>();
-    for (String name : RefArrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
+    Map<CharSequence, CharSequence> content = new HashMap<>();
+    for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
       content.put(name, new Scanner(getClass().getClassLoader().getResourceAsStream(name)).useDelimiter("\\Z").next()
           .replaceAll("[ \n\r\t]+", " "));
     }
-    String allContent = content.values().stream().collect(RefCollectors.joining("\n"));
-    RefList<CharSequence> sentances = RefArrays.stream(allContent.split("\\.+")).map(line -> line.trim() + ".")
-        .filter(line -> line.length() > 12).collect(RefCollectors.toList());
-    RefCollections.shuffle(sentances);
+    String allContent = content.values().stream().collect(Collectors.joining("\n"));
+    List<CharSequence> sentances = Arrays.stream(allContent.split("\\.+")).map(line -> line.trim() + ".")
+        .filter(line -> line.length() > 12).collect(Collectors.toList());
+    Collections.shuffle(sentances);
 
     CharSequence characterSet = content.values().stream().flatMapToInt(s -> s.chars()).distinct()
-        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(RefCollectors.joining(""));
-    RefSystem.out.println("Character Set:" + characterSet);
+        .mapToObj(c -> new String(Character.toChars(c))).sorted().collect(Collectors.joining(""));
+    System.out.println("Character Set:" + characterSet);
 
     int maxLevels = 7;
     int minWeight = 1;
     double smoothness = 1.0;
 
-    long startTime = RefSystem.currentTimeMillis();
-    RefMap<CharSequence, CharTrie> trees = new RefHashMap<>();
-    RefMap<CharSequence, CharSequence> dictionaries = new RefHashMap<>();
+    long startTime = System.currentTimeMillis();
+    Map<CharSequence, CharTrie> trees = new HashMap<>();
+    Map<CharSequence, CharSequence> dictionaries = new HashMap<>();
     for (Map.Entry<CharSequence, CharSequence> e : content.entrySet()) {
       CharTrieIndex tree = new CharTrieIndex();
       tree.addDocument(characterSet);
@@ -523,25 +523,25 @@ public class TrieTest {
       tree.index(maxLevels, minWeight).truncate();
       trees.put(e.getKey(), tree);
       dictionaries.put(e.getKey(), tree.copy().getGenerator().generateDictionary(16 * 1024, 5, "", 1, true));
-      RefSystem.out.println(
-          RefString.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
-      RefSystem.out
-          .println(RefString.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
+      System.out.println(
+          String.format("Indexing %s; \ntree.getIndexedSize = %s KB", e.getKey(), tree.getIndexedSize() / 1024));
+      System.out
+          .println(String.format("tree.getMemorySize = %s KB", tree.getMemorySize() / 1024));
     }
-    long elapsed = RefSystem.currentTimeMillis() - startTime;
-    RefSystem.out
-        .println(RefString.format("Built index in time = %s sec", elapsed / 1000.));
+    long elapsed = System.currentTimeMillis() - startTime;
+    System.out
+        .println(String.format("Built index in time = %s sec", elapsed / 1000.));
 
     TableOutput output1 = new TableOutput();
     TableOutput output2 = new TableOutput();
     sentances.stream().limit(1000).forEach(s -> {
-      RefMap<CharSequence, Object> map2 = new RefLinkedHashMap<>();
+      Map<CharSequence, Object> map2 = new LinkedHashMap<>();
       // map2.put("rawBits", s.length() * 8);
       // map2.put("decompressBits0", CharTreeUtil.compress("", s).length * 8);
       content.keySet().stream().forEach(key -> {
         CharTrie tree = trees.get(key);
         CharSequence dictionary = dictionaries.get(key);
-        RefMap<CharSequence, Object> map1 = new RefLinkedHashMap<>();
+        Map<CharSequence, Object> map1 = new LinkedHashMap<>();
         map1.put("key", key);
         map1.put("rawBits", s.length() * 8);
         map1.put("decompressBits0", CompressionUtil.encodeLZ(s, "").length * 8);
@@ -567,7 +567,7 @@ public class TrieTest {
       map2.put("txt", s);
       output2.putRow(map2);
     });
-    // com.simiacryptus.ref.wrappers.RefSystem.p.println(output1.toTextTable());
+    // com.simiacryptus.ref.wrappers.System.p.println(output1.toTextTable());
     String outputDirName = "sentenceClassification/";
     output2.writeProjectorData(new File(outPath, outputDirName), new URL(outBaseUrl, outputDirName));
   }

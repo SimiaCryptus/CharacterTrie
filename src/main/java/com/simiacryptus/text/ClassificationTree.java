@@ -19,15 +19,13 @@
 
 package com.simiacryptus.text;
 
-import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.wrappers.*;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.PrintStream;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ClassificationTree {
 
@@ -51,19 +49,19 @@ public class ClassificationTree {
   }
 
   @Nonnull
-  public Function<CharSequence, RefMap<CharSequence, Double>> categorizationTree(
-      @Nonnull RefMap<CharSequence, RefList<CharSequence>> categories, int depth) {
+  public Function<CharSequence, Map<CharSequence, Double>> categorizationTree(
+      @Nonnull Map<CharSequence, List<CharSequence>> categories, int depth) {
     return categorizationTree(categories, depth, "");
   }
 
   @Nonnull
-  private Function<CharSequence, RefMap<CharSequence, Double>> categorizationTree(
-      @Nonnull RefMap<CharSequence, RefList<CharSequence>> categories, int depth, CharSequence indent) {
+  private Function<CharSequence, Map<CharSequence, Double>> categorizationTree(
+      @Nonnull Map<CharSequence, List<CharSequence>> categories, int depth, CharSequence indent) {
     if (0 == depth) {
       return str -> {
         int sum = categories.values().stream().mapToInt(x -> x.size()).sum();
         return categories.entrySet().stream()
-            .collect(RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size() * 1.0 / sum));
+            .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size() * 1.0 / sum));
       };
     } else {
       if (1 >= categories.values().stream().filter(x -> !x.isEmpty()).count()) {
@@ -72,26 +70,26 @@ public class ClassificationTree {
       Optional<NodeInfo> info = categorizationSubstring(categories.values());
       if (!info.isPresent())
         return categorizationTree(categories, 0, indent);
-      CharSequence split = RefUtil.get(info).node.getString();
-      RefMap<CharSequence, RefList<CharSequence>> lSet = categories.entrySet().stream().collect(RefCollectors.toMap(
+      CharSequence split = info.get().node.getString();
+      Map<CharSequence, List<CharSequence>> lSet = categories.entrySet().stream().collect(Collectors.toMap(
           e -> e.getKey(),
-          e -> e.getValue().stream().filter(str -> str.toString().contains(split)).collect(RefCollectors.toList())));
-      RefMap<CharSequence, RefList<CharSequence>> rSet = categories.entrySet().stream().collect(RefCollectors.toMap(
+          e -> e.getValue().stream().filter(str -> str.toString().contains(split)).collect(Collectors.toList())));
+      Map<CharSequence, List<CharSequence>> rSet = categories.entrySet().stream().collect(Collectors.toMap(
           e -> e.getKey(),
-          e -> e.getValue().stream().filter(str -> !str.toString().contains(split)).collect(RefCollectors.toList())));
+          e -> e.getValue().stream().filter(str -> !str.toString().contains(split)).collect(Collectors.toList())));
       int lSum = lSet.values().stream().mapToInt(x -> x.size()).sum();
       int rSum = rSet.values().stream().mapToInt(x -> x.size()).sum();
       if (0 == lSum || 0 == rSum) {
         return categorizationTree(categories, 0, indent);
       }
       if (null != verbose) {
-        verbose.println(RefString.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%5f", split,
-            lSet.entrySet().stream().collect(RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
-            rSet.entrySet().stream().collect(RefCollectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
-            RefUtil.get(info).entropy));
+        verbose.println(String.format(indent + "\"%s\" -> Contains=%s\tAbsent=%s\tEntropy=%5f", split,
+            lSet.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
+            rSet.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue().size())),
+            info.get().entropy));
       }
-      Function<CharSequence, RefMap<CharSequence, Double>> l = categorizationTree(lSet, depth - 1, indent + "  ");
-      Function<CharSequence, RefMap<CharSequence, Double>> r = categorizationTree(rSet, depth - 1, indent + "  ");
+      Function<CharSequence, Map<CharSequence, Double>> l = categorizationTree(lSet, depth - 1, indent + "  ");
+      Function<CharSequence, Map<CharSequence, Double>> r = categorizationTree(rSet, depth - 1, indent + "  ");
       return str -> {
         if (str.toString().contains(split)) {
           return l.apply(str);
@@ -102,11 +100,11 @@ public class ClassificationTree {
     }
   }
 
-  private double entropy(@Nonnull RefMap<Integer, Long> sum, @Nonnull RefMap<Integer, Long> left) {
+  private double entropy(@Nonnull Map<Integer, Long> sum, @Nonnull Map<Integer, Long> left) {
     double sumSum = sum.values().stream().mapToDouble(x -> x).sum();
     double leftSum = left.values().stream().mapToDouble(x -> x).sum();
     double rightSum = sumSum - leftSum;
-    //com.simiacryptus.ref.wrappers.RefSystem.err.println(String.format("%s & %s", sum, left));
+    //com.simiacryptus.ref.wrappers.System.err.println(String.format("%s & %s", sum, left));
     if (rightSum < minLeafWeight)
       return Double.NEGATIVE_INFINITY;
     if (leftSum < minLeafWeight)
@@ -121,12 +119,12 @@ public class ClassificationTree {
   }
 
   @Nonnull
-  private Optional<NodeInfo> categorizationSubstring(@Nonnull RefCollection<RefList<CharSequence>> categories) {
+  private Optional<NodeInfo> categorizationSubstring(@Nonnull Collection<List<CharSequence>> categories) {
     CharTrieIndex trie = new CharTrieIndex();
-    RefMap<Integer, Integer> categoryMap = new RefTreeMap<>();
+    Map<Integer, Integer> categoryMap = new TreeMap<>();
     int categoryNumber = 0;
-    RefMap<Integer, Long> sum = new RefHashMap<>();
-    for (RefList<CharSequence> category : categories) {
+    Map<Integer, Long> sum = new HashMap<>();
+    for (List<CharSequence> category : categories) {
       categoryNumber += 1;
       for (CharSequence text : category) {
         sum.put(categoryNumber, sum.getOrDefault(categoryNumber, 0l) + text.length() + 1);
@@ -139,28 +137,27 @@ public class ClassificationTree {
   }
 
   @Nonnull
-  private NodeInfo info(@Nonnull IndexNode node, @Nonnull RefMap<Integer, Long> sum, @Nonnull RefMap<Integer, Integer> categoryMap) {
-    RefMap<Integer, Long> summary = summarize(node, categoryMap);
+  private NodeInfo info(@Nonnull IndexNode node, @Nonnull Map<Integer, Long> sum, @Nonnull Map<Integer, Integer> categoryMap) {
+    Map<Integer, Long> summary = summarize(node, categoryMap);
     return new NodeInfo(node, summary, entropy(sum, summary));
   }
 
-  private RefMap<Integer, Long> summarize(@Nonnull IndexNode node, @Nonnull RefMap<Integer, Integer> categoryMap) {
+  private Map<Integer, Long> summarize(@Nonnull IndexNode node, @Nonnull Map<Integer, Integer> categoryMap) {
     return node.getCursors().map(x -> x.getDocumentId()).distinct().map(x -> categoryMap.get(x))
-        .collect(RefCollectors.toList()).stream().collect(RefCollectors.groupingBy(x -> x, RefCollectors.counting()));
+        .collect(Collectors.toList()).stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
   }
 
   @Nonnull
-  private Optional<NodeInfo> categorizationSubstring(@Nonnull IndexNode node, @Nonnull RefMap<Integer, Integer> categoryMap,
-                                                     @Nonnull RefMap<Integer, Long> sum) {
-    RefList<NodeInfo> childrenInfo = node.getChildren().map(n -> categorizationSubstring(n, categoryMap, sum))
-        .filter(x -> x.isPresent()).map(optional -> RefUtil.get(optional)).collect(RefCollectors.toList());
+  private Optional<NodeInfo> categorizationSubstring(@Nonnull IndexNode node, @Nonnull Map<Integer, Integer> categoryMap,
+                                                     @Nonnull Map<Integer, Long> sum) {
+    List<NodeInfo> childrenInfo = node.getChildren().map(n -> categorizationSubstring(n, categoryMap, sum))
+        .filter(x -> x.isPresent()).map(optional -> optional.get()).collect(Collectors.toList());
     NodeInfo info = info(node, sum, categoryMap);
     if (info.node.getString().isEmpty() || !Double.isFinite(info.entropy))
       info = null;
-    Optional<NodeInfo> max = RefStream
-        .concat(null == info ? RefStream.empty() : RefStream.of(info), childrenInfo.stream())
-        .max(RefComparator.comparingDouble(x -> x.entropy));
-    return max;
+    return Stream
+        .concat(null == info ? Stream.empty() : Stream.of(info), childrenInfo.stream())
+        .max(Comparator.comparingDouble(x -> x.entropy));
   }
 
   private class NodeInfo {
