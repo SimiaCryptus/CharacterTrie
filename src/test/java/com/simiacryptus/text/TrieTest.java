@@ -65,7 +65,7 @@ public class TrieTest {
 
   @Nonnull
   private static Map<CharSequence, Object> evaluateDictionary(@Nonnull List<CharSequence> sentances,
-                                                                 @Nonnull CharSequence dictionary, @Nonnull Map<CharSequence, Object> map) {
+                                                              @Nonnull CharSequence dictionary, @Nonnull Map<CharSequence, Object> map) {
     Arrays.asList(1, 4, 16, 32).stream().forEach(k -> {
       DoubleStatistics statistics = sentances.stream().map(line -> {
         int length0 = CompressionUtil.encodeLZ(line, "").length;

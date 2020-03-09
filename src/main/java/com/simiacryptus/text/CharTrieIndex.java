@@ -105,9 +105,9 @@ public class CharTrieIndex extends CharTrie {
   public static Function<CharSequence, IntStream> getCursorInit(boolean words) {
     Function<CharSequence, IntStream> cursorSeeds;
     if (words) {
-      cursorSeeds = doc->IntStream.range(0, 1);
+      cursorSeeds = doc -> IntStream.range(0, 1);
     } else {
-      cursorSeeds = doc->IntStream.range(0, doc.length() + 1);
+      cursorSeeds = doc -> IntStream.range(0, doc.length() + 1);
     }
     return cursorSeeds;
   }

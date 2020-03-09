@@ -21,7 +21,6 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
-import com.simiacryptus.util.JsonUtil;
 import com.simiacryptus.util.test.TestCategories;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -29,7 +28,9 @@ import org.junit.experimental.categories.Category;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;

@@ -197,8 +197,8 @@ public class CompressionTest {
 
   @Nonnull
   protected Map<CharSequence, Compressor> buildCompressors(@Nonnull Supplier<Stream<? extends TestDocument>> source,
-                                                              int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context,
-                                                              final int encodingContext, int modelCount) {
+                                                           int ppmModelDepth, int model_minPathWeight, final int dictionary_lookahead, final int dictionary_context,
+                                                           final int encodingContext, int modelCount) {
     Map<CharSequence, Compressor> compressors = new LinkedHashMap<>();
     Compressor.addGenericCompressors(compressors);
     System.out.println(String.format("Preparing %s documents", modelCount));
