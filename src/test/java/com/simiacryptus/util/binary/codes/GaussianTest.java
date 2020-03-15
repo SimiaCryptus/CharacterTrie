@@ -21,10 +21,9 @@ package com.simiacryptus.util.binary.codes;
 
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
-import com.simiacryptus.util.test.TestCategories;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
@@ -34,7 +33,7 @@ import java.util.Random;
 
 public class GaussianTest {
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testBinomialRandom() throws IOException {
     final Random random = new Random();
     for (int i = 0; i < 100; i++) {
@@ -49,7 +48,7 @@ public class GaussianTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testBinomialScan() throws IOException {
     for (double probability = 0.01; probability <= 0.99; probability += .01) {
       for (int max = 1; max < 255; max += 1) {
@@ -60,7 +59,7 @@ public class GaussianTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testHardcodedGaussians() throws IOException {
     System.out
         .println(String.format("T: %s", this.test(new Gaussian(100, 3), 255)));
@@ -81,7 +80,7 @@ public class GaussianTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testZeros() throws IOException {
     for (int value = 0; value <= 0; value++) {
       final Gaussian gaussian = new Gaussian(100, 10);

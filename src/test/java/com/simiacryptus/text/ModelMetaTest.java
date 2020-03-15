@@ -26,8 +26,8 @@
 //import com.simiacryptus.util.test.TestDocument;
 //import com.simiacryptus.util.test.TweetSentiment;
 //import com.simiacryptus.util.test.WikiArticle;
-//import org.junit.Test;
-//import org.junit.experimental.categories.Category;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Tag;
 //
 //import java.io.File;
 //import java.net.URL;
@@ -70,7 +70,7 @@
 //   * @throws Exception the exception
 //   */
 //  @Test
-//  @Category(TestCategories.ResearchCode.class)
+//  @Tag("ResearchCode")
 //  public void calcSharedDictionariesLZ() throws Exception {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      CharTrieIndex baseTree = new CharTrieIndex();
@@ -115,7 +115,7 @@
 //   * @throws Exception the exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void calcSharedDictionariesBZ() throws Exception {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      CharTrieIndex baseTree = new CharTrieIndex();
@@ -159,7 +159,7 @@
 //   * @throws Exception the exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void calcCompressorPPM() throws Exception {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      CharTrieIndex baseTree = new CharTrieIndex();

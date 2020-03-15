@@ -21,10 +21,9 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
-import com.simiacryptus.util.test.TestCategories;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +39,7 @@ public class LogAnalysis {
 
 
   @Test
-  @Category(TestCategories.Report.class)
+  @Tag("Report")
   public void analyzeFailedLogs() throws IOException {
     try (NotebookOutput log = MarkdownNotebookOutput.get("logAnalysis")) {
 

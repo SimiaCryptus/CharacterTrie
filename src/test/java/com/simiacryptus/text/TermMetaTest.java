@@ -40,7 +40,7 @@ public class TermMetaTest {
   //   * @throws Exception the exception
   //   */
   //  @Test
-  //  @Category(TestCategories.Report.class)
+  //  @Tag("Report")
   //  public void calcCompressorPPM() throws Exception {
   //    NotebookOutput log = MarkdownNotebookOutput.get(this);
   //    CharTrieIndex baseTree = new CharTrieIndex();

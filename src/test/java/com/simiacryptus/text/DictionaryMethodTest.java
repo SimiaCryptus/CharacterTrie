@@ -22,9 +22,12 @@ package com.simiacryptus.text;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
-import com.simiacryptus.util.test.*;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import com.simiacryptus.util.test.Shakespeare;
+import com.simiacryptus.util.test.TestDocument;
+import com.simiacryptus.util.test.TweetSentiment;
+import com.simiacryptus.util.test.WikiArticle;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -36,7 +39,7 @@ import java.util.stream.Stream;
 public class DictionaryMethodTest {
 
   @Test
-  @Category(TestCategories.Report.class)
+  @Tag("Report")
   public void dictionariesTweets() throws Exception {
     try (NotebookOutput log = MarkdownNotebookOutput.get(new File("dictionariesTweets"))) {
       int modelCount = 10000;
@@ -47,7 +50,7 @@ public class DictionaryMethodTest {
   }
 
   @Test
-  @Category(TestCategories.Report.class)
+  @Tag("Report")
   public void dictionariesShakespeare() throws Exception {
     try (NotebookOutput log = MarkdownNotebookOutput.get(new File("dictionariesShakespeare"))) {
       int modelCount = 100;
@@ -59,7 +62,7 @@ public class DictionaryMethodTest {
   }
 
   @Test
-  @Category(TestCategories.Report.class)
+  @Tag("Report")
   public void dictionariesWiki() throws Exception {
     try (NotebookOutput log = MarkdownNotebookOutput.get(new File("dictionariesWiki"))) {
       int modelCount = 100;

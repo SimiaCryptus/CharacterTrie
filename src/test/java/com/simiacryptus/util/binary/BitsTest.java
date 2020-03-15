@@ -19,11 +19,10 @@
 
 package com.simiacryptus.util.binary;
 
-import com.simiacryptus.util.test.TestCategories;
 import org.json.JSONException;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
@@ -36,7 +35,7 @@ public class BitsTest {
   Random random = new Random();
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testConcatenate() throws JSONException {
     for (int i = 0; i < 1000; i++) {
       this.testConcatenate(this.randomLong(), this.randomLong());
@@ -44,7 +43,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testDivide() throws JSONException {
     Assert.assertEquals("1", Bits.divide(2, 2, 10).toBitString());
     Assert.assertEquals("0", Bits.divide(0, 2, 10).toBitString());
@@ -56,7 +55,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testBitStream() throws JSONException {
     Bits totalBits = BitOutputStream.toBits(out -> {
       try {
@@ -70,7 +69,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testInterval() throws JSONException {
     Assert.assertEquals("1", new Interval(1, 2, 3).toBits().toBitString());
 
@@ -92,7 +91,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testFixedLength() throws JSONException {
     for (int i = 0; i < 1000; i++) {
       this.testFixedLength(this.randomLong());
@@ -100,7 +99,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testVarLongs() throws JSONException, IOException {
     for (int i = 0; i < 1000; i++) {
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -113,7 +112,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testHardcoded() throws JSONException {
     Assert.assertEquals(new Bits(0), new Bits(0));
     Assert.assertEquals("", new Bits(0).toBitString());
@@ -137,7 +136,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testSubrange() throws JSONException {
     for (int i = 0; i < 1000; i++) {
       final long value = this.random.nextLong();
@@ -147,7 +146,7 @@ public class BitsTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testToString() throws JSONException {
     for (int i = 0; i < 1000; i++) {
       this.testToString(this.randomLong());

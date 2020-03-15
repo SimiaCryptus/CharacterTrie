@@ -21,13 +21,12 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.util.data.DoubleStatistics;
-import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -81,7 +80,7 @@ public class TrieTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testFunctionality() {
     CharTrieIndex tree = new CharTrieIndex();
     tree.addDocument("a quick brown fox jumped over the lazy dog");
@@ -104,7 +103,7 @@ public class TrieTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testPerformance() {
     CharTrieIndex tree = new CharTrieIndex();
     IntStream.range(0, 30000).parallel().forEach(i -> tree.addDocument(UUID.randomUUID().toString()));
@@ -118,7 +117,7 @@ public class TrieTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testPerformanceMatrix() {
     for (int count = 100; count < 50000; count *= 2) {
       for (int maxLevels = 1; maxLevels < 64; maxLevels = Math.max(maxLevels * 4, maxLevels + 1)) {
@@ -132,7 +131,7 @@ public class TrieTest {
 
   @Test
   @Ignore
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void testDictionaryGenerationMetaParameters() {
     TableOutput output = new TableOutput();
     final String content;
@@ -270,7 +269,7 @@ public class TrieTest {
 
   @Test
   @Ignore
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void testModelMetric() {
     Map<CharSequence, CharSequence> content = new HashMap<>();
     for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {
@@ -324,7 +323,7 @@ public class TrieTest {
 
   @Test
   @Ignore
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void calcWikiCoords() throws Exception {
 
     int minArticleLength = 8 * 1024;
@@ -389,7 +388,7 @@ public class TrieTest {
 
   @Test
   @Ignore
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void calcTweetVectors() throws Exception {
 
     int minArticleLength = 8;
@@ -449,7 +448,7 @@ public class TrieTest {
 
   @Test
   @Ignore
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void testTweetGeneration() {
 
     int maxLevels = 6;

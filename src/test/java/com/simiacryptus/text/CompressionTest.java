@@ -23,10 +23,13 @@ import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.util.binary.Bits;
-import com.simiacryptus.util.test.*;
+import com.simiacryptus.util.test.EnglishWords;
+import com.simiacryptus.util.test.TestDocument;
+import com.simiacryptus.util.test.TweetSentiment;
+import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedHashMap;
@@ -77,7 +80,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.UnitTest.class)
+  @Tag("UnitTest")
   public void testPPMCompression_Basic() {
     CharTrieIndex tree = new CharTrieIndex();
     tree.addDocument("ababababab");
@@ -91,7 +94,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void testPPMCompression_Tweets() {
     long articleCount = 1000;
     long modelCount = 10000;
@@ -133,7 +136,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.Report.class)
+  @Tag("Report")
   public void calcTweetCompression() throws Exception {
     int ppmModelDepth = 9;
     int model_minPathWeight = 3;
@@ -154,7 +157,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.Report.class)
+  @Tag("Report")
   public void calcTermCompression() throws Exception {
     int ppmModelDepth = 10;
     int model_minPathWeight = 0;
@@ -174,7 +177,7 @@ public class CompressionTest {
   }
 
   @Test
-  @Category(TestCategories.Report.class)
+  @Tag("Report")
   public void calcWikiCompression() throws Exception {
     int ppmModelDepth = 9;
     int model_minPathWeight = 3;

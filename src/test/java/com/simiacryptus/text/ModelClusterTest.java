@@ -22,12 +22,11 @@ package com.simiacryptus.text;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
-import com.simiacryptus.util.test.TestCategories;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -46,7 +45,7 @@ public abstract class ModelClusterTest {
   public abstract int getModelCount();
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void clusterSharedDictionariesLZ() throws Exception {
     try (NotebookOutput log = MarkdownNotebookOutput.get(new File("clusterSharedDictionariesLZ"))) {
 
@@ -106,7 +105,7 @@ public abstract class ModelClusterTest {
   }
 
   @Test
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void calcCompressorPPM() throws Exception {
     try (NotebookOutput log = MarkdownNotebookOutput.get(new File("calcCompressorPPM"))) {
       int ppmModelDepth = 6;
@@ -138,7 +137,7 @@ public abstract class ModelClusterTest {
 
   @Test
   @Ignore
-  @Category(TestCategories.ResearchCode.class)
+  @Tag("ResearchCode")
   public void calcEntropyPPM() throws Exception {
     try (NotebookOutput log = MarkdownNotebookOutput.get(new File("calcEntropyPPM"))) {
       int ppmModelDepth = 6;

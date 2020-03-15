@@ -38,8 +38,8 @@
 //import guru.nidi.graphviz.model.LinkTarget;
 //import guru.nidi.graphviz.model.Node;
 //import org.junit.Assert;
-//import org.junit.Test;
-//import org.junit.experimental.categories.Category;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Tag;
 //
 //import java.io.IOException;
 //import java.net.MalformedURLException;
@@ -86,7 +86,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoSearch() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //
@@ -125,7 +125,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoCharTree() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //
@@ -192,7 +192,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.ResearchCode.class)
+//  @Tag("ResearchCode")
 //  public void demoTweetGeneration() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      int testingSize = 100;
@@ -296,7 +296,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.ResearchCode.class)
+//  @Tag("ResearchCode")
 //  public void demoReversal() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      int testingSize = 100;
@@ -343,7 +343,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.ResearchCode.class)
+//  @Tag("ResearchCode")
 //  public void demoCommonWords() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      List<CharSequence> trainingData = WikiArticle.ENGLISH.stream().map(x -> x.getText()).limit(200).collect(Collectors.toList());
@@ -380,7 +380,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.ResearchCode.class)
+//  @Tag("ResearchCode")
 //  public void demoMarkovGraph() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      List<CharSequence> trainingData = Arrays.asList("a cat in the hat that can hat the cat");
@@ -425,7 +425,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.ResearchCode.class)
+//  @Tag("ResearchCode")
 //  public void demoTweetClassification() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      int testingSize = 1000;
@@ -525,7 +525,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.ResearchCode.class)
+//  @Tag("ResearchCode")
 //  public void demoTweetClassificationTree() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      int testingSize = 10000;
@@ -572,7 +572,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoLanguageClassification() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      int testingSize = 100;
@@ -665,7 +665,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoCompression() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      HashSet<CharSequence> articles = new HashSet<CharSequence>(Arrays.asList("A"));
@@ -741,7 +741,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void scratch() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      log.code(() -> {
@@ -765,7 +765,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoWikiSummary() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      HashSet<CharSequence> articles = new HashSet<>();
@@ -816,7 +816,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoWordlist() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      HashSet<CharSequence> articles = new HashSet<>();
@@ -866,7 +866,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoWikiSpelling() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      log.p("This will demonstrate how to serialize a CharTrie class in compressed format\n");
@@ -898,7 +898,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void demoSerialization() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //

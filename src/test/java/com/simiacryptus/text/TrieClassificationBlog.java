@@ -26,8 +26,8 @@
 //import com.simiacryptus.util.test.TestCategories;
 //import com.simiacryptus.util.test.TweetSentiment;
 //import com.simiacryptus.util.test.WikiArticle;
-//import org.junit.Test;
-//import org.junit.experimental.categories.Category;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Tag;
 //
 //import java.io.IOException;
 //import java.util.ArrayList;
@@ -57,7 +57,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void language_detection_ppm() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      log.h1("Language Detection via PPM Compression");
@@ -113,7 +113,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void prebuilt_language_models() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      log.h1("Language Detection using prebuilt models");
@@ -153,7 +153,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void sentiment_analysis_ppm() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      log.h1("Sentiment Analysis via PPM Compression");
@@ -218,7 +218,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void sentiment_analysis_decision_tree() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get(this)) {
 //      log.h1("Sentiment Analysis using a Decision Tree");

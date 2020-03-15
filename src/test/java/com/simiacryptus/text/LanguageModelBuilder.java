@@ -23,8 +23,8 @@
 //import com.simiacryptus.notebook.NotebookOutput;
 //import com.simiacryptus.util.test.TestCategories;
 //import com.simiacryptus.util.test.WikiArticle;
-//import org.junit.Test;
-//import org.junit.experimental.categories.Category;
+//import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Tag;
 //
 //import java.io.FileOutputStream;
 //import java.io.IOException;
@@ -54,7 +54,7 @@
 //   * @throws IOException the io exception
 //   */
 //  @Test
-//  @Category(TestCategories.Report.class)
+//  @Tag("Report")
 //  public void buildLanguageModels() throws IOException {
 //    try (NotebookOutput log = MarkdownNotebookOutput.get("buildLanguageModels")) {
 //      process(log, "English", WikiArticle.ENGLISH.stream());
