@@ -22,6 +22,7 @@ package com.simiacryptus.text;
 import com.davidehrmann.vcdiff.VCDiffDecoderBuilder;
 import com.davidehrmann.vcdiff.VCDiffEncoder;
 import com.davidehrmann.vcdiff.VCDiffEncoderBuilder;
+import com.simiacryptus.util.Util;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
@@ -44,7 +45,7 @@ public class CompressionUtil {
     try {
       asBytes = String.valueOf(data).getBytes("UTF-8");
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
     return encodeLZ(asBytes, dictionary);
   }
@@ -65,7 +66,7 @@ public class CompressionUtil {
         compresser.setDictionary(bytes2);
       }
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
     compresser.finish();
     int compressedDataLength = compresser.deflate(output);
@@ -92,7 +93,7 @@ public class CompressionUtil {
       decompresser.end();
       return Arrays.copyOfRange(result, 0, resultLength);
     } catch (@Nonnull DataFormatException | UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -106,7 +107,7 @@ public class CompressionUtil {
     try {
       return new String(decodeLZ(data), "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -115,7 +116,7 @@ public class CompressionUtil {
     try {
       return new String(decodeLZ(data), "UTF-8");
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -129,7 +130,7 @@ public class CompressionUtil {
     try {
       return new String(decodeBZRaw(data), "UTF-8");
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -139,7 +140,7 @@ public class CompressionUtil {
       BZip2CompressorInputStream compresser = new BZip2CompressorInputStream(output);
       return IOUtils.toByteArray(compresser);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -149,7 +150,7 @@ public class CompressionUtil {
       //assert(data.equals(decodeBZ(bytes)));
       return encodeBZ(data.getBytes("UTF-8"));
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -163,7 +164,7 @@ public class CompressionUtil {
       compresser.close();
       return output.toByteArray();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -175,7 +176,7 @@ public class CompressionUtil {
       VCDiffDecoderBuilder.builder().buildSimple().decode(dictBytes, decodeBZRaw(data), buffer);
       return new String(buffer.toByteArray(), "UTF-8");
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -185,7 +186,7 @@ public class CompressionUtil {
       //assert(data.equals(decodeBZ(bytes, dictionary)));
       return encodeBZ(data.getBytes("UTF-8"), dictionary);
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -198,7 +199,7 @@ public class CompressionUtil {
       encoder.encode(asBytes, buffer);
       return encodeBZ(buffer.toByteArray());
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 

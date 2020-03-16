@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.Util;
 import org.apache.commons.compress.utils.IOUtils;
 
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ public enum LanguageModel {
           try {
             bytes = IOUtils.toByteArray(getClass().getClassLoader().getResourceAsStream(resource));
           } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Util.throwException(e);
           }
           trie = new ConvolutionalTrieSerializer().deserialize(CompressionUtil.decodeLZ(bytes));
         }

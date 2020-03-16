@@ -92,7 +92,7 @@ public class EnglishWords extends TestDocument {
       if (!(e.getCause() instanceof InterruptedException))
         throw e;
     } catch (@Nonnull final Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 }

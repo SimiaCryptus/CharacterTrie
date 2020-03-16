@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.binary;
 
+import com.simiacryptus.util.Util;
 import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Tag;
@@ -62,7 +63,7 @@ public class BitsTest {
         out.write(Bits.divide(1, 2, 10));
         out.write(Bits.divide(1, 2, 10));
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     });
     Assert.assertEquals("0101", totalBits.toBitString());

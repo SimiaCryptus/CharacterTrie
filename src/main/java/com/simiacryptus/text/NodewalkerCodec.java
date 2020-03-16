@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -202,7 +203,7 @@ public class NodewalkerCodec {
         }
         return out.toString();
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     }
   }
@@ -254,7 +255,7 @@ public class NodewalkerCodec {
         out.flush();
         return new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     }
   }

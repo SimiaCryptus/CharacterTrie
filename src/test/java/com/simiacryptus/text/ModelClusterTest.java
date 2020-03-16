@@ -25,6 +25,7 @@ import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -136,7 +137,7 @@ public abstract class ModelClusterTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   @Tag("ResearchCode")
   public void calcEntropyPPM() throws Exception {
     try (NotebookOutput log = MarkdownNotebookOutput.get(new File("calcEntropyPPM"))) {

@@ -21,6 +21,7 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
+import com.simiacryptus.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class LogAnalysis {
         try {
           return (CharSequence) FileUtils.readFileToString(f, "UTF-8");
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw Util.throwException(e);
         }
       }));
       System.out.println(String.format("Total Failed Log Bytes: %s", failedLogs.values().stream().map(x -> x.length()).reduce((a, b) -> a + b).get()));
@@ -59,7 +60,7 @@ public class LogAnalysis {
         try {
           return (CharSequence) FileUtils.readFileToString(f, "UTF-8");
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw Util.throwException(e);
         }
       }));
       System.out.println(String.format("Total Succeeded Log Bytes: %s", failedLogs.values().stream().map(x -> x.length()).reduce((a, b) -> a + b).get()));

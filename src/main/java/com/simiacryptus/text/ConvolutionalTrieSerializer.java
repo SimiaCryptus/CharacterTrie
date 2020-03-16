@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -59,7 +60,7 @@ public class ConvolutionalTrieSerializer {
         }
       }
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
     return buffer.toByteArray();
   }
@@ -89,7 +90,7 @@ public class ConvolutionalTrieSerializer {
         int size = children.size();
         out.writeVarLong(size);
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
       children.forEach((token, child) -> {
         try {
@@ -99,7 +100,7 @@ public class ConvolutionalTrieSerializer {
           out.writeVarLong(child.getCursorCount());
           nodesWritten.incrementAndGet();
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw Util.throwException(e);
         }
       });
     } else {
@@ -113,7 +114,7 @@ public class ConvolutionalTrieSerializer {
         try {
           out.writeBoundedLong(children.size(), godchildren.size());
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw Util.throwException(e);
         }
         if (null != verbose) {
           verbose.println(String.format("Recursing %s apply godparent %s and %s of %s potential children %s",
@@ -154,7 +155,7 @@ public class ConvolutionalTrieSerializer {
               }
             }
           } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Util.throwException(e);
           }
         });
       });
@@ -178,7 +179,7 @@ public class ConvolutionalTrieSerializer {
         }
         root.writeChildren(children);
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     } else {
       HashMap<CharSequence, Integer> godchildCounters = new HashMap<>();
@@ -193,7 +194,7 @@ public class ConvolutionalTrieSerializer {
         try {
           numberOfChildren = in.readBoundedLong(godchildren.size());
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw Util.throwException(e);
         }
         if (null != verbose) {
           verbose.println(String.format("Recursing %s apply godparent %s and %s of %s potential children %s",
@@ -229,7 +230,7 @@ public class ConvolutionalTrieSerializer {
               }
             }
           } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Util.throwException(e);
           }
         });
         node.writeChildren(children);

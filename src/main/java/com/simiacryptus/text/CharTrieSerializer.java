@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 
@@ -44,7 +45,7 @@ public class CharTrieSerializer {
         }
       }
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
     return buffer.toByteArray();
   }
@@ -68,7 +69,7 @@ public class CharTrieSerializer {
         int size = children.size();
         out.writeVarLong(size);
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
       children.forEach((token, child) -> {
         try {
@@ -76,7 +77,7 @@ public class CharTrieSerializer {
           out.writeVarLong(child.getCursorCount());
           nodesWritten.incrementAndGet();
         } catch (IOException e) {
-          throw new RuntimeException(e);
+          throw Util.throwException(e);
         }
       });
     } else {
@@ -97,7 +98,7 @@ public class CharTrieSerializer {
             }
             nodesWritten.incrementAndGet();
           } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Util.throwException(e);
           }
         });
       });
@@ -119,7 +120,7 @@ public class CharTrieSerializer {
         }
         root.writeChildren(children);
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     } else {
       root.streamDecendents(level).forEach(node -> {
@@ -136,7 +137,7 @@ public class CharTrieSerializer {
               nodesRead.incrementAndGet();
             }
           } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw Util.throwException(e);
           }
         });
         node.writeChildren(children);

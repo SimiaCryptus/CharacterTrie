@@ -20,11 +20,13 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.TableOutput;
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.data.DoubleStatistics;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +49,7 @@ public class TrieTest {
     try {
       return new URL(url);
     } catch (MalformedURLException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -130,7 +132,7 @@ public class TrieTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   @Tag("ResearchCode")
   public void testDictionaryGenerationMetaParameters() {
     TableOutput output = new TableOutput();
@@ -268,7 +270,7 @@ public class TrieTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   @Tag("ResearchCode")
   public void testModelMetric() {
     Map<CharSequence, CharSequence> content = new HashMap<>();
@@ -322,7 +324,7 @@ public class TrieTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   @Tag("ResearchCode")
   public void calcWikiCoords() throws Exception {
 
@@ -387,7 +389,7 @@ public class TrieTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   @Tag("ResearchCode")
   public void calcTweetVectors() throws Exception {
 
@@ -447,7 +449,7 @@ public class TrieTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   @Tag("ResearchCode")
   public void testTweetGeneration() {
 
@@ -492,7 +494,7 @@ public class TrieTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void calcSentenceCoords() throws IOException {
     Map<CharSequence, CharSequence> content = new HashMap<>();
     for (String name : Arrays.asList("earthtomoon.txt", "20000leagues.txt", "macbeth.txt", "randj.txt")) {

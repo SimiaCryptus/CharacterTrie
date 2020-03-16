@@ -88,7 +88,7 @@ public class WikiArticle extends TestDocument {
             @Override
             public void characters(final char[] ch, final int start, final int length) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
-                throw new RuntimeException(new InterruptedException());
+                throw Util.throwException(new InterruptedException());
               }
               this.nodeString.append(ch, start, length);
               super.characters(ch, start, length);
@@ -102,7 +102,7 @@ public class WikiArticle extends TestDocument {
             @Override
             public void endElement(final String uri, final String localName, final String qName) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
-                throw new RuntimeException(new InterruptedException());
+                throw Util.throwException(new InterruptedException());
               }
               final CharSequence pop = this.prefix.pop();
               this.indexes.pop();
@@ -119,7 +119,7 @@ public class WikiArticle extends TestDocument {
                 //com.simiacryptus.ref.wrappers.System.p.println(String.format("Read #%s - %s", queue.size(), this.title));
                 queue.add(new WikiArticle(this.title, text));
                 if (queue.size() > articleLimit) {
-                  throw new RuntimeException(new InterruptedException());
+                  throw Util.throwException(new InterruptedException());
                 }
               }
               super.endElement(uri, localName, qName);
@@ -134,7 +134,7 @@ public class WikiArticle extends TestDocument {
             public void startElement(final String uri, final String localName, final String qName,
                                      final Attributes attributes) throws SAXException {
               if (Thread.currentThread().isInterrupted()) {
-                throw new RuntimeException(new InterruptedException());
+                throw Util.throwException(new InterruptedException());
               }
               int idx;
               if (0 < this.indexes.size()) {

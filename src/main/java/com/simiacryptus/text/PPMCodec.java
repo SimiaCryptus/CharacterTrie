@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -117,7 +118,7 @@ public class PPMCodec {
       }
       return out.toString();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -182,7 +183,7 @@ public class PPMCodec {
       //if(verbose) com.simiacryptus.ref.wrappers.System.p.println(String.format("Encoded %s to %s", original, bits));
       return new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
