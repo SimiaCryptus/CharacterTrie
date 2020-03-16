@@ -97,7 +97,7 @@ public class DictionaryMethodTest {
   private void addWordCountCompressor(@Nonnull NotebookOutput log, @Nonnull Map<CharSequence, Compressor> compressors,
                                       @Nonnull List<? extends TestDocument> content) {
     Map<CharSequence, Long> wordCounts = content.stream()
-        .flatMap(c -> Arrays.stream(c.getText().replaceAll("[^\\w\\s]", "").split(" +"))).map(s -> s.trim())
+        .flatMap(c -> Arrays.stream(c.getText().toString().replaceAll("[^\\w\\s]", "").split(" +"))).map(s -> s.trim())
         .filter(s -> !s.isEmpty()).collect(Collectors.groupingBy(x -> x, Collectors.counting()));
     CharSequence dictionary = wordCounts.entrySet().stream()
         .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
@@ -110,14 +110,14 @@ public class DictionaryMethodTest {
     compressors.put(key, new Compressor() {
       @Nonnull
       @Override
-      public byte[] compress(String text) {
+      public byte[] compress(CharSequence text) {
         return CompressionUtil.encodeLZ(text, dictionary.toString());
       }
 
       @Nonnull
       @Override
       public CharSequence uncompress(@Nonnull byte[] data) {
-        return CompressionUtil.decodeLZToString(data, dictionary);
+        return CompressionUtil.decodeLZToString(data);
       }
     });
   }
@@ -136,14 +136,14 @@ public class DictionaryMethodTest {
 
       @Nonnull
       @Override
-      public byte[] compress(String text) {
+      public byte[] compress(CharSequence text) {
         return CompressionUtil.encodeLZ(text, genDictionary);
       }
 
       @Nonnull
       @Override
       public CharSequence uncompress(@Nonnull byte[] data) {
-        return CompressionUtil.decodeLZToString(data, genDictionary);
+        return CompressionUtil.decodeLZToString(data);
       }
     });
     String genMarkov = dictionaryTree.copy().getGenerator().generateMarkov(8 * 1024, dictionary_context, "");
@@ -156,14 +156,14 @@ public class DictionaryMethodTest {
 
       @Nonnull
       @Override
-      public byte[] compress(String text) {
+      public byte[] compress(CharSequence text) {
         return CompressionUtil.encodeLZ(text, genMarkov);
       }
 
       @Nonnull
       @Override
       public CharSequence uncompress(@Nonnull byte[] data) {
-        return CompressionUtil.decodeLZToString(data, genMarkov);
+        return CompressionUtil.decodeLZToString(data);
       }
     });
   }

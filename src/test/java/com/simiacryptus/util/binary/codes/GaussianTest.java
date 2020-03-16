@@ -21,7 +21,6 @@ package com.simiacryptus.util.binary.codes;
 
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
-import org.junit.Assert;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +29,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GaussianTest {
   @Test
@@ -85,9 +86,9 @@ public class GaussianTest {
     for (int value = 0; value <= 0; value++) {
       final Gaussian gaussian = new Gaussian(100, 10);
       final byte[] serializedData = this.encode(gaussian, 0, 0);
-      Assert.assertEquals(0, serializedData.length);
+      assertEquals(0, serializedData.length);
       final long decoded = this.decode(gaussian, 0, serializedData);
-      Assert.assertEquals(value, decoded);
+      assertEquals(value, decoded);
     }
   }
 
@@ -117,7 +118,7 @@ public class GaussianTest {
   private int test(@Nonnull final Gaussian gaussian, final int max, final int value) throws IOException {
     final byte[] serializedData = this.encode(gaussian, max, value);
     final long decoded = this.decode(gaussian, max, serializedData);
-    Assert.assertEquals(value, decoded);
+    assertEquals(value, decoded);
     return serializedData.length;
   }
 }

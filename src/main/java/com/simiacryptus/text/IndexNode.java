@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 
 public class IndexNode extends TrieNode {
 
-  public IndexNode(CharTrie trie, short depth, int index, TrieNode parent) {
+  public IndexNode(CharTrie trie, int index, TrieNode parent) {
     super(trie, index, parent);
   }
 
@@ -45,7 +45,7 @@ public class IndexNode extends TrieNode {
   public Stream<? extends IndexNode> getChildren() {
     if (getData().firstChildIndex >= 0) {
       return IntStream.range(0, getData().numberOfChildren)
-          .mapToObj(i -> new IndexNode(this.trie, (short) (getDepth() + 1), getData().firstChildIndex + i, this));
+          .mapToObj(i -> new IndexNode(this.trie, getData().firstChildIndex + i, this));
     } else {
       return Stream.empty();
     }
@@ -86,7 +86,7 @@ public class IndexNode extends TrieNode {
       this.trie.nodes.update(index, data -> {
         return data.setFirstChildIndex(firstChildIndex).setNumberOfChildren(size);
       });
-      return new IndexNode(this.trie, getDepth(), index, getParent());
+      return new IndexNode(this.trie, index, getParent());
     } else {
       return this;
     }
@@ -127,7 +127,7 @@ public class IndexNode extends TrieNode {
     int max = data.firstChildIndex + data.numberOfChildren - 1;
     while (min <= max) {
       int i = (min + max) / 2;
-      IndexNode node = new IndexNode(this.trie, (short) (getDepth() + 1), i, this);
+      IndexNode node = new IndexNode(this.trie, i, this);
       char c = node.getChar();
       int compare = Character.compare(c, token);
       if (c < token) {

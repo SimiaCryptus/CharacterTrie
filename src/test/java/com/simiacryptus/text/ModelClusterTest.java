@@ -24,7 +24,6 @@ import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.WikiArticle;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -67,31 +66,31 @@ public abstract class ModelClusterTest {
 
           @Nonnull
           @Override
-          public byte[] compress(String text) {
+          public byte[] compress(CharSequence text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
 
           @Nonnull
           @Override
           public CharSequence uncompress(@Nonnull byte[] data) {
-            return CompressionUtil.decodeLZToString(data, dictionary);
+            return CompressionUtil.decodeLZToString(data);
           }
         });
 
         compressors.put(String.format("LZ_raw_%s", i), new Compressor() {
           @Nonnull
-          String dictionary = text.getText();
+          CharSequence dictionary = text.getText();
 
           @Nonnull
           @Override
-          public byte[] compress(String text) {
+          public byte[] compress(CharSequence text) {
             return CompressionUtil.encodeLZ(text, dictionary);
           }
 
           @Nonnull
           @Override
           public CharSequence uncompress(@Nonnull byte[] data) {
-            return CompressionUtil.decodeLZToString(data, dictionary);
+            return CompressionUtil.decodeLZToString(data);
           }
         });
       });

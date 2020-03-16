@@ -27,7 +27,6 @@ import com.simiacryptus.util.test.EnglishWords;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
-import org.junit.Assert;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +35,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CompressionTest {
 
@@ -49,14 +50,14 @@ public class CompressionTest {
 
       @Nonnull
       @Override
-      public byte[] compress(String text) {
+      public byte[] compress(CharSequence text) {
         return CompressionUtil.encodeLZ(text, dictionary);
       }
 
       @Nonnull
       @Override
       public CharSequence uncompress(@Nonnull byte[] data) {
-        return CompressionUtil.decodeLZToString(data, dictionary);
+        return CompressionUtil.decodeLZToString(data);
       }
     });
 
@@ -67,8 +68,8 @@ public class CompressionTest {
 
       @Nonnull
       @Override
-      public byte[] compress(@Nonnull String text) {
-        return CompressionUtil.encodeBZ(text, dictionary);
+      public byte[] compress(@Nonnull CharSequence text) {
+        return CompressionUtil.encodeBZ(text.toString(), dictionary);
       }
 
       @Nonnull
@@ -90,7 +91,7 @@ public class CompressionTest {
     String txt = "ab ba";
     Bits encoded = codec.encodePPM(txt, 1);
     CharSequence decoded = codec.decodePPM(encoded.getBytes(), 1);
-    Assert.assertEquals(txt, decoded);
+    assertEquals(txt, decoded);
   }
 
   @Test
@@ -110,7 +111,7 @@ public class CompressionTest {
       try {
         Bits encoded = codec.encodePPM(txt, encodingContext);
         CharSequence decoded = codec.decodePPM(encoded.getBytes(), encodingContext);
-        Assert.assertEquals(txt, decoded);
+        assertEquals(txt, decoded);
         System.out
             .println(String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
       } catch (Throwable e) {
@@ -121,7 +122,7 @@ public class CompressionTest {
             NodewalkerCodec codec2 = codec.setVerbose(System.out);
             Bits encoded = codec2.encodePPM(txt, encodingContext);
             CharSequence decoded = codec2.decodePPM(encoded.getBytes(), encodingContext);
-            Assert.assertEquals(txt, decoded);
+            assertEquals(txt, decoded);
             System.out.println(
                 String.format("Verified \"%s\" - %s chars -> %s bits", txt, txt.length(), encoded.bitLength));
             throw e;

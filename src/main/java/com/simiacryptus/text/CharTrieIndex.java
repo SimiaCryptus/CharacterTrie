@@ -191,7 +191,7 @@ public class CharTrieIndex extends CharTrie {
   @Nullable
   @Override
   public IndexNode root() {
-    return new IndexNode(this, (short) 0, 0, null);
+    return new IndexNode(this, 0, null);
   }
 
   @Nonnull

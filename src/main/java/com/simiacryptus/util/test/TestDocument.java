@@ -34,8 +34,7 @@ public class TestDocument {
     this.text = CompressionUtil.encodeLZ(text);
   }
 
-  @Nonnull
-  public String getText() {
+  public @Nonnull CharSequence getText() {
     return CompressionUtil.decodeLZToString(text);
   }
 

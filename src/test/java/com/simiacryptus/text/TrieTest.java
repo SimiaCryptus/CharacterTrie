@@ -24,8 +24,6 @@ import com.simiacryptus.util.Util;
 import com.simiacryptus.util.data.DoubleStatistics;
 import com.simiacryptus.util.test.TweetSentiment;
 import com.simiacryptus.util.test.WikiArticle;
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,6 +37,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TrieTest {
   public static final File outPath = new File("src/site/resources/");
@@ -88,20 +88,20 @@ public class TrieTest {
     tree.addDocument("a quick brown fox jumped over the lazy dog");
     tree.addDocument("this is a test. this is only a test. - nikola tesla");
     tree.index(3);
-    Assert.assertEquals(8, tree.traverse("t").getCursorCount());
-    Assert.assertEquals("t", tree.traverse("t").getString());
-    Assert.assertEquals("te", tree.traverse("te").getString());
-    Assert.assertEquals(3, tree.traverse("te").getCursorCount());
-    Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
-    Assert.assertEquals("dog", tree.traverse("dog").getString());
-    Assert.assertEquals(1, tree.traverse("do").getCursorCount());
-    Assert.assertEquals(6, tree.traverse("o").getCursorCount());
-    Assert.assertEquals(3, tree.traverse("test").getCursorCount());
-    Assert.assertEquals("tes", tree.traverse("test").getString());
-    Assert.assertEquals(2, tree.traverse("this ").getCursorCount());
-    Assert.assertEquals(1, tree.traverse(" dog").getCursorCount());
-    Assert.assertEquals(1, tree.traverse("dog").getCursorCount());
-    Assert.assertEquals(1, tree.traverse("a quick").getCursorCount());
+    assertEquals(8, tree.traverse("t").getCursorCount());
+    assertEquals("t", tree.traverse("t").getString());
+    assertEquals("te", tree.traverse("te").getString());
+    assertEquals(3, tree.traverse("te").getCursorCount());
+    assertEquals(1, tree.traverse("dog").getCursorCount());
+    assertEquals("dog", tree.traverse("dog").getString());
+    assertEquals(1, tree.traverse("do").getCursorCount());
+    assertEquals(6, tree.traverse("o").getCursorCount());
+    assertEquals(3, tree.traverse("test").getCursorCount());
+    assertEquals("tes", tree.traverse("test").getString());
+    assertEquals(2, tree.traverse("this ").getCursorCount());
+    assertEquals(1, tree.traverse(" dog").getCursorCount());
+    assertEquals(1, tree.traverse("dog").getCursorCount());
+    assertEquals(1, tree.traverse("a quick").getCursorCount());
   }
 
   @Test

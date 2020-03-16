@@ -58,8 +58,8 @@ public class NodewalkerCodec {
   }
 
   @Nonnull
-  public Bits encodePPM(@Nonnull String text, int context) {
-    return new Encoder(text, context).encodePPM();
+  public Bits encodePPM(@Nonnull CharSequence text, int context) {
+    return new Encoder(text.toString(), context).encodePPM();
   }
 
   protected void writeForward(@Nonnull Encoder encoder) throws IOException {

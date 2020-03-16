@@ -128,8 +128,8 @@ public interface Compressor {
     compressors.put("BZ0", new Compressor() {
       @Nonnull
       @Override
-      public byte[] compress(@Nonnull String text) {
-        return CompressionUtil.encodeBZ(text);
+      public byte[] compress(@Nonnull CharSequence text) {
+        return CompressionUtil.encodeBZ(text.toString());
       }
 
       @Nonnull
@@ -141,7 +141,7 @@ public interface Compressor {
     compressors.put("LZ0", new Compressor() {
       @Nonnull
       @Override
-      public byte[] compress(String text) {
+      public byte[] compress(CharSequence text) {
         return CompressionUtil.encodeLZ(text);
       }
 
@@ -161,7 +161,7 @@ public interface Compressor {
     return new Compressor() {
       @Nonnull
       @Override
-      public byte[] compress(@Nonnull String text) {
+      public byte[] compress(@Nonnull CharSequence text) {
         return codec.encodePPM(text, encodingContext).getBytes();
       }
 
@@ -173,7 +173,7 @@ public interface Compressor {
   }
 
   @Nonnull
-  byte[] compress(String text);
+  byte[] compress(CharSequence text);
 
   CharSequence uncompress(byte[] compress);
 }

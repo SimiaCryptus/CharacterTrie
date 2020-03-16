@@ -40,14 +40,14 @@ public class CompressionUtil {
   public static final Random random = new Random();
 
   @Nonnull
-  public static byte[] encodeLZ(CharSequence data, String dictionary) {
+  public static byte[] encodeLZ(CharSequence data, CharSequence dictionary) {
     byte[] asBytes = new byte[0];
     try {
       asBytes = String.valueOf(data).getBytes("UTF-8");
     } catch (UnsupportedEncodingException e) {
       throw Util.throwException(e);
     }
-    return encodeLZ(asBytes, dictionary);
+    return encodeLZ(asBytes, dictionary.toString());
   }
 
   @Nonnull
@@ -103,16 +103,7 @@ public class CompressionUtil {
   }
 
   @Nonnull
-  public static CharSequence decodeLZToString(@Nonnull byte[] data, CharSequence dictionary) {
-    try {
-      return new String(decodeLZ(data), "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      throw Util.throwException(e);
-    }
-  }
-
-  @Nonnull
-  public static String decodeLZToString(@Nonnull byte[] data) {
+  public static CharSequence decodeLZToString(@Nonnull byte[] data) {
     try {
       return new String(decodeLZ(data), "UTF-8");
     } catch (UnsupportedEncodingException e) {
