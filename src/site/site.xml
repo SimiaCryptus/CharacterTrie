@@ -17,7 +17,7 @@
   ~ under the License.
   -->
 
-<project name="java-util">
+<project name="char-trie">
     <!--<skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
@@ -38,12 +38,6 @@
     <body>
 
         <menu ref="reports"/>
-        <menu name="Data Reports">
-            <item name="Wikipedia Topics"
-                  href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/wikiTopics/config.json"/>
-            <item name="Sentence Classification"
-                  href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/sentenceClassification/config.json"/>
-        </menu>
         <menu name="Simia Cryptus" position="right">
             <item name="Blog" href="http://simiacryptus.com"/>
             <item name="GitHub" href="https://github.com/SimiaCryptus/"/>
@@ -51,20 +45,7 @@
             <item name="Maven" href="https://mvnrepository.com/artifact/com.simiacryptus"/>
         </menu>
 
-        <footer><![CDATA[
-    	<p>Search <a href="http://simiacryptus.com">SimiaCryptus Software</a>:</p>
-    	<script>
-  (function() {
-    var cx = '002356377723513062632:sj7pd32nzsk';
-    var gcse = document.createElement('script');
-    gcse.type = 'text/javascript';
-    gcse.async = true;
-    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
-    var s = document.getElementsByTagName('script')[0];
-    s.parentNode.insertBefore(gcse, s);
-  })();
-</script>
-<gcse:search></gcse:search>]]></footer>
+        <footer></footer>
 
     </body>
 </project>
