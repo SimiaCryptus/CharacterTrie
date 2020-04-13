@@ -17,31 +17,32 @@
   ~ under the License.
   -->
 
-<project name="char-trie">
-    <!--<skin>
+<project name="CharacterTrie">
+    <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
         <version>1.8</version>
-    </skin>-->
+    </skin>
     <custom>
         <fluidoSkin>
             <topBarEnabled>true</topBarEnabled>
             <sideBarEnabled>false</sideBarEnabled>
             <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
             <gitHub>
-                <projectId>SimiaCryptus/utilities</projectId>
+                <projectId>SimiaCryptus/CharacterTrie</projectId>
                 <ribbonOrientation>left</ribbonOrientation>
-                <ribbonColor>green</ribbonColor>
+                <ribbonColor>black</ribbonColor>
             </gitHub>
+            <profile>release</profile>
         </fluidoSkin>
     </custom>
     <body>
-
         <menu ref="reports"/>
         <menu name="Simia Cryptus" position="right">
             <item name="Blog" href="http://simiacryptus.com"/>
             <item name="GitHub" href="https://github.com/SimiaCryptus/"/>
-            <item name="Modules" href="http://simiacryptus.s3.us-west-2.amazonaws.com/release/2.0.0/all-projects/index.html"/>
+            <item name="Modules" href="http://code.simiacrypt.us/release/2.0.0/all-projects/index.html"/>
+            <item name="Tests" href="http://code.simiacrypt.us/tests/com/simiacryptus/mindseye/index/BasicTestReport.html"/>
             <item name="Maven" href="https://mvnrepository.com/artifact/com.simiacryptus"/>
         </menu>
 
