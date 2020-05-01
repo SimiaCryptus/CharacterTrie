@@ -20,10 +20,14 @@
 package com.simiacryptus.text;
 
 
+import com.simiacryptus.ref.lang.RefIgnore;
+import com.simiacryptus.ref.lang.RefUtil;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -89,18 +93,21 @@ public class TextAnalysis {
         : -Math.log(tokenNode.getCursorCount() * 1.0 / contextNode.getCursorCount()));
   }
 
+  @RefIgnore
   public List<CharSequence> keywords(@Nonnull final String source) {
     Map<CharSequence, Long> wordCounts = splitChars(source, DEFAULT_THRESHOLD).stream()
-        .collect(Collectors.groupingBy(x -> x, Collectors.counting()));
+        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     wordCounts = aggregateKeywords(wordCounts);
     return wordCounts.entrySet().stream().filter(x -> x.getValue() > 1)
         .sorted(Comparator.comparing(x -> -entropy(x.getKey()) * Math.pow(x.getValue(), 0.3))).map(e -> {
+          CharSequence key = e.getKey();
           if (isVerbose()) {
             assert verbose != null;
-            verbose.println(String.format("KEYWORD: \"%s\" - %s * %.3f / %s", e.getKey(), e.getValue(),
-                entropy(e.getKey()), e.getKey().length()));
+            verbose.println(String.format("KEYWORD: \"%s\" - %s * %.3f / %s", key, e.getValue(),
+                entropy(key), key.length()));
           }
-          return e.getKey();
+          RefUtil.freeRef(e);
+          return key;
         }).collect(Collectors.toList());
   }
 
@@ -475,7 +482,7 @@ public class TextAnalysis {
     }
 
     private Stream<Character> pick(@Nonnull Map<Character, Long> weights) {
-      return weights.entrySet().stream().sorted(Comparator.comparingLong(e -> e.getValue())).map(e -> e.getKey());
+      return weights.entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).map(Map.Entry::getKey);
     }
 
     @Nonnull

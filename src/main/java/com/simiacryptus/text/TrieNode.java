@@ -19,6 +19,7 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.Interval;
 
@@ -139,8 +140,12 @@ public class TrieNode {
     return trie.tokens().stream().collect(Collectors.toMap(x -> x, token -> {
       TrieNode traverse = trie.traverse(token.toString() + postContext);
       return traverse.getString().equals(token.toString() + postContext) ? traverse : null;
-    })).entrySet().stream().filter(e -> null != e.getValue())
-        .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+    })).entrySet().stream().filter(e -> {
+      boolean notNull = null != e.getValue();
+      RefUtil.freeRef(e);
+      return notNull;
+    })
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   public short getNumberOfChildren() {

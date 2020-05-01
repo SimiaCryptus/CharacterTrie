@@ -21,6 +21,7 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.lang.TimedResult;
 import com.simiacryptus.notebook.TableOutput;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.util.test.TestDocument;
 
 import javax.annotation.Nonnull;
@@ -47,6 +48,7 @@ public interface Compressor {
         try {
           CharSequence name = e.getKey();
           Compressor compressor = e.getValue();
+          RefUtil.freeRef(e);
           Map<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
@@ -54,16 +56,20 @@ public interface Compressor {
           rowWide.put(name + ".uncompressed", item.getText().length());
           rowTall.put("uncompressed", item.getText().length());
           TimedResult<byte[]> compress = TimedResult.time(() -> compressor.compress(item.getText()));
-          rowWide.put(name + ".compressed", compress.getResult().length);
-          rowTall.put("compressed", compress.getResult().length);
+          byte[] result = compress.getResult();
+          rowWide.put(name + ".compressed", result.length);
+          rowTall.put("compressed", result.length);
           double ONE_MILLION = 1000000.0;
           rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
-          TimedResult<CharSequence> uncompress = TimedResult.time(() -> compressor.uncompress(compress.getResult()));
+          compress.freeRef();
+          TimedResult<CharSequence> uncompress = TimedResult.time(() -> compressor.uncompress(result));
           rowWide.put(name + ".uncompressMs", uncompress.timeNanos / ONE_MILLION);
           rowTall.put("uncompressMs", uncompress.timeNanos / ONE_MILLION);
-          rowWide.put(name + ".verified", uncompress.getResult().equals(item.getText()));
-          rowTall.put("verified", uncompress.getResult().equals(item.getText()));
+          CharSequence uncompressResult = uncompress.getResult();
+          rowWide.put(name + ".verified", uncompressResult.equals(item.getText()));
+          rowTall.put("verified", uncompressResult.equals(item.getText()));
+          uncompress.freeRef();
           tallTable.putRow(rowTall);
           //com.simiacryptus.ref.wrappers.System.p.println(String.format("Evaluated #%s: %s apply %s - %s chars -> %s bytes in %s sec", index.incrementAndGet(), name, title, item.text.length(), compress.obj.length, compress.timeNanos / 1000000000.0));
         } catch (Exception ex) {
@@ -80,8 +86,9 @@ public interface Compressor {
                                                @Nonnull Map<CharSequence, Compressor> compressors, boolean wide) {
     Stream<Map.Entry<CharSequence, Compressor>> stream = compressors.entrySet().stream();
     Collector<Map.Entry<CharSequence, Compressor>, ?, Map<CharSequence, Function<TestDocument, Double>>> collector = Collectors
-        .toMap(e -> e.getKey(), e -> {
+        .toMap(Map.Entry::getKey, e -> {
           Compressor value = e.getValue();
+          RefUtil.freeRef(e);
           return x -> value.compress(x.getText()).length * 1.0 / x.getText().length();
         });
     return evalCluster(data, stream.collect(collector), wide);
@@ -101,20 +108,24 @@ public interface Compressor {
         try {
           CharSequence name = e.getKey();
           Function<TestDocument, Double> compressor = e.getValue();
+          RefUtil.freeRef(e);
           Map<CharSequence, Object> rowTall = new LinkedHashMap<>();
           rowTall.put("title", title);
           rowTall.put("compressor", name);
 
           TimedResult<Double> compress = TimedResult.time(() -> compressor.apply(item));
-          rowWide.put(name + ".value", compress.getResult());
-          rowTall.put("value", compress.getResult());
+          Double result = compress.getResult();
+          long timeNanos = compress.timeNanos;
+          compress.freeRef();
+          rowWide.put(name + ".value", result);
+          rowTall.put("value", result);
           //          double ONE_MILLION = 1000000.0;
           //          rowWide.put(name + ".compressMs", compress.timeNanos / ONE_MILLION);
           //          rowTall.put("compressMs", compress.timeNanos / ONE_MILLION);
           tallTable.putRow(rowTall);
           System.out.println(
               String.format("Evaluated #%s: %s apply %s - %s chars -> %s in %s sec", index.incrementAndGet(), name,
-                  title, item.getText().length(), compress.getResult(), compress.timeNanos / 1000000000.0));
+                  title, item.getText().length(), result, timeNanos / 1000000000.0));
         } catch (Exception ex) {
           ex.printStackTrace();
         }

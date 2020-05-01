@@ -21,6 +21,7 @@ package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.util.Util;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -131,8 +132,14 @@ public class LogAnalysis {
       patterns.put(Pattern.compile("Failed to build job executor for job"), "Bad Job");
       failedLogs.forEach((file, content) -> {
         List<String> matchedPatterns = patterns.entrySet().stream().filter(entry -> {
-          return entry.getKey().matcher(content).find();
-        }).map(entry -> entry.getValue()).collect(Collectors.toList());
+          boolean b = entry.getKey().matcher(content).find();
+          RefUtil.freeRef(entry);
+          return b;
+        }).map(entry -> {
+          String value = entry.getValue();
+          RefUtil.freeRef(entry);
+          return value;
+        }).collect(Collectors.toList());
         if (matchedPatterns.isEmpty()) {
           System.out.println(String.format("No patterns matched for %s", file));
         } else if (matchedPatterns.size() == 1) {
@@ -143,8 +150,14 @@ public class LogAnalysis {
       });
       successLogs.forEach((file, content) -> {
         List<String> matchedPatterns = patterns.entrySet().stream().filter(entry -> {
-          return entry.getKey().matcher(content).find();
-        }).map(entry -> entry.getValue()).collect(Collectors.toList());
+          boolean b = entry.getKey().matcher(content).find();
+          RefUtil.freeRef(entry);
+          return b;
+        }).map(entry -> {
+          String value = entry.getValue();
+          RefUtil.freeRef(entry);
+          return value;
+        }).collect(Collectors.toList());
         if (!matchedPatterns.isEmpty()) {
           System.out.println(String.format("Success log %s matched - %s", file, matchedPatterns.stream().reduce((a, b) -> a + ", " + b).get()));
         }

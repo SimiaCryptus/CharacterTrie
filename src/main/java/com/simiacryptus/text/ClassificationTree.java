@@ -19,6 +19,8 @@
 
 package com.simiacryptus.text;
 
+import com.simiacryptus.ref.lang.RefIgnore;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.PrintStream;
@@ -55,6 +57,7 @@ public class ClassificationTree {
   }
 
   @Nonnull
+  @RefIgnore
   private Function<CharSequence, Map<CharSequence, Double>> categorizationTree(
       @Nonnull Map<CharSequence, List<CharSequence>> categories, int depth, CharSequence indent) {
     if (0 == depth) {

@@ -19,7 +19,10 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrayList;
+import com.simiacryptus.ref.wrappers.RefSpliterators;
+import com.simiacryptus.ref.wrappers.RefStreamSupport;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 
@@ -33,9 +36,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -78,8 +79,8 @@ public class TweetSentiment extends TestDocument {
         }
       }
     }
-    Iterator<TweetSentiment> iterator = new AsyncListIterator<TweetSentiment>(new RefArrayList<>(queue), thread);
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
+    @RefAware Iterator<TweetSentiment> iterator = new AsyncListIterator<TweetSentiment>(new RefArrayList<>(queue), thread);
+    return RefStreamSupport.stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
         .filter(x -> x != null);
   }
 

@@ -19,7 +19,11 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrayList;
+import com.simiacryptus.ref.wrappers.RefSpliterators;
+import com.simiacryptus.ref.wrappers.RefStream;
+import com.simiacryptus.ref.wrappers.RefStreamSupport;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.AsyncListIterator;
 import org.apache.commons.compress.utils.IOUtils;
@@ -31,8 +35,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class EnglishWords extends TestDocument {
   private static final ArrayList<EnglishWords> queue = new ArrayList<>();
@@ -61,7 +63,7 @@ public class EnglishWords extends TestDocument {
   }
 
   @Nonnull
-  public static Stream<EnglishWords> load() {
+  public static RefStream<EnglishWords> load() {
     if (thread == null) {
       synchronized (WikiArticle.class) {
         if (thread == null) {
@@ -71,8 +73,8 @@ public class EnglishWords extends TestDocument {
         }
       }
     }
-    Iterator<EnglishWords> iterator = new AsyncListIterator<>(new RefArrayList<>(queue), thread);
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
+    @RefAware Iterator<EnglishWords> iterator = new AsyncListIterator<>(new RefArrayList<>(queue), thread);
+    return RefStreamSupport.stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false)
         .filter(x -> x != null);
   }
 

@@ -20,6 +20,8 @@
 package com.simiacryptus.text;
 
 import com.simiacryptus.notebook.TableOutput;
+import com.simiacryptus.ref.lang.RefIgnore;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.data.DoubleStatistics;
 import com.simiacryptus.util.test.TweetSentiment;
@@ -81,6 +83,11 @@ public class TrieTest {
     return map;
   }
 
+  @RefIgnore
+  private static long keyLength(Map.Entry<CharSequence, Long> e) {
+    return e.getKey().length();
+  }
+
   @Test
   @Tag("UnitTest")
   public void testFunctionality() {
@@ -134,6 +141,7 @@ public class TrieTest {
   @Test
   @Disabled
   @Tag("ResearchCode")
+  @RefIgnore
   public void testDictionaryGenerationMetaParameters() {
     TableOutput output = new TableOutput();
     final String content;
@@ -153,8 +161,8 @@ public class TrieTest {
     {
       CharSequence commonTerms = wordCounts.entrySet().stream()
           .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
-              .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
+              .thenComparing(Comparator.comparingLong(e -> -keyLength(e))))
+          .map(Map.Entry::getKey).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
       Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "CommonTerm");
       evaluateDictionary(sentances, commonTerms, map);
@@ -169,9 +177,9 @@ public class TrieTest {
       int _encodingPenalty = encodingPenalty;
       CharSequence meritTerms = wordCounts.entrySet().stream()
           .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(
-              e -> -e.getValue() * (e.getKey().length() - _encodingPenalty))
-              .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
+              e -> -e.getValue() * (keyLength(e) - _encodingPenalty))
+              .thenComparing(Comparator.comparingLong(e -> -keyLength(e))))
+          .map(Map.Entry::getKey).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
       Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "MeritTerm");
       map.put("encodingPenalty", encodingPenalty);
@@ -185,9 +193,9 @@ public class TrieTest {
 
     {
       CharSequence uncommonTerms = wordCounts.entrySet().stream()
-          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> e.getValue())
-              .thenComparing(Comparator.comparingLong(e -> e.getKey().length())))
-          .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
+          .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(Map.Entry::getValue)
+              .thenComparing(Comparator.comparingLong(TrieTest::keyLength)))
+          .map(Map.Entry::getKey).reduce((a, b) -> a + " " + b).get().subSequence(0, size);
       Map<CharSequence, Object> map = new LinkedHashMap<>();
       map.put("type", "UncommonTerm,");
       evaluateDictionary(sentances, uncommonTerms, map);
@@ -348,9 +356,10 @@ public class TrieTest {
 
     Stream<Map.Entry<CharSequence, CharSequence>> stream = articles.entrySet().stream().limit(dictionaryCount);
     Map<CharSequence, CharTrie> models = stream.collect(Collectors
-        .toMap((Map.Entry<CharSequence, CharSequence> d) -> d.getKey(), (Map.Entry<CharSequence, CharSequence> d) -> {
+        .toMap(Map.Entry::getKey, (Map.Entry<CharSequence, CharSequence> d) -> {
           CharSequence article = d.getValue();
           CharSequence title = d.getKey();
+          RefUtil.freeRef(d);
           CharTrieIndex tree = new CharTrieIndex();
           tree.addDocument(characterSet);
           tree.addDocument(article);
@@ -362,12 +371,14 @@ public class TrieTest {
           return tree;
         }));
     Map<CharSequence, CharSequence> dictionaries = models.entrySet().stream().collect(Collectors
-        .toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(), (Map.Entry<CharSequence, CharTrie> d) -> {
-          return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+        .toMap(Map.Entry::getKey, (Map.Entry<CharSequence, CharTrie> d) -> {
+          String dictionary = d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+          RefUtil.freeRef(d);
+          return dictionary;
         }));
 
     TableOutput output = new TableOutput();
-    articles.entrySet().stream().limit(articleCount).collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()))
+    articles.entrySet().stream().limit(articleCount).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
         .forEach((dataTitle, article) -> {
           Map<CharSequence, Object> map = new LinkedHashMap<>();
           map.put("dataTitle", dataTitle);
@@ -423,8 +434,10 @@ public class TrieTest {
           return tree;
         }));
     Map<CharSequence, CharSequence> dictionaries = models.entrySet().stream().collect(Collectors
-        .toMap((Map.Entry<CharSequence, CharTrie> d) -> d.getKey(), (Map.Entry<CharSequence, CharTrie> d) -> {
-          return d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+        .toMap(Map.Entry::getKey, (Map.Entry<CharSequence, CharTrie> d) -> {
+          String dictionary = d.getValue().copy().getGenerator().generateDictionary(dictionaryLength, 5, "", 1, true);
+          RefUtil.freeRef(d);
+          return dictionary;
         }));
 
     TableOutput output = new TableOutput();

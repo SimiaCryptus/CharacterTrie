@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
   ~ Copyright (c) 2019 by Andrew Charneski.
   ~
@@ -16,7 +17,6 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -101,13 +101,13 @@
         <dependency>
             <groupId>com.simiacryptus</groupId>
             <artifactId>literate-reporting</artifactId>
-            <version>MINDSEYE-SNAPSHOT</version>
+
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.simiacryptus</groupId>
             <artifactId>refcount-core</artifactId>
-            <version>${project.version}</version>
+
         </dependency>
     </dependencies>
     <build>
@@ -144,4 +144,21 @@
         </profile>
     </profiles>
 
+    <url>http://code.simiacrypt.us/release/${project.version}/char-trie</url>
+    <distributionManagement>
+        <site>
+            <url>s3://code.simiacrypt.us/release/${project.version}/char-trie</url>
+        </site>
+    </distributionManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.simiacryptus</groupId>
+                <artifactId>bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

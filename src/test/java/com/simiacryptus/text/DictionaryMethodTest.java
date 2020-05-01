@@ -22,6 +22,7 @@ package com.simiacryptus.text;
 import com.simiacryptus.notebook.MarkdownNotebookOutput;
 import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.notebook.TableOutput;
+import com.simiacryptus.ref.lang.RefIgnore;
 import com.simiacryptus.util.test.Shakespeare;
 import com.simiacryptus.util.test.TestDocument;
 import com.simiacryptus.util.test.TweetSentiment;
@@ -94,6 +95,7 @@ public class DictionaryMethodTest {
     log.p(output.calcNumberStats().toCSV(true));
   }
 
+  @RefIgnore
   private void addWordCountCompressor(@Nonnull NotebookOutput log, @Nonnull Map<CharSequence, Compressor> compressors,
                                       @Nonnull List<? extends TestDocument> content) {
     Map<CharSequence, Long> wordCounts = content.stream()
@@ -102,7 +104,7 @@ public class DictionaryMethodTest {
     CharSequence dictionary = wordCounts.entrySet().stream()
         .sorted(Comparator.<Map.Entry<CharSequence, Long>>comparingLong(e -> -e.getValue())
             .thenComparing(Comparator.comparingLong(e -> -e.getKey().length())))
-        .map(x -> x.getKey()).reduce((a, b) -> a + " " + b).get().subSequence(0, 8 * 1024);
+        .map(Map.Entry::getKey).reduce((a, b) -> a + " " + b).get().subSequence(0, 8 * 1024);
     CharSequence key = "LZ8k_commonWords";
     int dictSampleSize = 512;
     log.p("Common Words Dictionary %s: %s...\n", key,

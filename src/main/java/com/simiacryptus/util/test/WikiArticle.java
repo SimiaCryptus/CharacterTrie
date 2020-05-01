@@ -69,6 +69,11 @@ public class WikiArticle extends TestDocument {
     }
 
     @Override
+    public void _free() {
+      super._free();
+    }
+
+    @Override
     protected void read(@Nonnull RefList<WikiArticle> queue) {
       try {
         try (final InputStream in = new BZip2CompressorInputStream(Util.cacheLocal(file, new URI(url)), true)) {
@@ -164,6 +169,7 @@ public class WikiArticle extends TestDocument {
       } catch (@Nonnull final Exception e) {
         e.printStackTrace();
       } finally {
+        queue.freeRef();
         System.err.println("Read thread exit");
       }
     }
