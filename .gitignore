@@ -13,6 +13,7 @@
 *.iml
 *.jar
 *.log
+*.pem
 *.rar
 *.tar.gz
 *.war
